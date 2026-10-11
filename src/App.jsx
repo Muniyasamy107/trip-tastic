@@ -130,9 +130,9 @@ function Reveal({ as: Element = 'div', children, className = '', delay = 0, ...p
 
 function Brand({ light = false }) {
   return (
-    <a className={`brand ${light ? 'brand--light' : ''}`} href="#home" aria-label="Trip Tastic Holidays home">
-      <span className="brand-emblem" aria-hidden="true"><img src="/trip-tastic-emblem.svg" alt="" /></span>
-      <span className="brand-wording"><strong>Trip <em>Tastic</em></strong><small>HOLIDAYS · SOUTH INDIA</small></span>
+    <a className={`brand ${light ? 'brand--light' : ''}`} href="#home" aria-label="Trip Tastic home">
+      <span className="brand-mark"><Compass size={23} strokeWidth={2.1} /></span>
+      <span className="brand-wording"><strong>trip tastic<span>.</span></strong><small>SOUTH INDIA, YOUR WAY</small></span>
     </a>
   );
 }
