@@ -34,6 +34,7 @@ public class DestinationController {
     @GetMapping("/{id}")
     public DestinationResponse findDestination(@PathVariable Long id) {
         Destination destination = destinationRepository.findById(id)
+                .filter(item -> "South India".equalsIgnoreCase(item.getRegion()))
                 .orElseThrow(() -> new ResourceNotFoundException("We couldn't find that destination."));
         return DestinationResponse.from(destination);
     }

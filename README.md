@@ -1,13 +1,13 @@
 # Trip Tastic
 
-A colorful, story-first travel planner built with **React + Vite**, **Spring Boot**, and **MySQL**. The experience includes a looping Defender off-road video hero, scroll-led animation, responsive destination discovery, a South India-first collection, regional filters, saved trips, destination details, and a booking-request flow.
+A colorful, story-first travel planner built with **React + Vite**, **Spring Boot**, and **MySQL**—focused exclusively on South India. The experience includes a Defender off-road video hero, scroll-led animation, destination search, experience filters, saved trips, destination details, and a booking-request flow.
 
 ## What’s in the repo
 
-- **Frontend:** React 18, Vite, Lucide icons, custom responsive CSS and Intersection Observer reveals.
-- **Backend:** Spring Boot REST API with validation, destination search, and booking requests.
-- **Database:** MySQL 8.4. The API creates/updates its tables and seeds South India favourites plus a small set of international trips. Existing local databases receive any missing starter destinations on the next API startup.
-- **Local-first preview:** the curated destination cards and interactions still render if the API is not running. Booking requests are saved as a clearly labelled local preview draft in that case.
+- **Frontend:** React 18, Vite, Lucide icons, custom responsive CSS, and Intersection Observer reveals.
+- **Backend:** Spring Boot REST API with validation, South India destination search, and booking requests. Destination lookups and booking requests reject trips outside South India.
+- **Database:** MySQL 8.4. The API creates or updates its tables and seeds ten South India destinations. Older database rows from a previous version are not returned by the South India-only API.
+- **Local-first preview:** the curated South India destination cards and interactions still render if the API is not running. Booking requests are saved as clearly labelled local preview drafts; favourites and newsletter-preview sign-ups stay in this browser until production services are connected.
 
 ## Run it locally
 
@@ -60,7 +60,7 @@ npm run build
 | Method | Endpoint | Description |
 | --- | --- | --- |
 | `GET` | `/api/health` | Basic API health check |
-| `GET` | `/api/destinations` | List all destinations; optional `search` and `region` query parameters |
+| `GET` | `/api/destinations` | List South India destinations; optional `search` and `region` query parameters |
 | `GET` | `/api/destinations/{id}` | Get a destination |
 | `POST` | `/api/bookings` | Validate and save a trip request |
 | `GET` | `/api/bookings/{id}` | Get booking status and confirmation details |
@@ -82,6 +82,6 @@ A successful request returns `201 Created` with a confirmation code, for example
 
 ## Notes
 
-- Destination photography is loaded from Unsplash URLs; an internet connection is needed to see those images. The Defender off-road hero loop is a free-to-use Pexels clip credited in the video card; its poster image remains as the fallback.
+- Destination and editorial photography is loaded from Unsplash and Pexels URLs; an internet connection is needed to see those images. The Defender off-road hero loop is a free-to-use Pexels clip credited in the video card, with a poster image as its fallback.
 - Starter trip prices are illustrative INR estimates and should be reviewed before launch.
 - `spring.jpa.hibernate.ddl-auto=update` is convenient for local development. Use a managed migration tool and production-grade secrets/configuration before deploying.

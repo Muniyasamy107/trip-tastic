@@ -25,6 +25,9 @@ public class Destination {
     @Column(nullable = false, length = 40)
     private String region;
 
+    @Column(length = 50)
+    private String category;
+
     @Column(nullable = false, length = 150)
     private String tagline;
 
@@ -59,6 +62,7 @@ public class Destination {
             String name,
             String country,
             String region,
+            String category,
             String tagline,
             String description,
             String imageUrl,
@@ -71,6 +75,7 @@ public class Destination {
         this.name = name;
         this.country = country;
         this.region = region;
+        this.category = category;
         this.tagline = tagline;
         this.description = description;
         this.imageUrl = imageUrl;
@@ -85,7 +90,10 @@ public class Destination {
     public Long getId() { return id; }
     public String getName() { return name; }
     public String getCountry() { return country; }
+    public void setCountry(String country) { this.country = country; }
     public String getRegion() { return region; }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
     public String getTagline() { return tagline; }
     public String getDescription() { return description; }
     public String getImageUrl() { return imageUrl; }

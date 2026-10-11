@@ -27,6 +27,7 @@ public class BookingService {
     @Transactional
     public BookingResponse create(BookingRequest request) {
         Destination destination = destinationRepository.findById(request.destinationId())
+                .filter(item -> "South India".equalsIgnoreCase(item.getRegion()))
                 .orElseThrow(() -> new ResourceNotFoundException("That destination could not be found."));
 
         Booking booking = new Booking(
