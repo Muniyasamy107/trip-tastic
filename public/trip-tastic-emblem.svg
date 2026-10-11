@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 136" role="img" aria-labelledby="title desc">
+  <title id="title">Trip Tastic hill-road emblem</title>
+  <desc id="desc">A golden sunset over green hills, a waterfall, winding mountain road and a 4x4.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffc744" />
+      <stop offset="1" stop-color="#f4a92e" />
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#c9ece2" />
+      <stop offset=".48" stop-color="#f8f0d6" />
+      <stop offset="1" stop-color="#83c6c4" />
+    </linearGradient>
+    <clipPath id="landscape">
+      <path d="M13 99V49C13 22 42 7 80 7s67 15 67 42v50c-15 20-39 30-67 30s-52-10-67-30Z" />
+    </clipPath>
+  </defs>
+  <path d="M8 100V48C8 18 39 2 80 2s72 16 72 46v52c-16 23-42 34-72 34S24 123 8 100Z" fill="#201d16" />
+  <g clip-path="url(#landscape)">
+    <path d="M8 4h144v103H8z" fill="url(#sky)" />
+    <circle cx="107" cy="35" r="20" fill="#ffe59b" opacity=".82" />
+    <path d="m2 77 24-24 13 11 26-33 22 29 17-17 21 24 19-16 12 17v43H2Z" fill="#68833a" />
+    <path d="m3 85 25-21 12 13 27-24 17 19 19-15 19 16 19-11 14 14v37H3Z" fill="#355632" />
+    <path d="m8 88 22-14 14 10 18-13 15 12 17-11 19 14 16-9 23 14v26H8Z" fill="#243e2d" />
+    <path d="M35 32c8 2 14 8 15 17l4 29-8 9-15-8 4-29Z" fill="url(#water)" stroke="#172c22" stroke-width="3" stroke-linejoin="round" />
+    <path d="M40 40 42 74m5-27 2 28" fill="none" stroke="#fff9dc" stroke-width="3" stroke-linecap="round" opacity=".88" />
+    <path d="M27 83c9-4 18-3 27 2 7 4 15 5 22 2l7 17H18Z" fill="#4b9893" />
+    <path d="M154 55c-19-8-35-9-48-2-12 6-13 17-24 24-10 7-21 9-33 18-10 8-15 20-18 35h146V77c-6-9-13-17-23-22Z" fill="#26241c" />
+    <path d="M151 62c-18-8-33-8-43-2-9 6-10 16-23 24-9 6-20 9-31 17-10 8-16 20-18 31h115Z" fill="#3b382b" />
+    <path d="M135 65c-14-4-24-3-30 3-8 7-8 17-20 25-9 7-18 10-27 17-7 6-11 14-13 22h92Z" fill="#1e211a" />
+    <path d="M111 91c3-8 9-15 17-20" fill="none" stroke="#eeb332" stroke-width="2.2" stroke-linecap="round" />
+    <path d="M27 105h109" fill="none" stroke="#b99559" stroke-width="2" opacity=".9" />
+    <g stroke="#171b14" stroke-linejoin="round">
+      <path d="M36 88 43 79h42l8 7 20 3 7 8-2 12H34l-3-8 2-8Z" fill="#67704b" stroke-width="2.4" />
+      <path d="m49 81-4 8h19v-8Zm18 0v8h20l-7-8Z" fill="#25362d" stroke-width="2" />
+      <path d="M64 80v11m8-11v11m18-3 13 2m-74 9h79" fill="none" stroke="#141a14" stroke-width="2" />
+      <path d="M33 94h-5l-4 6h9m81-2h5l-3 6h-4" fill="#d8bf83" stroke-width="1.5" />
+      <circle cx="48" cy="108" r="8" fill="#201f19" stroke-width="2" />
+      <circle cx="48" cy="108" r="3.5" fill="#bda36a" stroke-width="1.5" />
+      <circle cx="100" cy="108" r="8" fill="#201f19" stroke-width="2" />
+      <circle cx="100" cy="108" r="3.5" fill="#bda36a" stroke-width="1.5" />
+      <path d="M38 88h-5v10m1-6h4m79 7h4v6" fill="none" stroke-width="2" />
+    </g>
+    <path d="M17 45 24 35l4 8 5-17 7 19m9-2 7-12 5 10 4-21 7 20m5 7 6-10 4 9 5-16 6 19" fill="#173123" stroke="#171d14" stroke-width="2.3" stroke-linejoin="round" />
+  </g>
+  <path d="M8 100V48C8 18 39 2 80 2s72 16 72 46v52c-16 23-42 34-72 34S24 123 8 100Z" fill="none" stroke="#1e1a13" stroke-width="4" />
+</svg>
