@@ -77,6 +77,41 @@ function priceLabel(value) {
   return `₹${Number(value || 0).toLocaleString('en-IN')}`;
 }
 
+function responsiveImageUrl(source, width = 1600) {
+  try {
+    const url = new URL(source);
+    const isUnsplash = url.hostname === 'images.unsplash.com';
+    const isPexels = url.hostname === 'images.pexels.com';
+    if (!isUnsplash && !isPexels) return source;
+
+    const originalWidth = Number(url.searchParams.get('w')) || width;
+    const originalHeight = Number(url.searchParams.get('h'));
+    url.searchParams.set('w', String(width));
+    if (isUnsplash) {
+      url.searchParams.set('auto', 'format');
+      url.searchParams.set('fit', 'crop');
+      url.searchParams.set('q', '90');
+    } else if (originalHeight) {
+      url.searchParams.set('h', String(Math.round(width * originalHeight / originalWidth)));
+    }
+    return url.toString();
+  } catch {
+    return source;
+  }
+}
+
+function responsiveImageSrcSet(source) {
+  try {
+    const host = new URL(source).hostname;
+    if (host !== 'images.unsplash.com' && host !== 'images.pexels.com') return undefined;
+    return [160, 320, 480, 640, 960, 1280, 1920]
+      .map((width) => `${responsiveImageUrl(source, width)} ${width}w`)
+      .join(', ');
+  } catch {
+    return undefined;
+  }
+}
+
 function loadSavedTrips() {
   try {
     const stored = JSON.parse(localStorage.getItem('trip-tastic-favourites') || '[]');
@@ -174,7 +209,15 @@ function DestinationCard({ trip, index, onExplore, isSaved, onSave }) {
     <Reveal as="article" className={`destination-card destination-card--${index % 4}`} delay={(index % 3) * 90}>
       <div className="destination-image-wrap">
         <button className="destination-image-button" type="button" onClick={() => onExplore(trip)} aria-label={`Explore ${trip.name}`}>
-          <img src={trip.imageUrl} alt={`${trip.name}, ${trip.country}`} loading="lazy" />
+          <img
+            src={responsiveImageUrl(trip.imageUrl, 1280)}
+            srcSet={responsiveImageSrcSet(trip.imageUrl)}
+            sizes="(max-width: 760px) calc(100vw - 38px), (max-width: 1050px) 43vw, 30vw"
+            alt={`${trip.name}, ${trip.country}`}
+            loading="lazy"
+            decoding="async"
+            data-parallax="slow"
+          />
           <span className="image-wash" />
         </button>
         <span className="destination-badge"><Sparkles size={12} /> {trip.badge || categoryFor(trip)}</span>
@@ -275,7 +318,7 @@ function TripModal({ trip, onClose, preferences }) {
     <div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <section className={`trip-modal ${bookingOpen ? 'trip-modal--booking' : ''}`} role="dialog" aria-modal="true" aria-labelledby="trip-modal-title">
         <button className="modal-close" type="button" onClick={onClose} aria-label="Close trip details"><X size={20} /></button>
-        <div className="modal-photo"><img src={trip.imageUrl} alt={`${trip.name} landscape`} /><span className="modal-photo-label"><MapPin size={13} /> {trip.country}, South India</span></div>
+        <div className="modal-photo"><img src={responsiveImageUrl(trip.imageUrl, 1600)} srcSet={responsiveImageSrcSet(trip.imageUrl)} sizes="(max-width: 760px) 100vw, 42vw" alt={`${trip.name} landscape`} decoding="async" /><span className="modal-photo-label"><MapPin size={13} /> {trip.country}, South India</span></div>
         <div className="modal-content">
           {bookingStatus === 'success' || bookingStatus === 'preview' ? (
             <div className="booking-confirmation">
@@ -354,6 +397,7 @@ export default function App() {
   const [isHeroVideoPlaying, setIsHeroVideoPlaying] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [savedTrips, setSavedTrips] = useState(loadSavedTrips);
+  const [showSavedOnly, setShowSavedOnly] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterMessage, setNewsletterMessage] = useState('');
   const videoRef = useRef(null);
@@ -409,9 +453,10 @@ export default function App() {
     return destinations.filter((trip) => {
       const matchesCategory = activeCategory === 'All escapes' || categoryFor(trip) === activeCategory;
       const matchesQuery = !query || [trip.name, trip.country, trip.region, trip.tagline, categoryFor(trip)].some((value) => value?.toLowerCase().includes(query));
-      return matchesCategory && matchesQuery && trip.region?.toLowerCase() === 'south india';
+      const matchesSaved = !showSavedOnly || savedTrips.has(trip.name);
+      return matchesCategory && matchesQuery && matchesSaved && trip.region?.toLowerCase() === 'south india';
     });
-  }, [activeCategory, destinations, submittedSearch]);
+  }, [activeCategory, destinations, savedTrips, showSavedOnly, submittedSearch]);
 
   const featuredTrip = filteredDestinations.find((trip) => trip.id === activeFeaturedId) || filteredDestinations[0] || null;
   const tripSelectors = filteredDestinations.slice(0, 7);
@@ -449,6 +494,7 @@ export default function App() {
     setSubmittedSearch('');
     setSearchInput('');
     setActiveCategory('All escapes');
+    setShowSavedOnly(false);
     setDestinations(fallbackDestinations);
     try {
       const results = await getDestinations();
@@ -515,6 +561,37 @@ export default function App() {
 
   const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
+  useEffect(() => {
+    if (prefersReducedMotion) return undefined;
+    const parallaxImages = [...document.querySelectorAll('[data-parallax="slow"]')];
+    if (!parallaxImages.length) return undefined;
+
+    let frame = 0;
+    const updateParallax = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const viewportCenter = window.innerHeight / 2;
+        for (const image of parallaxImages) {
+          const rect = image.getBoundingClientRect();
+          if (rect.bottom < 0 || rect.top > window.innerHeight) continue;
+          const distance = rect.top + rect.height / 2 - viewportCenter;
+          const offset = Math.max(-18, Math.min(18, -distance * 0.035));
+          image.style.setProperty('--parallax-offset', `${offset.toFixed(1)}px`);
+        }
+      });
+    };
+
+    updateParallax();
+    window.addEventListener('scroll', updateParallax, { passive: true });
+    window.addEventListener('resize', updateParallax);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', updateParallax);
+      window.removeEventListener('resize', updateParallax);
+    };
+  }, [filteredDestinations, prefersReducedMotion]);
+
   return (
     <>
       <div ref={scrollProgressRef} className="scroll-progress" aria-hidden="true" />
@@ -529,14 +606,14 @@ export default function App() {
             loop
             playsInline
             preload="metadata"
-            poster="https://images.pexels.com/videos/30245559/pexels-photo-30245559.jpeg?auto=compress&w=1600&h=900&dpr=1"
+            poster="https://images.pexels.com/videos/30245559/pexels-photo-30245559.jpeg?auto=compress&w=1920&h=1080&dpr=1"
             aria-label="A Land Rover Defender on a muddy off-road trail"
             onPlay={() => setIsHeroVideoPlaying(true)}
             onPause={() => setIsHeroVideoPlaying(false)}
             onTimeUpdate={updateVideoProgress}
           >
             <source src="https://videos.pexels.com/video-files/30245559/12966487_1920_1080_120fps.mp4" type="video/mp4" />
-            <img src="https://images.pexels.com/videos/30245559/pexels-photo-30245559.jpeg?auto=compress&w=1600&h=900&dpr=1" alt="Land Rover crossing a muddy trail" />
+            <img src="https://images.pexels.com/videos/30245559/pexels-photo-30245559.jpeg?auto=compress&w=1920&h=1080&dpr=1" srcSet="https://images.pexels.com/videos/30245559/pexels-photo-30245559.jpeg?auto=compress&w=960&h=540&dpr=1 960w, https://images.pexels.com/videos/30245559/pexels-photo-30245559.jpeg?auto=compress&w=1600&h=900&dpr=1 1600w, https://images.pexels.com/videos/30245559/pexels-photo-30245559.jpeg?auto=compress&w=1920&h=1080&dpr=1 1920w" sizes="100vw" alt="Land Rover crossing a muddy trail" />
           </video>
           <div className="hero-tint" />
           <div className="hero-dust" aria-hidden="true" />
@@ -620,11 +697,11 @@ export default function App() {
             </Reveal>
             <div className="welcome-gallery">
               <Reveal className="welcome-photo welcome-photo--hill" delay={110}>
-                <img src="https://images.unsplash.com/photo-1707655315272-33a54a771068?auto=format&fit=crop&w=1000&q=85" alt="A train winding through the green Nilgiri hills" loading="lazy" />
+                <img src={responsiveImageUrl('https://images.unsplash.com/photo-1707655315272-33a54a771068?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1707655315272-33a54a771068?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 90vw, 46vw" alt="A train winding through the green Nilgiri hills" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="photo-tag photo-tag--yellow">THE NILGIRIS · TAKE IT SLOW</span>
               </Reveal>
               <Reveal className="welcome-photo welcome-photo--water" delay={220}>
-                <img src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=900&q=85" alt="A boat gliding through Kerala backwaters" loading="lazy" />
+                <img src={responsiveImageUrl('https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 90vw, 40vw" alt="A boat gliding through Kerala backwaters" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="photo-tag photo-tag--green">KERALA · GO WITH THE FLOW</span>
               </Reveal>
               <div className="gallery-scribble" aria-hidden="true">south<br />is a feeling<span>✳</span></div>
@@ -647,12 +724,15 @@ export default function App() {
               </Reveal>
             </div>
 
-            <div className="category-selector" role="tablist" aria-label="Filter South India trips by experience">
+            <div className="category-selector" role="group" aria-label="Filter South India trips">
               {categories.map(({ name, icon: Icon, color }) => (
-                <button key={name} className={`category-tab ${activeCategory === name ? 'category-tab--active' : ''}`} type="button" role="tab" aria-selected={activeCategory === name} onClick={() => selectCategory(name)}>
+                <button key={name} className={`category-tab ${activeCategory === name ? 'category-tab--active' : ''}`} type="button" aria-pressed={activeCategory === name} onClick={() => selectCategory(name)}>
                   <span className={`category-icon category-icon--${color}`}><Icon size={18} strokeWidth={1.8} /></span><span>{name}</span>
                 </button>
               ))}
+              <button className={`category-tab category-tab--saved ${showSavedOnly ? 'category-tab--active' : ''}`} type="button" aria-pressed={showSavedOnly} aria-label={`Filter by saved trips, ${savedTrips.size} saved`} onClick={() => setShowSavedOnly((current) => !current)}>
+                <span className="category-icon category-icon--saved"><Heart size={17} fill={showSavedOnly ? 'currentColor' : 'none'} /></span><span>Saved trips <b>{savedTrips.size}</b></span>
+              </button>
             </div>
 
             {submittedSearch && <button className="clear-search" type="button" onClick={clearSearch}>Clear “{submittedSearch}” <X size={13} /></button>}
@@ -660,7 +740,8 @@ export default function App() {
             {featuredTrip ? (
               <Reveal className="featured-escape" delay={60}>
                 <div className="featured-image">
-                  <img src={featuredTrip.imageUrl} alt={`${featuredTrip.name} in ${featuredTrip.country}`} />
+                  <img src={responsiveImageUrl(featuredTrip.imageUrl, 1600)} srcSet={responsiveImageSrcSet(featuredTrip.imageUrl)} sizes="(max-width: 760px) 100vw, 54vw" alt={`${featuredTrip.name} in ${featuredTrip.country}`} loading="lazy" decoding="async" data-parallax="slow" />
+                  <button className={`save-trip featured-save-trip ${savedTrips.has(featuredTrip.name) ? 'save-trip--active' : ''}`} type="button" aria-label={savedTrips.has(featuredTrip.name) ? `Remove ${featuredTrip.name} from saved trips` : `Save ${featuredTrip.name}`} aria-pressed={savedTrips.has(featuredTrip.name)} onClick={() => toggleSaved(featuredTrip.name)}><Heart size={18} fill={savedTrips.has(featuredTrip.name) ? 'currentColor' : 'none'} /></button>
                   <div className="featured-image-shade" />
                   <span className="featured-season"><Sparkles size={13} /> {featuredTrip.badge || categoryFor(featuredTrip)}</span>
                   <span className="featured-location"><MapPin size={14} /> {featuredTrip.name} · {featuredTrip.country}</span>
@@ -677,14 +758,14 @@ export default function App() {
                   <div className="featured-selector" role="tablist" aria-label="Choose a featured South India destination">
                     {tripSelectors.map((trip) => (
                       <button key={trip.id} className={`destination-selector ${trip.id === featuredTrip.id ? 'destination-selector--active' : ''}`} type="button" role="tab" aria-selected={trip.id === featuredTrip.id} aria-label={`Show ${trip.name}`} onClick={() => setActiveFeaturedId(trip.id)}>
-                        <img src={trip.imageUrl} alt="" loading="lazy" /><span>{trip.name}</span>
+                        <img src={responsiveImageUrl(trip.imageUrl, 320)} srcSet={responsiveImageSrcSet(trip.imageUrl)} sizes="28px" alt="" loading="lazy" decoding="async" /><span>{trip.name}</span>
                       </button>
                     ))}
                   </div>
                 </div>
               </Reveal>
             ) : (
-              <div className="empty-results"><span><Compass size={26} /></span><h3>That little corner is still a secret.</h3><p>Try another South Indian place or experience.</p><button className="button button--dark" type="button" onClick={clearSearch}>Show me the South <ArrowRight size={16} /></button></div>
+              <div className="empty-results"><span>{showSavedOnly ? <Heart size={24} /> : <Compass size={26} />}</span><h3>{showSavedOnly ? 'Your saved collection is taking shape.' : 'That little corner is still a secret.'}</h3><p>{showSavedOnly ? 'Tap the heart on any escape to keep it close for later.' : 'Try another South Indian place or experience.'}</p><button className="button button--dark" type="button" onClick={clearSearch}>Show me the South <ArrowRight size={16} /></button></div>
             )}
 
             {filteredDestinations.length > 1 && (
@@ -706,19 +787,19 @@ export default function App() {
             </div>
             <div className="moods-grid">
               <button className="mood-card mood-card--hills" type="button" onClick={() => selectCategory('Hill escapes')}>
-                <img src="https://images.unsplash.com/photo-1665481193520-86e5eaba1af6?auto=format&fit=crop&w=800&q=85" alt="Green hills at Kodaikanal" loading="lazy" />
+                <img src={responsiveImageUrl('https://images.unsplash.com/photo-1665481193520-86e5eaba1af6?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1665481193520-86e5eaba1af6?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 50vw, 25vw" alt="Green hills at Kodaikanal" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="mood-number">01</span><span className="mood-icon"><Mountain size={20} /></span><span className="mood-card-copy"><small>FOR THE FRESH-AIR SEEKERS</small><strong>Hill days</strong><i>Tea trails, train rides & misty starts</i></span><ArrowUpRight className="mood-arrow" size={22} />
               </button>
               <button className="mood-card mood-card--water" type="button" onClick={() => selectCategory('Backwaters')}>
-                <img src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=85" alt="Kerala's backwaters" loading="lazy" />
+                <img src={responsiveImageUrl('https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 50vw, 25vw" alt="Kerala's backwaters" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="mood-number">02</span><span className="mood-icon"><Ship size={20} /></span><span className="mood-card-copy"><small>FOR THE SLOW-DOWN PEOPLE</small><strong>Water ways</strong><i>Quiet canals & long lunches</i></span><ArrowUpRight className="mood-arrow" size={22} />
               </button>
               <button className="mood-card mood-card--heritage" type="button" onClick={() => selectCategory('Heritage & food')}>
-                <img src="https://images.unsplash.com/photo-1596018382916-56d2e341d784?auto=format&fit=crop&w=800&q=85" alt="Ancient stone ruins at Hampi" loading="lazy" />
+                <img src={responsiveImageUrl('https://images.unsplash.com/photo-1596018382916-56d2e341d784?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1596018382916-56d2e341d784?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 50vw, 25vw" alt="Ancient stone ruins at Hampi" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="mood-number">03</span><span className="mood-icon"><Utensils size={20} /></span><span className="mood-card-copy"><small>FOR THE CURIOUS ONES</small><strong>Culture & flavour</strong><i>Old streets, local kitchens & stories</i></span><ArrowUpRight className="mood-arrow" size={22} />
               </button>
               <button className="mood-card mood-card--coast" type="button" onClick={() => selectCategory('Coast & culture')}>
-                <img src="https://images.unsplash.com/photo-1677951221673-09be408d2ddf?auto=format&fit=crop&w=800&q=85" alt="Colorful street in Puducherry" loading="lazy" />
+                <img src={responsiveImageUrl('https://images.unsplash.com/photo-1677951221673-09be408d2ddf?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1677951221673-09be408d2ddf?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 50vw, 25vw" alt="Colorful street in Puducherry" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="mood-number">04</span><span className="mood-icon"><Waves size={20} /></span><span className="mood-card-copy"><small>FOR THE BLUE-HOUR CHASERS</small><strong>Coastal days</strong><i>Pastel lanes, sea breeze & no rush</i></span><ArrowUpRight className="mood-arrow" size={22} />
               </button>
             </div>
@@ -749,7 +830,7 @@ export default function App() {
 
         <section className="route-feature page-width">
           <Reveal className="route-feature-photo">
-            <img src="https://images.pexels.com/videos/35530760/bus-window-view-calming-scenery-cinematic-travel-countryside-india-35530760.jpeg?auto=compress&w=1260&h=750&dpr=1" alt="The winding green tea roads of Munnar" loading="lazy" />
+            <img src="https://images.pexels.com/videos/35530760/bus-window-view-calming-scenery-cinematic-travel-countryside-india-35530760.jpeg?auto=compress&w=1920&h=1143&dpr=1" srcSet="https://images.pexels.com/videos/35530760/bus-window-view-calming-scenery-cinematic-travel-countryside-india-35530760.jpeg?auto=compress&w=640&h=381&dpr=1 640w, https://images.pexels.com/videos/35530760/bus-window-view-calming-scenery-cinematic-travel-countryside-india-35530760.jpeg?auto=compress&w=960&h=572&dpr=1 960w, https://images.pexels.com/videos/35530760/bus-window-view-calming-scenery-cinematic-travel-countryside-india-35530760.jpeg?auto=compress&w=1280&h=762&dpr=1 1280w, https://images.pexels.com/videos/35530760/bus-window-view-calming-scenery-cinematic-travel-countryside-india-35530760.jpeg?auto=compress&w=1920&h=1143&dpr=1 1920w" sizes="100vw" alt="The winding green tea roads of Munnar" loading="lazy" decoding="async" data-parallax="slow" />
             <div className="route-photo-overlay" />
             <span className="route-feature-label"><span className="film-live-dot" /> THE SLOW ROAD SERIES · 01</span>
             <span className="route-feature-caption">A road through<br /><em>the Western Ghats.</em></span>

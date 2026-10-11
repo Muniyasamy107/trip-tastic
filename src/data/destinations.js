@@ -1,5 +1,5 @@
-const unsplash = (photoId) => `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=1400&q=85`;
-const munnarPoster = 'https://images.pexels.com/videos/35530760/bus-window-view-calming-scenery-cinematic-travel-countryside-india-35530760.jpeg?auto=compress&w=1260&h=750&dpr=1';
+const unsplash = (photoId) => `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=1920&q=90`;
+const munnarPoster = 'https://images.pexels.com/videos/35530760/bus-window-view-calming-scenery-cinematic-travel-countryside-india-35530760.jpeg?auto=compress&w=1920&h=1143&dpr=1';
 
 export const fallbackDestinations = [
   {
