@@ -40,7 +40,7 @@ img, video { display: block; max-width: 100%; }
 .site-header--scrolled { background: rgba(255,253,248,.91); box-shadow: 0 8px 24px rgba(27,53,40,.07); backdrop-filter: blur(14px); }
 .header-inner { display: flex; align-items: center; justify-content: space-between; width: min(1420px, calc(100% - 76px)); height: 84px; margin: auto; }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--forest); white-space: nowrap; }
-.brand-logo { display: block; width: 64px; height: 64px; flex: 0 0 auto; border-radius: 3px; background: #fff; object-fit: contain; }
+.brand-logo { display: block; width: 64px; height: 64px; flex: 0 0 auto; object-fit: contain; }
 .brand-wording { display: flex; flex-direction: column; gap: 4px; }
 .brand-wording strong { color: var(--forest); font-family: var(--serif); font-size: 20px; font-weight: 700; letter-spacing: -.075em; line-height: 1; white-space: nowrap; }
 .brand-wording strong em { color: var(--chilli); font-size: 1.04em; font-style: italic; font-weight: 600; }
