@@ -129,7 +129,7 @@ function loadSavedTrips() {
   }
 }
 
-function Reveal({ as: Element = 'div', children, className = '', delay = 0, ...props }) {
+function Reveal({ as: Element = 'div', children, className = '', delay = 0, variant = 'up', ...props }) {
   const elementRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -147,7 +147,7 @@ function Reveal({ as: Element = 'div', children, className = '', delay = 0, ...p
           observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+      { threshold: 0.1, rootMargin: '0px 0px -52px 0px' },
     );
     observer.observe(node);
     return () => observer.disconnect();
@@ -156,7 +156,7 @@ function Reveal({ as: Element = 'div', children, className = '', delay = 0, ...p
   return (
     <Element
       ref={elementRef}
-      className={`reveal ${isVisible ? 'is-visible' : ''} ${className}`.trim()}
+      className={`reveal reveal--${variant} ${isVisible ? 'is-visible' : ''} ${className}`.trim()}
       style={{ '--reveal-delay': `${delay}ms` }}
       {...props}
     >
@@ -759,18 +759,18 @@ export default function App() {
         <section className="destinations-section" id="destinations">
           <div className="page-width">
             <div className="section-heading-row">
-              <Reveal className="section-heading-copy">
+              <Reveal variant="left" className="section-heading-copy">
                 <p className="eyebrow"><span className="eyebrow-dot" /> TRENDING ESCAPES · SOUTH INDIA ONLY</p>
                 <h2>Pick your kind<br />of <em>South.</em></h2>
               </Reveal>
-              <Reveal className="section-heading-note" delay={120}>
+              <Reveal variant="right" className="section-heading-note" delay={120}>
                 <span className="hand-arrow">↙</span>
                 <p>Hill air, temple towns, blue-water days and routes made for your pace.</p>
                 <span className="route-count">{filteredDestinations.length.toString().padStart(2, '0')} places to begin</span>
               </Reveal>
             </div>
 
-            <div className="category-selector" role="group" aria-label="Filter South India trips">
+            <Reveal as="div" className="category-selector" role="group" aria-label="Filter South India trips" delay={100}>
               {categories.map(({ name, icon: Icon, color }) => (
                 <button key={name} className={`category-tab ${activeCategory === name ? 'category-tab--active' : ''}`} type="button" aria-pressed={activeCategory === name} onClick={() => selectCategory(name)}>
                   <span className={`category-icon category-icon--${color}`}><Icon size={18} strokeWidth={1.8} /></span><span>{name}</span>
@@ -779,7 +779,7 @@ export default function App() {
               <button className={`category-tab category-tab--saved ${showSavedOnly ? 'category-tab--active' : ''}`} type="button" aria-pressed={showSavedOnly} aria-label={`Filter by saved trips, ${savedTrips.size} saved`} onClick={() => setShowSavedOnly((current) => !current)}>
                 <span className="category-icon category-icon--saved"><Heart size={17} fill={showSavedOnly ? 'currentColor' : 'none'} /></span><span>Saved trips <b>{savedTrips.size}</b></span>
               </button>
-            </div>
+            </Reveal>
 
             {submittedSearch && <button className="clear-search" type="button" onClick={clearSearch}>Clear “{submittedSearch}” <X size={13} /></button>}
 
@@ -828,26 +828,26 @@ export default function App() {
         <section className="moods-section" id="experiences">
           <div className="page-width">
             <div className="moods-heading">
-              <Reveal><p className="eyebrow eyebrow--light"><span className="eyebrow-dot" /> TAKE THE SCENIC ROUTE</p><h2>Go by what<br />moves <em>you.</em></h2></Reveal>
-              <Reveal delay={100}><p>Pick a feeling. Your trip coordinator will find the places, people and little moments that fit.</p></Reveal>
+              <Reveal variant="left"><p className="eyebrow eyebrow--light"><span className="eyebrow-dot" /> TAKE THE SCENIC ROUTE</p><h2>Go by what<br />moves <em>you.</em></h2></Reveal>
+              <Reveal variant="right" delay={100}><p>Pick a feeling. Your trip coordinator will find the places, people and little moments that fit.</p></Reveal>
             </div>
             <div className="moods-grid">
-              <button className="mood-card mood-card--hills" type="button" onClick={() => selectCategory('Hill escapes')}>
+              <Reveal as="button" variant="zoom" className="mood-card mood-card--hills" type="button" delay={0} onClick={() => selectCategory('Hill escapes')}>
                 <img src={responsiveImageUrl('https://images.unsplash.com/photo-1665481193520-86e5eaba1af6?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1665481193520-86e5eaba1af6?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 50vw, 25vw" alt="Green hills at Kodaikanal" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="mood-number">01</span><span className="mood-icon"><Mountain size={20} /></span><span className="mood-card-copy"><small>FOR THE FRESH-AIR SEEKERS</small><strong>Hill days</strong><i>Tea trails, train rides & misty starts</i></span><ArrowUpRight className="mood-arrow" size={22} />
-              </button>
-              <button className="mood-card mood-card--water" type="button" onClick={() => selectCategory('Backwaters')}>
+              </Reveal>
+              <Reveal as="button" variant="zoom" className="mood-card mood-card--water" type="button" delay={90} onClick={() => selectCategory('Backwaters')}>
                 <img src={responsiveImageUrl('https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 50vw, 25vw" alt="Kerala's backwaters" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="mood-number">02</span><span className="mood-icon"><Ship size={20} /></span><span className="mood-card-copy"><small>FOR THE SLOW-DOWN PEOPLE</small><strong>Water ways</strong><i>Quiet canals & long lunches</i></span><ArrowUpRight className="mood-arrow" size={22} />
-              </button>
-              <button className="mood-card mood-card--heritage" type="button" onClick={() => selectCategory('Heritage & food')}>
+              </Reveal>
+              <Reveal as="button" variant="zoom" className="mood-card mood-card--heritage" type="button" delay={180} onClick={() => selectCategory('Heritage & food')}>
                 <img src={responsiveImageUrl('https://images.unsplash.com/photo-1596018382916-56d2e341d784?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1596018382916-56d2e341d784?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 50vw, 25vw" alt="Ancient stone ruins at Hampi" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="mood-number">03</span><span className="mood-icon"><Utensils size={20} /></span><span className="mood-card-copy"><small>FOR THE CURIOUS ONES</small><strong>Culture & flavour</strong><i>Old streets, local kitchens & stories</i></span><ArrowUpRight className="mood-arrow" size={22} />
-              </button>
-              <button className="mood-card mood-card--coast" type="button" onClick={() => selectCategory('Coast & culture')}>
+              </Reveal>
+              <Reveal as="button" variant="zoom" className="mood-card mood-card--coast" type="button" delay={270} onClick={() => selectCategory('Coast & culture')}>
                 <img src={responsiveImageUrl('https://images.unsplash.com/photo-1677951221673-09be408d2ddf?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1677951221673-09be408d2ddf?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 50vw, 25vw" alt="Colorful street in Puducherry" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="mood-number">04</span><span className="mood-icon"><Waves size={20} /></span><span className="mood-card-copy"><small>FOR THE BLUE-HOUR CHASERS</small><strong>Coastal days</strong><i>Pastel lanes, sea breeze & no rush</i></span><ArrowUpRight className="mood-arrow" size={22} />
-              </button>
+              </Reveal>
             </div>
           </div>
         </section>
@@ -856,7 +856,7 @@ export default function App() {
           <div className="how-decoration how-decoration--one" aria-hidden="true" /><div className="how-decoration how-decoration--two" aria-hidden="true" />
           <div className="page-width how-layout">
             <div className="how-copy">
-              <Reveal>
+              <Reveal variant="left">
                 <p className="eyebrow eyebrow--light"><span className="eyebrow-dot" /> YOUR TRIP, THOUGHT THROUGH</p>
                 <h2>Good plans.<br /><em>Open roads.</em></h2>
                 <p>Local know-how, a little wiggle room and someone to sort the details. That’s how your South India story comes together.</p>
@@ -875,14 +875,14 @@ export default function App() {
         </section>
 
         <section className="route-feature page-width">
-          <Reveal className="route-feature-photo">
+          <Reveal variant="zoom" className="route-feature-photo">
             <img src="https://images.pexels.com/videos/35530760/bus-window-view-calming-scenery-cinematic-travel-countryside-india-35530760.jpeg?auto=compress&w=1920&h=1143&dpr=1" srcSet="https://images.pexels.com/videos/35530760/bus-window-view-calming-scenery-cinematic-travel-countryside-india-35530760.jpeg?auto=compress&w=640&h=381&dpr=1 640w, https://images.pexels.com/videos/35530760/bus-window-view-calming-scenery-cinematic-travel-countryside-india-35530760.jpeg?auto=compress&w=960&h=572&dpr=1 960w, https://images.pexels.com/videos/35530760/bus-window-view-calming-scenery-cinematic-travel-countryside-india-35530760.jpeg?auto=compress&w=1280&h=762&dpr=1 1280w, https://images.pexels.com/videos/35530760/bus-window-view-calming-scenery-cinematic-travel-countryside-india-35530760.jpeg?auto=compress&w=1920&h=1143&dpr=1 1920w" sizes="100vw" alt="The winding green tea roads of Munnar" loading="lazy" decoding="async" data-parallax="slow" />
             <div className="route-photo-overlay" />
             <span className="route-feature-label"><span className="film-live-dot" /> THE SLOW ROAD SERIES · 01</span>
             <span className="route-feature-caption">A road through<br /><em>the Western Ghats.</em></span>
             <span className="route-photo-coordinates">MUNNAR · KERALA</span>
           </Reveal>
-          <Reveal className="route-feature-copy" delay={130}>
+          <Reveal variant="right" className="route-feature-copy" delay={130}>
             <p className="eyebrow"><span className="eyebrow-dot" /> A LITTLE INSPIRATION FOR YOUR NEXT ESCAPE</p>
             <h2>Somewhere between<br />the <em>map and the moment.</em></h2>
             <p>Follow a tea trail, take the scenic detour and leave enough room for the chai stop you didn’t know you needed. We’ll help you find the route.</p>
@@ -893,8 +893,8 @@ export default function App() {
         <section className="stories-section" id="stories">
           <div className="page-width">
             <div className="section-heading-row stories-heading">
-              <Reveal className="section-heading-copy"><p className="eyebrow"><span className="eyebrow-dot" /> NOTES FROM THE SOUTH</p><h2>Little things<br />worth <em>knowing.</em></h2></Reveal>
-              <Reveal className="section-heading-note" delay={100}><p>Local notes for curious travellers. Start with the story, then make it your own.</p><a className="text-arrow" href="#destinations">See every escape <ArrowRight size={15} /></a></Reveal>
+              <Reveal variant="left" className="section-heading-copy"><p className="eyebrow"><span className="eyebrow-dot" /> NOTES FROM THE SOUTH</p><h2>Little things<br />worth <em>knowing.</em></h2></Reveal>
+              <Reveal variant="right" className="section-heading-note" delay={100}><p>Local notes for curious travellers. Start with the story, then make it your own.</p><a className="text-arrow" href="#destinations">See every escape <ArrowRight size={15} /></a></Reveal>
             </div>
             <div className="stories-grid">
               <Reveal as="article" className="story-card story-card--one"><span className="story-tag">MADURAI · CULTURE</span><h3>How to spend a morning<br />around the flower market.</h3><span className="story-read">A LOCAL NOTE · 4 MIN READ</span></Reveal>
@@ -905,8 +905,8 @@ export default function App() {
         </section>
 
         <section className="quote-section page-width">
-          <Reveal className="quote-decoration" aria-hidden="true">“</Reveal>
-          <Reveal className="quote-content" delay={100}>
+          <Reveal variant="left" className="quote-decoration" aria-hidden="true">“</Reveal>
+          <Reveal variant="right" className="quote-content" delay={100}>
             <p className="eyebrow"><span className="eyebrow-dot" /> A NOTE FROM THE ROAD</p>
             <blockquote>“The best bit wasn’t one place. It was how unhurried the whole trip felt.”</blockquote>
             <div className="quote-attribution"><span className="quote-avatar">M</span><span><strong>Maya R.</strong><small>South India trip · sample traveller note</small></span><span className="quote-stars">★★★★★</span></div>
@@ -916,8 +916,8 @@ export default function App() {
 
         <section className="faq-section" id="faq">
           <div className="page-width faq-layout">
-            <Reveal className="faq-heading"><p className="eyebrow"><span className="eyebrow-dot" /> THE LITTLE DETAILS</p><h2>A few good<br /><em>questions.</em></h2><p>Still wondering about something? Browse an escape and tell us what you have in mind.</p><a className="text-arrow" href="#destinations">Find your South <ArrowUpRight size={15} /></a></Reveal>
-            <Reveal className="faq-content" delay={120}><FAQList /></Reveal>
+            <Reveal variant="left" className="faq-heading"><p className="eyebrow"><span className="eyebrow-dot" /> THE LITTLE DETAILS</p><h2>A few good<br /><em>questions.</em></h2><p>Still wondering about something? Browse an escape and tell us what you have in mind.</p><a className="text-arrow" href="#destinations">Find your South <ArrowUpRight size={15} /></a></Reveal>
+            <Reveal variant="right" className="faq-content" delay={120}><FAQList /></Reveal>
           </div>
         </section>
 
@@ -936,13 +936,15 @@ export default function App() {
 
         <section className="newsletter-section">
           <div className="page-width newsletter-layout">
-            <div><p className="eyebrow"><span className="eyebrow-dot" /> A POSTCARD, ONCE IN A WHILE</p><h2>Good places.<br /><em>Good notes.</em></h2><p className="newsletter-description">South India stories, small local finds and the occasional reason to take a Friday off.</p></div>
-            <form className="newsletter-form" onSubmit={handleNewsletter}>
+            <Reveal variant="left" className="newsletter-intro">
+              <p className="eyebrow"><span className="eyebrow-dot" /> A POSTCARD, ONCE IN A WHILE</p><h2>Good places.<br /><em>Good notes.</em></h2><p className="newsletter-description">South India stories, small local finds and the occasional reason to take a Friday off.</p>
+            </Reveal>
+            <Reveal as="form" variant="right" className="newsletter-form" delay={120} onSubmit={handleNewsletter}>
               <label className="sr-only" htmlFor="newsletter-email">Email address</label>
               <input id="newsletter-email" type="email" value={newsletterEmail} onChange={(event) => setNewsletterEmail(event.target.value)} placeholder="Your email address" required />
               <button type="submit" aria-label="Subscribe to South India postcards"><ArrowRight size={18} /></button>
               <p aria-live="polite">{newsletterMessage || 'Preview sign-ups are saved on this device only.'}</p>
-            </form>
+            </Reveal>
           </div>
         </section>
       </main>
