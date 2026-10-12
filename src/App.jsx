@@ -165,6 +165,47 @@ function Reveal({ as: Element = 'div', children, className = '', delay = 0, vari
   );
 }
 
+function TiltSurface({ as: Element = 'div', children, className = '', maxTilt = 5, onPointerMove, onPointerLeave, ...props }) {
+  const surfaceRef = useRef(null);
+
+  const handlePointerMove = (event) => {
+    onPointerMove?.(event);
+    if (event.pointerType !== 'mouse' || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    const surface = surfaceRef.current;
+    if (!surface) return;
+    const bounds = surface.getBoundingClientRect();
+    if (!bounds.width || !bounds.height) return;
+
+    const x = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width));
+    const y = Math.min(1, Math.max(0, (event.clientY - bounds.top) / bounds.height));
+    surface.style.setProperty('--tilt-x', `${((0.5 - y) * maxTilt * 2).toFixed(2)}deg`);
+    surface.style.setProperty('--tilt-y', `${((x - 0.5) * maxTilt * 2).toFixed(2)}deg`);
+    surface.classList.add('is-tilting');
+  };
+
+  const handlePointerLeave = (event) => {
+    const surface = surfaceRef.current;
+    if (surface) {
+      surface.style.setProperty('--tilt-x', '0deg');
+      surface.style.setProperty('--tilt-y', '0deg');
+      surface.classList.remove('is-tilting');
+    }
+    onPointerLeave?.(event);
+  };
+
+  return (
+    <Element
+      ref={surfaceRef}
+      className={`tilt-surface ${className}`.trim()}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+      {...props}
+    >
+      {children}
+    </Element>
+  );
+}
+
 function Brand({ light = false }) {
   return (
     <a className={`brand ${light ? 'brand--light' : ''}`} href="#home" aria-label="Trip Tastic Holidays home">
@@ -253,7 +294,8 @@ function SocialDock() {
 function DestinationCard({ trip, index, onExplore, isSaved, onSave }) {
   return (
     <Reveal as="article" className={`destination-card destination-card--${index % 4}`} delay={(index % 3) * 90}>
-      <div className="destination-image-wrap">
+      <TiltSurface className="destination-card-tilt" maxTilt={5}>
+        <div className="destination-image-wrap">
         <button className="destination-image-button" type="button" onClick={() => onExplore(trip)} aria-label={`Explore ${trip.name}`}>
           <img
             src={responsiveImageUrl(trip.imageUrl, 1280)}
@@ -292,6 +334,7 @@ function DestinationCard({ trip, index, onExplore, isSaved, onSave }) {
           <span>from <strong>{priceLabel(trip.priceFrom)}</strong></span>
         </div>
       </div>
+      </TiltSurface>
     </Reveal>
   );
 }
@@ -786,13 +829,15 @@ export default function App() {
             {featuredTrip ? (
               <Reveal className="featured-escape" delay={60}>
                 <div className="featured-image">
-                  <img src={responsiveImageUrl(featuredTrip.imageUrl, 1600)} srcSet={responsiveImageSrcSet(featuredTrip.imageUrl)} sizes="(max-width: 760px) 100vw, 54vw" alt={`${featuredTrip.name} in ${featuredTrip.country}`} loading="lazy" decoding="async" data-parallax="slow" />
-                  <button className={`save-trip featured-save-trip ${savedTrips.has(featuredTrip.name) ? 'save-trip--active' : ''}`} type="button" aria-label={savedTrips.has(featuredTrip.name) ? `Remove ${featuredTrip.name} from saved trips` : `Save ${featuredTrip.name}`} aria-pressed={savedTrips.has(featuredTrip.name)} onClick={() => toggleSaved(featuredTrip.name)}><Heart size={18} fill={savedTrips.has(featuredTrip.name) ? 'currentColor' : 'none'} /></button>
-                  <div className="featured-image-shade" />
-                  <span className="featured-season"><Sparkles size={13} /> {featuredTrip.badge || categoryFor(featuredTrip)}</span>
-                  <span className="featured-location"><MapPin size={14} /> {featuredTrip.name} · {featuredTrip.country}</span>
-                  <span className="featured-image-index">0{Math.max(1, destinations.findIndex((trip) => trip.id === featuredTrip.id) + 1)}</span>
-                  <span className="image-orbit image-orbit--one" /><span className="image-orbit image-orbit--two" />
+                  <TiltSurface className="featured-image-stage" maxTilt={3}>
+                    <img src={responsiveImageUrl(featuredTrip.imageUrl, 1600)} srcSet={responsiveImageSrcSet(featuredTrip.imageUrl)} sizes="(max-width: 760px) 100vw, 54vw" alt={`${featuredTrip.name} in ${featuredTrip.country}`} loading="lazy" decoding="async" data-parallax="slow" />
+                    <button className={`save-trip featured-save-trip ${savedTrips.has(featuredTrip.name) ? 'save-trip--active' : ''}`} type="button" aria-label={savedTrips.has(featuredTrip.name) ? `Remove ${featuredTrip.name} from saved trips` : `Save ${featuredTrip.name}`} aria-pressed={savedTrips.has(featuredTrip.name)} onClick={() => toggleSaved(featuredTrip.name)}><Heart size={18} fill={savedTrips.has(featuredTrip.name) ? 'currentColor' : 'none'} /></button>
+                    <div className="featured-image-shade" />
+                    <span className="featured-season"><Sparkles size={13} /> {featuredTrip.badge || categoryFor(featuredTrip)}</span>
+                    <span className="featured-location"><MapPin size={14} /> {featuredTrip.name} · {featuredTrip.country}</span>
+                    <span className="featured-image-index">0{Math.max(1, destinations.findIndex((trip) => trip.id === featuredTrip.id) + 1)}</span>
+                    <span className="image-orbit image-orbit--one" /><span className="image-orbit image-orbit--two" />
+                  </TiltSurface>
                 </div>
                 <div className="featured-copy">
                   <p className="eyebrow"><span className="eyebrow-dot" /> {categoryFor(featuredTrip).toUpperCase()} · MADE PERSONAL</p>
@@ -832,21 +877,29 @@ export default function App() {
               <Reveal variant="right" delay={100}><p>Pick a feeling. Your trip coordinator will find the places, people and little moments that fit.</p></Reveal>
             </div>
             <div className="moods-grid">
-              <Reveal as="button" variant="zoom" className="mood-card mood-card--hills" type="button" delay={0} onClick={() => selectCategory('Hill escapes')}>
+              <Reveal variant="zoom" className="mood-card-reveal" delay={0}>
+                <TiltSurface as="button" className="mood-card mood-card--hills" type="button" maxTilt={5} onClick={() => selectCategory('Hill escapes')}>
                 <img src={responsiveImageUrl('https://images.unsplash.com/photo-1665481193520-86e5eaba1af6?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1665481193520-86e5eaba1af6?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 50vw, 25vw" alt="Green hills at Kodaikanal" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="mood-number">01</span><span className="mood-icon"><Mountain size={20} /></span><span className="mood-card-copy"><small>FOR THE FRESH-AIR SEEKERS</small><strong>Hill days</strong><i>Tea trails, train rides & misty starts</i></span><ArrowUpRight className="mood-arrow" size={22} />
+                </TiltSurface>
               </Reveal>
-              <Reveal as="button" variant="zoom" className="mood-card mood-card--water" type="button" delay={90} onClick={() => selectCategory('Backwaters')}>
+              <Reveal variant="zoom" className="mood-card-reveal" delay={90}>
+                <TiltSurface as="button" className="mood-card mood-card--water" type="button" maxTilt={5} onClick={() => selectCategory('Backwaters')}>
                 <img src={responsiveImageUrl('https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 50vw, 25vw" alt="Kerala's backwaters" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="mood-number">02</span><span className="mood-icon"><Ship size={20} /></span><span className="mood-card-copy"><small>FOR THE SLOW-DOWN PEOPLE</small><strong>Water ways</strong><i>Quiet canals & long lunches</i></span><ArrowUpRight className="mood-arrow" size={22} />
+                </TiltSurface>
               </Reveal>
-              <Reveal as="button" variant="zoom" className="mood-card mood-card--heritage" type="button" delay={180} onClick={() => selectCategory('Heritage & food')}>
+              <Reveal variant="zoom" className="mood-card-reveal" delay={180}>
+                <TiltSurface as="button" className="mood-card mood-card--heritage" type="button" maxTilt={5} onClick={() => selectCategory('Heritage & food')}>
                 <img src={responsiveImageUrl('https://images.unsplash.com/photo-1596018382916-56d2e341d784?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1596018382916-56d2e341d784?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 50vw, 25vw" alt="Ancient stone ruins at Hampi" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="mood-number">03</span><span className="mood-icon"><Utensils size={20} /></span><span className="mood-card-copy"><small>FOR THE CURIOUS ONES</small><strong>Culture & flavour</strong><i>Old streets, local kitchens & stories</i></span><ArrowUpRight className="mood-arrow" size={22} />
+                </TiltSurface>
               </Reveal>
-              <Reveal as="button" variant="zoom" className="mood-card mood-card--coast" type="button" delay={270} onClick={() => selectCategory('Coast & culture')}>
+              <Reveal variant="zoom" className="mood-card-reveal" delay={270}>
+                <TiltSurface as="button" className="mood-card mood-card--coast" type="button" maxTilt={5} onClick={() => selectCategory('Coast & culture')}>
                 <img src={responsiveImageUrl('https://images.unsplash.com/photo-1677951221673-09be408d2ddf?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1677951221673-09be408d2ddf?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 50vw, 25vw" alt="Colorful street in Puducherry" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="mood-number">04</span><span className="mood-icon"><Waves size={20} /></span><span className="mood-card-copy"><small>FOR THE BLUE-HOUR CHASERS</small><strong>Coastal days</strong><i>Pastel lanes, sea breeze & no rush</i></span><ArrowUpRight className="mood-arrow" size={22} />
+                </TiltSurface>
               </Reveal>
             </div>
           </div>
