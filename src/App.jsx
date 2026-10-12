@@ -657,7 +657,8 @@ export default function App() {
   useEffect(() => {
     if (prefersReducedMotion) return undefined;
     const parallaxImages = [...document.querySelectorAll('[data-parallax="slow"]')];
-    if (!parallaxImages.length) return undefined;
+    const parallaxLayers = [...document.querySelectorAll('[data-scroll-parallax]')];
+    if (!parallaxImages.length && !parallaxLayers.length) return undefined;
 
     let frame = 0;
     const updateParallax = () => {
@@ -669,8 +670,16 @@ export default function App() {
           const rect = image.getBoundingClientRect();
           if (rect.bottom < 0 || rect.top > window.innerHeight) continue;
           const distance = rect.top + rect.height / 2 - viewportCenter;
-          const offset = Math.max(-18, Math.min(18, -distance * 0.035));
+          const offset = Math.max(-24, Math.min(24, -distance * 0.05));
           image.style.setProperty('--parallax-offset', `${offset.toFixed(1)}px`);
+        }
+        for (const layer of parallaxLayers) {
+          const section = layer.closest('section') || layer;
+          const rect = section.getBoundingClientRect();
+          if (rect.bottom < -window.innerHeight * 0.15 || rect.top > window.innerHeight * 1.15) continue;
+          const speed = Number(layer.dataset.scrollParallax) || 0.15;
+          const offset = Math.max(-90, Math.min(90, -rect.top * speed));
+          layer.style.setProperty('--scroll-offset', `${offset.toFixed(1)}px`);
         }
       });
     };
@@ -694,6 +703,7 @@ export default function App() {
           <video
             ref={videoRef}
             className="hero-video"
+            data-scroll-parallax="0.16"
             autoPlay={!prefersReducedMotion}
             muted
             loop
@@ -709,7 +719,7 @@ export default function App() {
             <img src="https://images.pexels.com/videos/30245559/pexels-photo-30245559.jpeg?auto=compress&w=1920&h=1080&dpr=1" srcSet="https://images.pexels.com/videos/30245559/pexels-photo-30245559.jpeg?auto=compress&w=960&h=540&dpr=1 960w, https://images.pexels.com/videos/30245559/pexels-photo-30245559.jpeg?auto=compress&w=1600&h=900&dpr=1 1600w, https://images.pexels.com/videos/30245559/pexels-photo-30245559.jpeg?auto=compress&w=1920&h=1080&dpr=1 1920w" sizes="100vw" alt="Land Rover crossing a muddy trail" />
           </video>
           <div className="hero-tint" />
-          <div className="hero-dust" aria-hidden="true" />
+          <div className="hero-dust" data-scroll-parallax="0.1" aria-hidden="true" />
           <div className="hero-topline page-width"><span className="live-badge"><i /> THE SOUTH, UNPACKED</span><span className="hero-index">01 <i /> 10 SOUTH INDIAN ESCAPES</span></div>
           <div className="page-width hero-main">
             <Reveal className="hero-copy">
@@ -733,7 +743,7 @@ export default function App() {
             <a className="hero-scroll-cue" href="#about">SCROLL TO FIND YOUR SOUTH <ArrowDown size={14} /></a>
           </div>
           <a className="hero-video-credit" href="https://www.pexels.com/video/off-road-adventure-land-rover-in-muddy-terrain-30245559/" target="_blank" rel="noreferrer">VIDEO: HARVEY TAN VILLARINO / PEXELS</a>
-          <div className="hero-corner-stamp"><span>LOCAL</span><span>LOVED</span><span>DOWN SOUTH</span></div>
+          <div className="hero-corner-stamp" data-scroll-parallax="0.24"><span>LOCAL</span><span>LOVED</span><span>DOWN SOUTH</span></div>
         </section>
 
         <div className="marquee-strip" aria-label="South India, your way">
@@ -782,7 +792,7 @@ export default function App() {
           <div className="page-width welcome-layout">
             <Reveal className="welcome-copy">
               <p className="eyebrow"><span className="eyebrow-dot" /> VANAKKAM · WELCOME TO OUR SOUTH</p>
-              <span className="welcome-watermark" aria-hidden="true">WELCOME</span>
+              <span className="welcome-watermark" data-scroll-parallax="0.12" aria-hidden="true">WELCOME</span>
               <h2>Not a checklist.<br /><em>A feeling.</em></h2>
               <p>We believe the best trips happen when you stop chasing every landmark. Meet the makers, taste the local favourite, stay one more night. That’s our South India.</p>
               <a className="text-arrow" href="#how-it-works">Get to know our way <ArrowRight size={16} /></a>
@@ -797,7 +807,7 @@ export default function App() {
                 <img src={responsiveImageUrl('https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=90', 1600)} srcSet={responsiveImageSrcSet('https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=90')} sizes="(max-width: 760px) 90vw, 40vw" alt="A boat gliding through Kerala backwaters" loading="lazy" decoding="async" data-parallax="slow" />
                 <span className="photo-tag photo-tag--green">KERALA · GO WITH THE FLOW</span>
               </Reveal>
-              <div className="gallery-scribble" aria-hidden="true">south<br />is a feeling<span>✳</span></div>
+              <div className="gallery-scribble" data-scroll-parallax="0.22" aria-hidden="true">south<br />is a feeling<span>✳</span></div>
               <span className="gallery-coordinate">10° 05′ N · 77° 03′ E</span>
             </div>
           </div>
@@ -979,7 +989,7 @@ export default function App() {
         </section>
 
         <section className="plan-section" id="plan">
-          <div className="plan-image" aria-hidden="true" />
+          <div className="plan-image" data-scroll-parallax="0.18" aria-hidden="true" />
           <div className="plan-overlay" />
           <Reveal className="plan-content page-width">
             <p className="eyebrow eyebrow--light"><span className="eyebrow-dot" /> ONE GOOD HELLO IS ALL IT TAKES</p>
