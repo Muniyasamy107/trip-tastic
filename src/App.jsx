@@ -180,6 +180,9 @@ function TiltSurface({ as: Element = 'div', children, className = '', maxTilt = 
     const y = Math.min(1, Math.max(0, (event.clientY - bounds.top) / bounds.height));
     surface.style.setProperty('--tilt-x', `${((0.5 - y) * maxTilt * 2).toFixed(2)}deg`);
     surface.style.setProperty('--tilt-y', `${((x - 0.5) * maxTilt * 2).toFixed(2)}deg`);
+    surface.style.setProperty('--tilt-glare-x', `${(x * 100).toFixed(1)}%`);
+    surface.style.setProperty('--tilt-glare-y', `${(y * 100).toFixed(1)}%`);
+    surface.style.setProperty('--tilt-glare-opacity', '0.36');
     surface.classList.add('is-tilting');
   };
 
@@ -188,6 +191,7 @@ function TiltSurface({ as: Element = 'div', children, className = '', maxTilt = 
     if (surface) {
       surface.style.setProperty('--tilt-x', '0deg');
       surface.style.setProperty('--tilt-y', '0deg');
+      surface.style.setProperty('--tilt-glare-opacity', '0');
       surface.classList.remove('is-tilting');
     }
     onPointerLeave?.(event);
