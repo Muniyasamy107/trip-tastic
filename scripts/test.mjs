@@ -1,5 +1,7 @@
+import './test-download-film.mjs';
 import { launchBrowser } from './browser.mjs';
 import { filmFixture } from './film-fixture.mjs';
+import { stockFilm } from '../film-source.js';
 import { api } from '../server/api.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -9,8 +11,8 @@ fs.mkdirSync('.cache',{recursive:true});
 const testMedia=fs.mkdtempSync('.cache/hero-metadata-');
 try{
  const readMetadata=()=>{let output;api({method:'GET',url:'/api/hero-film'},{writeHead(status){assert.equal(status,200);},end(body){output=JSON.parse(body);}},()=>assert.fail('Media metadata route was not handled'),{mediaRoot:testMedia});return output;};
- assert.deepEqual(readMetadata(),{available:false});
- fs.writeFileSync(`${testMedia}/hero-road-trip.mp4`,'');assert.deepEqual(readMetadata(),{available:false});
+ assert.equal(readMetadata().src,stockFilm.src);assert.equal(readMetadata().delivery,'external-cdn');
+ fs.writeFileSync(`${testMedia}/hero-road-trip.mp4`,'');assert.equal(readMetadata().src,stockFilm.src);
  fs.copyFileSync(new URL('./fixtures/player-test.mp4',import.meta.url),`${testMedia}/hero-road-trip.mp4`);
  const metadata=readMetadata();assert.equal(metadata.available,true);assert.equal(metadata.src,'/media/hero-road-trip.mp4');assert.equal(metadata.poster,null);assert.ok(metadata.revision);
  fs.copyFileSync('public/trip-tastic-logo.jpeg',`${testMedia}/hero-road-trip-poster.jpg`);assert.equal(readMetadata().poster,'/media/hero-road-trip-poster.jpg');
@@ -95,7 +97,7 @@ const duplicatePayload={name:'Automated QA',email,destination:'munnar-mist',date
 const duplicate=await request.post(base+'/api/enquiries',{data:duplicatePayload});assert.equal(duplicate.status(),200);assert.equal((await duplicate.json()).reference,savedReference);
 const past=await request.post(base+'/api/enquiries',{data:{...duplicatePayload,date:'2020-01-01'}});assert.equal(past.status(),422);assert.ok((await past.json()).fields.date);
 assert.deepEqual(errors,[]);
-// Verify the unconfigured site never downloads or plays the rejected animation.
+// Metadata/network failure keeps the genuine still and never requests fake footage.
 const fallback=await page.context().newPage();await filmFixture(fallback,{available:false});const fallbackRequests=[];fallback.on('request',r=>fallbackRequests.push(r.url()));
 await fallback.goto(base);await fallback.waitForTimeout(400);
 assert.equal(await fallback.locator('#watch-film').isVisible(),false);
@@ -115,7 +117,19 @@ await once.locator('#watch-film').click();assert.equal(await once.locator('video
 const repeatedRequests=[];once.on('request',r=>repeatedRequests.push(r.url()));
 await once.reload();await once.waitForFunction(()=>document.querySelector('#hero-video').poster.startsWith('data:image/jpeg'));
 await once.waitForTimeout(500);assert.equal(await once.locator('#hero-video').evaluate(v=>v.paused&&!v.loop&&!v.getAttribute('src')),true);assert.equal(repeatedRequests.some(url=>url.endsWith('/media/hero-road-trip.mp4')),false);await once.close();
-console.log('PASS: owner-footage fallback, single shared player, once-only/session-persistent playback, original-logo placements and brand icons, test-fixture autoplay, six journeys, filters/search/sort/finder, saved persistence, compare limit/table, route pages, itinerary downloads, keyboard tabs, 3-step enquiry + SQLite receipt, nested privacy dialog, brief download, journal, persistent checklist, motion controls, film, 4 responsive widths, mobile menu, reduced motion, 404 page, API validation/origin/size/privacy/idempotency.');
+// Exercise the exact configured stock URL without relying on third-party availability.
+const stock=await context.newPage();await filmFixture(stock,{stock:true});await stock.goto(base);
+await stock.waitForFunction(()=>document.querySelector('#hero-video').currentTime>.1);
+assert.equal(await stock.locator('#hero-video').getAttribute('src'),stockFilm.src);
+assert.equal(await stock.locator('video').count(),1);
+await stock.locator('#watch-film').click();assert.match(await stock.locator('#film-caption').textContent(),/Syam Krishnan/);await stock.keyboard.press('Escape');
+await stock.locator('#hero-video').evaluate(v=>{v.currentTime=v.duration-.25;v.play();});await stock.waitForFunction(()=>document.querySelector('#hero-video').ended);
+const stockRequests=[];stock.on('request',r=>stockRequests.push(r.url()));await stock.reload();await stock.locator('#film-duration').filter({hasText:'Viewed once'}).waitFor();
+assert.equal(await stock.locator('#hero-video').evaluate(v=>!v.getAttribute('src')&&v.paused),true);assert.equal(stockRequests.includes(stockFilm.src),false);await stock.close();
+// Unknown remote URLs cannot become a movie source.
+const untrusted=await context.newPage();await untrusted.route('**/api/hero-film',route=>route.fulfill({json:{available:true,src:'https://example.invalid/untrusted.mp4'}}));await untrusted.goto(base);await untrusted.waitForTimeout(400);
+assert.equal(await untrusted.locator('#hero-video').evaluate(v=>!v.getAttribute('src')),true);await untrusted.close();
+console.log('PASS: licensed-stock/local metadata selection, fixed CDN allowlist, CDN playback path (intercepted fixture), network fallback, single shared player, once-only/session-persistent playback, original-logo placements and brand icons, test-fixture autoplay, six journeys, filters/search/sort/finder, saved persistence, compare limit/table, route pages, itinerary downloads, keyboard tabs, 3-step enquiry + SQLite receipt, nested privacy dialog, brief download, journal, persistent checklist, motion controls, film, 4 responsive widths, mobile menu, reduced motion, 404 page, API validation/origin/size/privacy/idempotency.');
 }finally{
  // Test records contain no real personal data; remove them after verifying storage.
  if(savedReference){const db=new DatabaseSync('.data/enquiries.sqlite');db.prepare('DELETE FROM enquiries WHERE id=? AND email=?').run(savedReference,email);db.close();}

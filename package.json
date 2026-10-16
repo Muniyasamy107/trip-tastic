@@ -10,7 +10,8 @@
     "test": "node scripts/test.mjs",
     "start": "node server.mjs",
     "enquiries": "node scripts/enquiries.mjs",
-    "visual:check": "node scripts/visual-check.mjs"
+    "visual:check": "node scripts/visual-check.mjs",
+    "media:download": "node scripts/download-film.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.0",

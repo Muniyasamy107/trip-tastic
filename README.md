@@ -16,8 +16,10 @@ npm run dev -- --port 5173
 ```
 
 Vite's middleware runs the enquiry API on the **same origin** as the website.
-There is no browser-facing localhost API URL, external font service or stock-media
-CDN. The server binds to `0.0.0.0` and permits Arena's `.e2b.app` preview hosts.
+There is no browser-facing localhost API URL or external font service. The header
+streams its fixed licensed Pexels film unless you install it locally with
+`npm run media:download`. The server binds to `0.0.0.0` and permits Arena's
+`.e2b.app` preview hosts.
 
 ## Production
 
@@ -63,7 +65,7 @@ single-server backend; scale-out needs shared storage or a managed database.
 - GSAP headline entrances and scroll reveals,
   image/CTA interactions, route tracing, rotating seal, marquee and scroll progress.
 - Decorative-motion pause/play, reduced-motion preferences (including live
-  changes), a single owner-footage player with offscreen pausing and an enlarged
+  changes), a single licensed-footage player with offscreen pausing and an enlarged
   view. A supplied film plays once; it is not looped or duplicated.
 
 ## Enquiries: real storage, not a simulated success screen
@@ -114,39 +116,58 @@ used. The original provided logo remains in the repository and About section.
 
 ## Visuals and transparency
 
-### Real-footage header: replacement file still required
+### Real filmed header — Kerala tea-country driving
 
-The rejected car-cutout animation and its generator have been removed. **There is
-currently no approved real filmed clip in this repository.** Until the owner
-supplies one, the header deliberately shows a static AI-created creative image;
-the film button is hidden. It does not pretend that the image is real footage.
-Hero image zoom/parallax has also been removed rather than simulating a camera.
+The header now streams **“A Jeep Moving on the Road” by Syam Krishnan / Pexels**
+(clip 9117219), a landscape driving film with Kerala/Munnar publisher metadata.
+It is not the rejected photo/car-cutout animation. The poster is an actual preview
+of that film, and the custom scenic-aperture layout keeps the footage separate
+from the editorial headline. A slim in-frame progress line tracks the single film.
 
-To add the actual footage locally:
+Source and licence: [`public/media/FOOTAGE-LICENSE.md`](public/media/FOOTAGE-LICENSE.md).
+This is non-exclusive licensed stock, not a commissioned/exclusive shoot. Its
+location is publisher-labelled, not independently GPS-verified. Visible source
+credit, licence context and external-CDN privacy disclosure are included.
 
-1. Obtain an original or properly licensed South India hill-road driving clip,
-   ideally a landscape H.264 MP4 (with actual vehicle/camera/landscape motion).
-2. Save it as **`public/media/hero-road-trip.mp4`**. Optionally add a real frame as
-   `public/media/hero-road-trip-poster.jpg`.
-3. Restart the dev server, or run `npm run build` and restart production.
-4. Verify the location, licence and any required credits before public launch.
+**It works without a manual MP4 install:** `/api/hero-film` returns the exact fixed
+Pexels CDN URL from `film-source.js`. Browser network access to videos.pexels.com
+is required. The repository does not contain a fake or unlicensed substitute MP4.
+If media fails, the real film’s still remains and the film button is hidden.
 
-`/api/hero-film` checks the appropriate public/build media directory. No broken
-movie URL is requested when the file is missing. Corrupt/unsupported files fall
-back to the still image without a misleading film button.
+For production, self-host the clip instead of depending on third-party availability:
 
-There is exactly **one** video element. Enlarging the film moves that same element
-into the dialog without rewinding or creating another player. It plays once and
-stops; scrolling, SPA navigation, closing the dialog and motion toggles cannot
-restart a completed film. Completion and a captured final frame are kept in
-session storage, so refreshing the same tab shows that final frame without
-requesting the movie again. If session storage is blocked, the in-memory guard
-still prevents replay within the current page. Replacing the file creates a new
-revision, allowing that genuinely new film to be shown once.
+```bash
+npm run media:download
+npm run build
+npm start
+```
 
-Destination/editorial images remain original AI-created mood visuals, not evidence
-of an exact property, vehicle, included activity or destination view. The Visuals
-& Transparency panel explains the difference.
+The optional downloader validates the MP4 container, caps the file at 100 MB, saves
+atomically and **never overwrites or re-downloads an existing film**. Downloads are
+Git-ignored; include the media in your deployment artifact/storage. The API prefers
+`public/media/hero-road-trip.mp4` (or `dist/media/hero-road-trip.mp4` in production).
+An owner replacement must have checked rights/location and updated poster/credits.
+Do not replace the installed stock film with the test fixture.
+
+There is exactly **one** video element. Enlargement moves that element without
+rewinding. It plays once and stops; scrolling, navigation, dialog close and motion
+toggles cannot restart it. Completion is stored per revision in session storage:
+refreshing the completed tab makes **no new movie request**. A final frame is cached
+where canvas security permits; cross-origin streaming can fall back to the real
+opening still after refresh. If session storage is blocked, the in-memory guard
+still prevents replay on the current page. A new tab or genuinely changed source
+revision can play once again. This is not a permanent per-person playback ban.
+
+The restricted development environment cannot independently play/download the
+external CDN film. Tests intercept the **exact configured stock URL** with an
+isolated synthetic chart to verify playback, once-only state, and no repeated
+request on reload. They do not establish live third-party CDN availability or
+film picture quality. Verify actual footage in an internet-connected browser;
+`npm run media:download` allows fully local playback there.
+
+Other destination/editorial images remain AI-created mood visuals, not proof of an
+exact property, vehicle, included activity or destination view. The Visuals &
+Transparency panel explains the distinction.
 
 Manrope and Cormorant Garamond fonts are self-hosted under the SIL Open Font
 License. Their licences are in `public/fonts/`.
@@ -164,8 +185,8 @@ For the production server: `TEST_URL=http://localhost:3000 npm test`.
 
 The browser/API suite uses a small synthetic colour-chart fixture (intercepted
 in browser tests only, never deployed as hero footage) to check video playback,
-no-loop behaviour, a single shared player, final-frame/session persistence and
-the missing-footage fallback; filters/search/sorting/finder;
+no-loop behaviour, a single shared player, session persistence, fixed CDN-source
+allowlisting, local-file preference and the network-failure fallback; filters/search/sorting/finder;
 save persistence; comparison limits; route pages; keyboard tabs; downloads; all
 three enquiry steps; **the actual saved SQLite record**; nested dialogs; journal;
 packing persistence; motion controls; responsive widths (360/390/768/1440); mobile

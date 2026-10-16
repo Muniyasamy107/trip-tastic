@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { journeys } from '../journeys.js';
+import { stockFilm } from '../film-source.js';
 const dataDir = path.resolve(process.env.DATA_DIR || '.data');
 fs.mkdirSync(dataDir,{recursive:true,mode:0o700});
 const db=new DatabaseSync(path.join(dataDir,'enquiries.sqlite'));
@@ -23,10 +24,10 @@ export function api(req,res,next,{mediaRoot=path.resolve('public/media')}={}){
   const file=path.join(mediaRoot,'hero-road-trip.mp4');
   try{
    const stat=fs.statSync(file);
-   if(!stat.isFile()||stat.size===0)return json(res,200,{available:false});
+   if(!stat.isFile()||stat.size===0)throw new Error('No installed film');
    const poster=fs.existsSync(path.join(mediaRoot,'hero-road-trip-poster.jpg'))?'/media/hero-road-trip-poster.jpg':null;
    return json(res,200,{available:true,src:'/media/hero-road-trip.mp4',revision:`${stat.size}-${stat.mtimeMs}`,poster});
-  }catch{return json(res,200,{available:false});}
+  }catch{return json(res,200,{available:true,...stockFilm,delivery:'external-cdn'});}
  }
 
  if(pathname!=='/api/enquiries')return json(res,404,{error:'Not found.'});
