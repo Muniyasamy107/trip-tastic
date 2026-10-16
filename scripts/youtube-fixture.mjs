@@ -1,5 +1,7 @@
+import { thumbnailFixture } from './thumbnail-fixture.mjs';
 // Offline provider double. Never shipped or used by the public application.
 export async function youtubeFixture(page,{error,autoplayBlocked=false}={}){
+ await thumbnailFixture(page);
  const settings=JSON.stringify({error,autoplayBlocked});
  await page.route('https://www.youtube.com/iframe_api',route=>route.fulfill({contentType:'application/javascript',body:`
   const settings=${settings};window.__ytPlayers=[];
@@ -8,7 +10,7 @@ export async function youtubeFixture(page,{error,autoplayBlocked=false}={}){
    mute(){this.muted=true;}
    playVideo(){if(this.destroyed)return;if(settings.autoplayBlocked&&!document.querySelector('#film-dialog:modal')){this.events.onAutoplayBlocked();return;}this.state=1;this.events.onStateChange({data:1});}
    pauseVideo(){this.state=2;}
-   getDuration(){return 106;}
+   getDuration(){return 15082;}
    getCurrentTime(){return this.time;}
    destroy(){this.destroyed=true;this.frame.remove();}
    end(){this.events.onStateChange({data:0});}

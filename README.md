@@ -120,21 +120,31 @@ used. The original provided logo remains in the repository and About section.
 ### Selected YouTube header — no download or upload required
 
 The full-bleed header now embeds the user-selected film:
-**[Above & Beyond – Landrover New Zealand 4K](https://www.youtube.com/watch?v=AXvVH8CeViI)**
-by **Jason Charles Hill**, using the official YouTube IFrame API and a
-`youtube-nocookie.com` player. The source description identifies New Zealand and
-Landrover as the client. It is **not South India footage**, a Trip-Tastic commission,
-or an endorsement. Visible credit and location labels reflect this distinction.
+**[South India – 4K Scenic Nature Drone Relaxation Film](https://www.youtube.com/watch?v=9AJGRwIo66I)**
+by **The Indian Ambience**, using the official YouTube IFrame API and a
+`youtube-nocookie.com` player. The source description identifies scenic drone footage from Southern India.
+It is not a Trip-Tastic commission or endorsement; visible credits reflect the
+new source. The approximately **4:11:22** film replaces the prior New Zealand selection.
 Source/provenance: [`public/media/YOUTUBE-SOURCE.md`](public/media/YOUTUBE-SOURCE.md).
 
-The local opening still is the user's supplied screenshot, with black letterbox
-bands removed. The real film is not downloaded, copied into Git, extracted or
+The opening still is the official YouTube thumbnail, served from `i.ytimg.com`,
+not the previous New Zealand screenshot. This thumbnail request occurs on page
+load, including reduced-motion and completed-tab views; it is disclosed separately
+from API/player loading in the privacy panel. The real film is not downloaded, copied into Git, extracted or
 re-hosted. Its ID is fixed in `film-source.js`; no arbitrary embed URL is accepted.
 `/api/hero-film` defaults to that YouTube source, even if an old local MP4 exists.
 
 The dark emerald/champagne styling and original logo are retained. The background
-iframe covers the whole header responsively; mild overscan removes this selected
-film's internal cinematic bars. Enlarging shows the full uncropped player canvas.
+iframe covers the whole header responsively with a modest 4% cover margin. A lighter
+emerald overlay plus **brightness(1.16)** on the background iframe makes the film
+brighter; the enlarged player stays unfiltered and shows the uncropped player canvas.
+
+**Resolution is not fabricated:** the creator titles this source **4K**, not 8K.
+No 8K stream has been verified. The app does not use ineffective/deprecated quality
+forcing parameters or claim that CSS brightness creates 8K detail. YouTube chooses
+adaptive quality; the enlarged player's native Settings menu allows the highest
+quality actually offered on that browser/device/connection. Native 8K requires an
+actual 8K source plus compatible YouTube playback and sufficient bandwidth.
 A single iframe stays inside the **same dialog and stage**: switching its dialog
 between nonmodal-background and native-modal presentation never reparents/reloads
 that browsing context. Closing the enlarged view preserves its position.
@@ -144,15 +154,15 @@ Offscreen/route changes, pause-motion and document hiding pause playback. Reduce
 motion initially defers loading the provider entirely until an explicit play or
 motion-enable action. If autoplay is blocked, the visible film button lets the
 user try playback. If API loading/embedding fails (including owner restrictions),
-the supplied still, useful status message and **Watch on YouTube** link remain.
+the official thumbnail, useful status message and **Watch on YouTube** link remain.
 YouTube branding, ads and provider restrictions cannot be guaranteed away.
 
 Once the film ends, the iframe is destroyed and completion is stored for this
-source revision in session storage. The supplied still is shown (YouTube does not
+source revision in session storage. The official thumbnail is shown (YouTube does not
 allow canvas final-frame capture). Reloading the completed tab does not load the
 API or embed again. Motion toggles, enlargement, scrolling and navigation do not
 reset completion. A new tab/source revision can play again; blocked storage means
-only the in-memory guard can be guaranteed. Provider-internal requests, ads,
+only the in-memory guard can be guaranteed. Provider-internal requests, thumbnail requests, ads,
 manual native controls and playback policies remain YouTube-controlled.
 
 Embedding contacts Google/YouTube services. Privacy-enhanced mode is **not** a
@@ -163,7 +173,7 @@ a shared link is not permission to download or republish a copyrighted film.
 The source watch page and YouTube oEmbed endpoint were checked successfully, but
 live streaming from the deployment domain cannot be verified in the restricted
 coding environment. `npm run test:youtube` uses an isolated mocked provider API
-and iframe, **never claiming that a synthetic fixture is the real film**. Test
+and iframe, plus a labelled synthetic thumbnail, **never claiming that a synthetic fixture is the real film**. Test
 actual playback, browser autoplay and any regional/owner restrictions before launch.
 
 #### Legacy self-hosted/stock mode (not the selected YouTube header)

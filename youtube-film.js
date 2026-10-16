@@ -20,14 +20,14 @@ export function setupYouTubeFilm({video,container,dialog,stage,watchButton,durat
  let completed=false,failed=false,expanded=false,player,frame,playerReady=false,initializing=false,progressTimer,readyTimer;
  try{completed=JSON.parse(sessionStorage.getItem(key)||'null')?.finished===true;}catch{/* In-memory completion still applies. */}
  video.hidden=true;video.removeAttribute('src');
- const poster=container.querySelector('.hero-poster');poster.src=youtubeFilm.poster;poster.alt='Road and mountain scene from the user-supplied film screenshot';
- caption.textContent=`${youtubeFilm.title} · ${youtubeFilm.credit} · Plays once`;
+ const poster=container.querySelector('.hero-poster');poster.src=youtubeFilm.poster;poster.alt='Official YouTube thumbnail for South India by The Indian Ambience';
+ caption.textContent=`${youtubeFilm.title} · ${youtubeFilm.credit} · Creator-labelled 4K · YouTube auto quality · Plays once`;
  const status=document.createElement('p');status.className='hero-film-status';status.setAttribute('role','status');status.hidden=true;watchButton.parentElement.after(status);
  const message=text=>{status.textContent=text;status.hidden=!text;};
  const finishedLabel=()=>{watchButton.querySelector('[data-film-title]').textContent='FILM VIEWED';durationLabel.textContent='Viewed once · no automatic replay';watchButton.disabled=true;container.style.setProperty('--film-progress','100%');};
  watchButton.hidden=false;
  if(completed){finishedLabel();return {ready:Promise.resolve(),sync(){},pause(){},isAvailable:()=>true,isCompleted:()=>true};}
- durationLabel.textContent='Your selected film · YouTube';
+ durationLabel.textContent='YouTube · Auto quality';
  // Keep the iframe in this dialog permanently. Changing nonmodal/modal state
  // does not reparent the browsing context or restart/reload the movie.
  container.append(dialog);dialog.classList.add('youtube-embedded');dialog.setAttribute('role','presentation');dialog.setAttribute('open','');
@@ -35,9 +35,9 @@ export function setupYouTubeFilm({video,container,dialog,stage,watchButton,durat
  const resize=()=>{
   if(!frame)return;
   const rect=stage.getBoundingClientRect();if(!rect.width||!rect.height)return;
-  // This selected film includes cinematic letterbox bars. Overscan only the
-  // header; the enlarged player displays the complete, uncropped 16:9 canvas.
-  const width=expanded?rect.width:Math.max(rect.width,rect.height*16/9)*1.34;
+  // A modest header overscan keeps cover edges clean; enlarged playback shows
+  // the complete uncropped player, with native quality controls available.
+  const width=expanded?rect.width:Math.max(rect.width,rect.height*16/9)*1.04;
   frame.style.width=`${width}px`;frame.style.height=`${expanded?rect.height:width*9/16}px`;
  };
  const observer=new ResizeObserver(resize);observer.observe(stage);
@@ -52,9 +52,9 @@ export function setupYouTubeFilm({video,container,dialog,stage,watchButton,durat
  const finish=()=>{
   if(completed)return;completed=true;
   try{sessionStorage.setItem(key,JSON.stringify({finished:true}));}catch{}
-  // YouTube does not permit canvas frame capture. Restore the supplied still,
+  // YouTube does not permit canvas frame capture. Restore the official thumbnail,
   // and remove the ended player so recommendations cannot become a replay.
-  destroy();stage.style.backgroundImage=`url("${youtubeFilm.poster}")`;finishedLabel();message('Film viewed once. The supplied still is shown; it will not automatically replay in this tab.');
+  destroy();stage.style.backgroundImage=`url("${youtubeFilm.poster}")`;finishedLabel();message('Film viewed once. The film thumbnail is shown; it will not automatically replay in this tab.');
  };
  const shouldPlay=()=>!document.hidden&&(expanded||canAutoplay());
  async function initialize(){
@@ -66,7 +66,7 @@ export function setupYouTubeFilm({video,container,dialog,stage,watchButton,durat
    frame=document.createElement('iframe');frame.id='hero-youtube';frame.title=youtubeFilm.title;frame.allow='autoplay; encrypted-media; fullscreen; picture-in-picture';frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';frame.tabIndex=expanded?0:-1;frame.style.visibility=expanded?'visible':'hidden';frame.src=url.href;stage.append(frame);resize();
    readyTimer=setTimeout(()=>failure(),15000);
    player=new YT.Player(frame,{host:'https://www.youtube-nocookie.com',events:{
-    onReady:event=>{if(failed||completed)return;player=event.target;playerReady=true;clearTimeout(readyTimer);command('mute');sync();progressTimer=setInterval(()=>{if(!playerReady||completed||failed)return;try{const duration=player.getDuration(),time=player.getCurrentTime();if(duration>0){container.style.setProperty('--film-progress',`${Math.min(100,time/duration*100)}%`);durationLabel.textContent=`Your selected film · ${Math.floor(duration/60)}:${String(Math.floor(duration%60)).padStart(2,'0')}`;}}catch{}},500);},
+    onReady:event=>{if(failed||completed)return;player=event.target;playerReady=true;clearTimeout(readyTimer);command('mute');sync();progressTimer=setInterval(()=>{if(!playerReady||completed||failed)return;try{const duration=player.getDuration(),time=player.getCurrentTime();if(duration>0){container.style.setProperty('--film-progress',`${Math.min(100,time/duration*100)}%`);const seconds=Math.floor(duration),hours=Math.floor(seconds/3600),minutes=Math.floor(seconds%3600/60);durationLabel.textContent=`${hours?`${hours}:${String(minutes).padStart(2,'0')}`:minutes}:${String(seconds%60).padStart(2,'0')} · Auto quality`;}}catch{}},500);},
     onStateChange:event=>{if(completed||failed)return;if(event.data===0){finish();return;}if(event.data===1){frame.style.visibility='visible';message('');if(!shouldPlay())command('pauseVideo');}},
     onAutoplayBlocked:()=>{if(expanded&&frame)frame.style.visibility='visible';watchButton.querySelector('[data-film-title]').textContent='PLAY THE FILM';message('Autoplay is blocked. Select Play the film to start, or open it on YouTube.');},
     onError:event=>failure(event.data),

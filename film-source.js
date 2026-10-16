@@ -11,10 +11,10 @@ export const stockFilm=Object.freeze({
 // User-selected link. Embed only: never download/re-host this YouTube film.
 export const youtubeFilm=Object.freeze({
  provider:'youtube',
- videoId:'AXvVH8CeViI',
- source:'https://www.youtube.com/watch?v=AXvVH8CeViI',
- title:'Above & Beyond - Landrover New Zealand 4K',
- credit:'Jason Charles Hill / YouTube',
- poster:'/media/youtube-road-trip-poster.jpg',
- revision:'youtube-AXvVH8CeViI-v1',
+ videoId:'9AJGRwIo66I',
+ source:'https://www.youtube.com/watch?v=9AJGRwIo66I',
+ title:'South India - 4K Scenic Nature Drone Relaxation Film',
+ credit:'The Indian Ambience / YouTube',
+ poster:'https://i.ytimg.com/vi/9AJGRwIo66I/hqdefault.jpg',
+ revision:'youtube-9AJGRwIo66I-v1',
 });
