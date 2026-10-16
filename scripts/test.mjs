@@ -132,6 +132,9 @@ assert.equal(await stock.locator('#hero-video').evaluate(v=>!v.getAttribute('src
 const untrusted=await context.newPage();await thumbnailFixture(untrusted);await untrusted.route('**/api/hero-film',route=>route.fulfill({json:{available:true,src:'https://example.invalid/untrusted.mp4'}}));await untrusted.goto(base);await untrusted.waitForTimeout(400);
 assert.equal(await untrusted.locator('#hero-video').evaluate(v=>!v.getAttribute('src')),true);await untrusted.close();
 console.log('PASS: licensed-stock/local metadata selection, fixed CDN allowlist, CDN playback path (intercepted fixture), network fallback, single shared player, once-only/session-persistent playback, original-logo placements and brand icons, test-fixture autoplay, six journeys, filters/search/sort/finder, saved persistence, compare limit/table, route pages, itinerary downloads, keyboard tabs, 3-step enquiry + SQLite receipt, nested privacy dialog, brief download, journal, persistent checklist, motion controls, film, full-bleed video bounds at 4 responsive widths, mobile menu, reduced motion, 404 page, API validation/origin/size/privacy/idempotency.');
+}catch(error){
+ try{console.error('Layout diagnostics',await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('body *')].map(e=>({tag:e.tagName,cls:typeof e.className==='string'?e.className:'svg',right:e.getBoundingClientRect().right,left:e.getBoundingClientRect().left,width:e.getBoundingClientRect().width})).filter(e=>e.width&&e.right>innerWidth+1).slice(0,45)})));await page.screenshot({path:'.cache/main-test-failure.png',fullPage:true});}catch{}
+ throw error;
 }finally{
  // Test records contain no real personal data; remove them after verifying storage.
  if(savedReference){const db=new DatabaseSync('.data/enquiries.sqlite');db.prepare('DELETE FROM enquiries WHERE id=? AND email=?').run(savedReference,email);db.close();}

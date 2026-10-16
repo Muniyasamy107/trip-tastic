@@ -13,6 +13,7 @@ http.createServer((req,res)=>{
  let file=path.resolve(root,'.'+pathname);
  if(file!==root&&!file.startsWith(root+path.sep)){res.writeHead(403);return res.end('Forbidden');}
  if(pathname==='/')file=path.join(root,'index.html');
+ if(pathname==='/admin'||pathname==='/admin/')file=path.join(root,'admin.html');
  if(!fs.existsSync(file)||!fs.statSync(file).isFile()){res.writeHead(404);return res.end('Not found');}
  const size=fs.statSync(file).size;const type=mime[path.extname(file)]||'application/octet-stream';
  res.setHeader('Content-Type',type);res.setHeader('Cache-Control',path.extname(file)==='.html'?'no-cache':'public, max-age=3600');res.setHeader('Accept-Ranges','bytes');

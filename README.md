@@ -20,6 +20,29 @@ There is no browser-facing localhost API URL or external font service. The heade
 embeds the selected YouTube film without needing a video download/upload. The server binds to `0.0.0.0` and permits Arena's
 `.e2b.app` preview hosts.
 
+## Super Admin / Owner Studio
+
+The private dashboard is **`/admin.html`**, with consented enquiry inbox,
+email/WhatsApp reply drafts, editable journey price ranges, verified footer social
+settings and password/session management. Anonymous visitors' emails cannot be
+identified; only submitted enquiries appear. Messages open your own apps and must
+be sent there manually—there is no automatic delivery service.
+
+```bash
+npm run admin:setup       # run once in your private terminal
+# Username: superadmin; unique password is printed once (never hard-coded).
+npm run dev -- --port 5173
+```
+
+Open http://localhost:5173/admin.html and use the generated credentials. No live
+owner account or shared password is shipped. Recovery: `npm run admin:setup -- --reset`.
+Setup must run against the same private `DATA_DIR` as your server. Prices/contact
+links persist in SQLite and refresh publicly on reload/focus. Add your real
+business WhatsApp number and Instagram profile in **Social & contact**; footer
+channels remain disabled until those details are published.
+
+Full setup/security/messaging/deployment guide: **[docs/ADMIN.md](docs/ADMIN.md)**.
+
 ## Production
 
 ```sh
@@ -73,7 +96,9 @@ single-server backend; scale-out needs shared storage or a managed database.
 
 `POST /api/enquiries` validates the request, requires consent and stores accepted
 requests in `.data/enquiries.sqlite`. Public read endpoints are `GET /api/health`
-and `GET /api/hero-film` (film availability only). **There is no public enquiry-list or personal-data retrieval API.**
+and `GET /api/hero-film` (film availability only). `GET /api/site-settings` exposes
+only published prices and business social links. `/api/admin/*` is the private
+authenticated owner API; mutations require Origin and CSRF checks. **There is no public enquiry-list or personal-data retrieval API.**
 
 Protections include same-origin checks, JSON-only POSTs, a 16 KB body limit,
 server-side field/date/party-size validation, a honeypot, request rate limits,
@@ -223,6 +248,11 @@ packing persistence; motion controls; responsive widths (360/390/768/1440); mobi
 navigation; reduced motion; a missing route; validation, origin/body-size checks,
 idempotency and the absence of a public personal-data API. QA records use reserved
 `example.test` addresses and are removed after the test.
+
+`npm run test:admin` uses a separate temporary database to test owner bootstrap,
+login/session/CSRF/rate controls, price/settings edits, public propagation,
+consent-aware enquiry inbox/contact drafts, deletion/password rotation and
+responsive owner UI without seeding a real account or sending messages.
 
 `npm run visual:check` creates ignored desktop/mobile screenshots for review.
 The browser helper uses npm-distributed Chromium and its bundled Linux libraries;
