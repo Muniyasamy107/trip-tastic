@@ -1,7 +1,7 @@
 import './test-download-film.mjs';
 import { launchBrowser } from './browser.mjs';
 import { filmFixture } from './film-fixture.mjs';
-import { stockFilm } from '../film-source.js';
+import { stockFilm, youtubeFilm } from '../film-source.js';
 import { api } from '../server/api.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -10,7 +10,8 @@ const base=process.env.TEST_URL||'http://localhost:5173';
 fs.mkdirSync('.cache',{recursive:true});
 const testMedia=fs.mkdtempSync('.cache/hero-metadata-');
 try{
- const readMetadata=()=>{let output;api({method:'GET',url:'/api/hero-film'},{writeHead(status){assert.equal(status,200);},end(body){output=JSON.parse(body);}},()=>assert.fail('Media metadata route was not handled'),{mediaRoot:testMedia});return output;};
+ let defaultMetadata;api({method:'GET',url:'/api/hero-film'},{writeHead(){},end(body){defaultMetadata=JSON.parse(body);}},()=>assert.fail('Missing film API'));assert.equal(defaultMetadata.videoId,youtubeFilm.videoId);assert.equal(defaultMetadata.provider,'youtube');
+ const readMetadata=()=>{let output;api({method:'GET',url:'/api/hero-film'},{writeHead(status){assert.equal(status,200);},end(body){output=JSON.parse(body);}},()=>assert.fail('Media metadata route was not handled'),{mediaRoot:testMedia,filmProvider:'local'});return output;};
  assert.equal(readMetadata().src,stockFilm.src);assert.equal(readMetadata().delivery,'external-cdn');
  fs.writeFileSync(`${testMedia}/hero-road-trip.mp4`,'');assert.equal(readMetadata().src,stockFilm.src);
  fs.copyFileSync(new URL('./fixtures/player-test.mp4',import.meta.url),`${testMedia}/hero-road-trip.mp4`);

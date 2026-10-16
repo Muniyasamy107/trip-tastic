@@ -4,7 +4,8 @@ import { randomUUID } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { stockFilm } from '../film-source.js';
 
-// Optional self-hosting step. Never overwrites an installed owner film.
+// Legacy Pexels self-hosting only. Does not download the selected YouTube film.
+// Never overwrites an installed owner film.
 export async function installStockFilm({mediaRoot=path.resolve('public/media'),fetchImpl=fetch}={}) {
  fs.mkdirSync(mediaRoot,{recursive:true});
  const target=path.join(mediaRoot,'hero-road-trip.mp4');
@@ -25,5 +26,5 @@ export async function installStockFilm({mediaRoot=path.resolve('public/media'),f
  }finally{if(fs.existsSync(temporary))fs.unlinkSync(temporary);}
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href){
- try{console.log((await installStockFilm()).message);}catch(error){console.error(`Film download failed: ${error.message}\nThe site still uses the fixed Pexels CDN source. You can also download the original from ${stockFilm.source} and save it as public/media/hero-road-trip.mp4.`);process.exitCode=1;}
+ try{console.log((await installStockFilm()).message);}catch(error){console.error(`Film download failed: ${error.message}\nThis does not change the selected YouTube embed. For legacy Pexels mode only, the original is at ${stockFilm.source} and save it as public/media/hero-road-trip.mp4.`);process.exitCode=1;}
 }

@@ -7,3 +7,14 @@ export const stockFilm=Object.freeze({
  credit:'Syam Krishnan / Pexels',
  source:'https://www.pexels.com/video/a-jeep-moving-on-the-road-9117219/',
 });
+
+// User-selected link. Embed only: never download/re-host this YouTube film.
+export const youtubeFilm=Object.freeze({
+ provider:'youtube',
+ videoId:'AXvVH8CeViI',
+ source:'https://www.youtube.com/watch?v=AXvVH8CeViI',
+ title:'Above & Beyond - Landrover New Zealand 4K',
+ credit:'Jason Charles Hill / YouTube',
+ poster:'/media/youtube-road-trip-poster.jpg',
+ revision:'youtube-AXvVH8CeViI-v1',
+});

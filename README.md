@@ -17,8 +17,7 @@ npm run dev -- --port 5173
 
 Vite's middleware runs the enquiry API on the **same origin** as the website.
 There is no browser-facing localhost API URL or external font service. The header
-streams its fixed licensed Pexels film unless you install it locally with
-`npm run media:download`. The server binds to `0.0.0.0` and permits Arena's
+embeds the selected YouTube film without needing a video download/upload. The server binds to `0.0.0.0` and permits Arena's
 `.e2b.app` preview hosts.
 
 ## Production
@@ -36,6 +35,8 @@ the enquiry form to work. Use HTTPS through your hosting provider/reverse proxy.
 Optional environment variables:
 
 - `PORT`: production HTTP port (default `3000`).
+- `HERO_FILM_PROVIDER`: defaults to `youtube`; `local` explicitly enables legacy media mode.
+  PowerShell: `$env:HERO_FILM_PROVIDER="local"`; Bash: `HERO_FILM_PROVIDER=local npm run dev`.
 - `DATA_DIR`: persistent private database directory (default `.data/`).
 - `PUBLIC_ORIGIN`: the canonical full website origin, if different from the
   incoming Host header behind your proxy.
@@ -65,7 +66,7 @@ single-server backend; scale-out needs shared storage or a managed database.
 - GSAP headline entrances and scroll reveals,
   image/CTA interactions, route tracing, rotating seal, marquee and scroll progress.
 - Decorative-motion pause/play, reduced-motion preferences (including live
-  changes), a single licensed-footage player with offscreen pausing and an enlarged
+  changes), a single user-selected YouTube player with offscreen pausing and an enlarged
   view. A supplied film plays once; it is not looped or duplicated.
 
 ## Enquiries: real storage, not a simulated success screen
@@ -116,57 +117,66 @@ used. The original provided logo remains in the repository and About section.
 
 ## Visuals and transparency
 
-### Real filmed header — Kerala tea-country driving
+### Selected YouTube header — no download or upload required
 
-The header now streams **“A Jeep Moving on the Road” by Syam Krishnan / Pexels**
-(clip 9117219), a landscape driving film with Kerala/Munnar publisher metadata.
-It is not the rejected photo/car-cutout animation. The poster is an actual preview
-of that film, and the full-bleed layout covers the entire header on desktop and phones. Dark emerald
-gradients, champagne-gold accents and oversized editorial typography provide the
-royal presentation without replacing the filmed movement with animation. Landscape
-footage uses responsive cover cropping on narrow screens. A slim progress line
-tracks the same single film.
+The full-bleed header now embeds the user-selected film:
+**[Above & Beyond – Landrover New Zealand 4K](https://www.youtube.com/watch?v=AXvVH8CeViI)**
+by **Jason Charles Hill**, using the official YouTube IFrame API and a
+`youtube-nocookie.com` player. The source description identifies New Zealand and
+Landrover as the client. It is **not South India footage**, a Trip-Tastic commission,
+or an endorsement. Visible credit and location labels reflect this distinction.
+Source/provenance: [`public/media/YOUTUBE-SOURCE.md`](public/media/YOUTUBE-SOURCE.md).
 
-Source and licence: [`public/media/FOOTAGE-LICENSE.md`](public/media/FOOTAGE-LICENSE.md).
-This is non-exclusive licensed stock, not a commissioned/exclusive shoot. Its
-location is publisher-labelled, not independently GPS-verified. Visible source
-credit, licence context and external-CDN privacy disclosure are included.
+The local opening still is the user's supplied screenshot, with black letterbox
+bands removed. The real film is not downloaded, copied into Git, extracted or
+re-hosted. Its ID is fixed in `film-source.js`; no arbitrary embed URL is accepted.
+`/api/hero-film` defaults to that YouTube source, even if an old local MP4 exists.
 
-**It works without a manual MP4 install:** `/api/hero-film` returns the exact fixed
-Pexels CDN URL from `film-source.js`. Browser network access to videos.pexels.com
-is required. The repository does not contain a fake or unlicensed substitute MP4.
-If media fails, the real film’s still remains and the film button is hidden.
+The dark emerald/champagne styling and original logo are retained. The background
+iframe covers the whole header responsively; mild overscan removes this selected
+film's internal cinematic bars. Enlarging shows the full uncropped player canvas.
+A single iframe stays inside the **same dialog and stage**: switching its dialog
+between nonmodal-background and native-modal presentation never reparents/reloads
+that browsing context. Closing the enlarged view preserves its position.
 
-For production, self-host the clip instead of depending on third-party availability:
+Muted autoplay is attempted when the hero is visible and motion is enabled.
+Offscreen/route changes, pause-motion and document hiding pause playback. Reduced
+motion initially defers loading the provider entirely until an explicit play or
+motion-enable action. If autoplay is blocked, the visible film button lets the
+user try playback. If API loading/embedding fails (including owner restrictions),
+the supplied still, useful status message and **Watch on YouTube** link remain.
+YouTube branding, ads and provider restrictions cannot be guaranteed away.
 
-```bash
-npm run media:download
-npm run build
-npm start
-```
+Once the film ends, the iframe is destroyed and completion is stored for this
+source revision in session storage. The supplied still is shown (YouTube does not
+allow canvas final-frame capture). Reloading the completed tab does not load the
+API or embed again. Motion toggles, enlargement, scrolling and navigation do not
+reset completion. A new tab/source revision can play again; blocked storage means
+only the in-memory guard can be guaranteed. Provider-internal requests, ads,
+manual native controls and playback policies remain YouTube-controlled.
 
-The optional downloader validates the MP4 container, caps the file at 100 MB, saves
-atomically and **never overwrites or re-downloads an existing film**. Downloads are
-Git-ignored; include the media in your deployment artifact/storage. The API prefers
-`public/media/hero-road-trip.mp4` (or `dist/media/hero-road-trip.mp4` in production).
-An owner replacement must have checked rights/location and updated poster/credits.
-Do not replace the installed stock film with the test fixture.
+Embedding contacts Google/YouTube services. Privacy-enhanced mode is **not** a
+promise of no tracking/storage. This is disclosed in the site's privacy panel.
+Before launch, confirm promotional embedding/branding rights with the owner;
+a shared link is not permission to download or republish a copyrighted film.
 
-There is exactly **one** video element. Enlargement moves that element without
-rewinding. It plays once and stops; scrolling, navigation, dialog close and motion
-toggles cannot restart it. Completion is stored per revision in session storage:
-refreshing the completed tab makes **no new movie request**. A final frame is cached
-where canvas security permits; cross-origin streaming can fall back to the real
-opening still after refresh. If session storage is blocked, the in-memory guard
-still prevents replay on the current page. A new tab or genuinely changed source
-revision can play once again. This is not a permanent per-person playback ban.
+The source watch page and YouTube oEmbed endpoint were checked successfully, but
+live streaming from the deployment domain cannot be verified in the restricted
+coding environment. `npm run test:youtube` uses an isolated mocked provider API
+and iframe, **never claiming that a synthetic fixture is the real film**. Test
+actual playback, browser autoplay and any regional/owner restrictions before launch.
 
-The restricted development environment cannot independently play/download the
-external CDN film. Tests intercept the **exact configured stock URL** with an
-isolated synthetic chart to verify playback, once-only state, and no repeated
-request on reload. They do not establish live third-party CDN availability or
-film picture quality. Verify actual footage in an internet-connected browser;
-`npm run media:download` allows fully local playback there.
+#### Legacy self-hosted/stock mode (not the selected YouTube header)
+
+Set `HERO_FILM_PROVIDER=local` on the server to explicitly opt into the older local
+MP4/Pexels controller. A local `public/media/hero-road-trip.mp4` takes priority in
+that mode; otherwise the fixed prior Pexels source is used. The existing optional
+`npm run media:download` command downloads **only that older licensed Pexels clip**,
+never this YouTube film. Do not run it expecting to obtain the selected film.
+Legacy provenance: `public/media/FOOTAGE-LICENSE.md`. Never substitute the isolated
+player test fixture into public/ or dist/. If changing sources, update visible
+credits/poster and verify rights; the production default should remain YouTube
+for the current requested design.
 
 Other destination/editorial images remain AI-created mood visuals, not proof of an
 exact property, vehicle, included activity or destination view. The Visuals &
@@ -177,7 +187,7 @@ License. Their licences are in `public/fonts/`.
 
 ## Verification
 
-With the dev server running:
+With the dev server running (the YouTube suite mocks the provider, not live streaming):
 
 ```sh
 npm test
@@ -185,6 +195,13 @@ npm run build
 ```
 
 For the production server: `TEST_URL=http://localhost:3000 npm test`.
+
+The separate YouTube suite verifies the selected ID/origin/referrer, single persistent
+iframe, modal position preservation, full-cover bounds, motion/route pausing,
+scroll unlocking, completion/no repeated embed on reload, reduced-motion deferral,
+autoplay-blocked recovery, embed denial and network failure. It mocks the provider
+and does not claim live streaming verification. Run it alone with
+`npm run test:youtube`.
 
 The browser/API suite uses a small synthetic colour-chart fixture (intercepted
 in browser tests only, never deployed as hero footage) to check video playback,

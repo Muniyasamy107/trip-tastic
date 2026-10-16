@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { journeys } from '../journeys.js';
-import { stockFilm } from '../film-source.js';
+import { stockFilm, youtubeFilm } from '../film-source.js';
 const dataDir = path.resolve(process.env.DATA_DIR || '.data');
 fs.mkdirSync(dataDir,{recursive:true,mode:0o700});
 const db=new DatabaseSync(path.join(dataDir,'enquiries.sqlite'));
@@ -16,11 +16,12 @@ db.exec(`PRAGMA journal_mode=WAL; CREATE TABLE IF NOT EXISTS enquiries (
 const limits=new Map();
 function json(res,status,data){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(data));}
 function clean(value,max=200){return typeof value==='string'?value.trim().replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g,'').slice(0,max):'';}
-export function api(req,res,next,{mediaRoot=path.resolve('public/media')}={}){
+export function api(req,res,next,{mediaRoot=path.resolve('public/media'),filmProvider=process.env.HERO_FILM_PROVIDER||'youtube'}={}){
  const pathname=new URL(req.url,'http://localhost').pathname;
  if(!pathname.startsWith('/api/'))return next?.();
  if(req.method==='GET' && pathname==='/api/health')return json(res,200,{ok:true,service:'Trip-Tastic enquiries'});
  if(req.method==='GET' && pathname==='/api/hero-film'){
+  if(filmProvider==='youtube')return json(res,200,{available:true,...youtubeFilm});
   const file=path.join(mediaRoot,'hero-road-trip.mp4');
   try{
    const stat=fs.statSync(file);

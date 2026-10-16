@@ -49,3 +49,14 @@
 @media(max-width:700px){.hero{height:100svh;min-height:790px;max-height:none}.hero-visual{inset:0;width:100%;height:100%;border:0;border-radius:0;aspect-ratio:auto}.hero-visual video,.hero-visual .hero-poster{object-position:32% center}.hero-overlay{background:linear-gradient(90deg,#061f25b8 0%,#061f254d 62%,#061f2520 100%),linear-gradient(180deg,#061f2590,transparent 32%,transparent 58%,#061f25eb)}.hero-topline{top:127px}.hero-copy{padding-top:180px;max-width:100%}.hero-copy h1{font-size:clamp(56px,16.2vw,76px);line-height:.95;letter-spacing:-1.8px;margin:24px 0}.hero-copy>p{margin-top:25px;font-size:11px}.hero-actions{gap:20px;margin-top:26px;flex-wrap:wrap;max-width:330px;row-gap:20px}.hero-actions .button{font-size:9px;gap:20px;padding-left:17px}.watch-button>span:last-child{font-size:6px}.watch-button small{font-size:7px}.play-ring{width:36px;height:36px}.hero-caption{display:flex;right:7%;bottom:135px;width:218px}.hero-caption p{font-size:29px}.hero-caption .eyebrow{font-size:5px}.hero-coordinate{top:170px;right:15px;font-size:5px}.hero-film-credit{right:6%;bottom:91px;font-size:5px;letter-spacing:.65px}.hero-bottom{height:85px}}
 @media(max-width:380px){.hero-caption{bottom:123px;width:200px}.hero-caption p{font-size:26px}.hero-actions{max-width:320px;gap:18px}}
 @media(prefers-reduced-motion:reduce){.hero-visual::after{transition:none}}
+/* One persistent YouTube iframe: nonmodal background -> native modal, no move. */
+#film-dialog.youtube-embedded{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:hidden;pointer-events:none}
+#film-dialog.youtube-embedded .dialog-close,#film-dialog.youtube-embedded .film-description{display:none}
+.film-stage.youtube-stage{position:relative;width:100%;height:min(64.6875vw,78svh);background-size:cover;background-position:center;overflow:hidden}
+#film-dialog.youtube-embedded .youtube-stage{height:100%;aspect-ratio:auto}
+.youtube-stage iframe{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:0;max-width:none;display:block}
+.youtube-embedded iframe{pointer-events:none}
+.hero-copy>.hero-film-status{max-width:430px;font-size:10px;line-height:1.8;color:#f5dfbc;margin-top:14px;text-wrap:pretty}
+.watch-button:disabled{cursor:default;opacity:.8}.watch-button:disabled .play-ring::before{animation:none}
+@media(max-width:700px){.hero-copy>.hero-film-status{font-size:9px;max-width:300px}}
+.hero:has(.hero-film-status:not([hidden])) .hero-caption{display:none}

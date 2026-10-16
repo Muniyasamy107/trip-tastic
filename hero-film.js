@@ -1,7 +1,21 @@
-// One media element, one playback. No generated vehicle animation is used here.
-// Prefer a self-hosted film; otherwise use the one licensed, fixed CDN source.
-import { stockFilm } from './film-source.js';
-export function setupHeroFilm({video,container,dialog,stage,watchButton,durationLabel,caption,canAutoplay,onDialogOpen}) {
+// Dispatch to one selected provider. No generated vehicle animation is used.
+// YouTube is the default; native/local playback remains an explicit legacy mode.
+import { stockFilm, youtubeFilm } from './film-source.js';
+import { setupYouTubeFilm } from './youtube-film.js';
+
+export function setupHeroFilm(options){
+ let controller;
+ const ready=fetch('/api/hero-film',{headers:{Accept:'application/json'}}).then(async response=>{
+  if(!response.ok)throw new Error('Film availability could not be checked');
+  const data=await response.json();
+  if(data.available===true&&data.provider==='youtube'&&data.videoId===youtubeFilm.videoId)controller=setupYouTubeFilm(options);
+  else controller=setupLocalFilm({...options,metadata:data});
+  return controller.ready;
+ }).catch(()=>{options.video.hidden=true;options.watchButton.hidden=true;});
+ return {ready,sync:()=>controller?.sync(),pause:()=>controller?.pause(),isAvailable:()=>controller?.isAvailable()||false,isCompleted:()=>controller?.isCompleted()||false};
+}
+
+function setupLocalFilm({video,container,dialog,stage,watchButton,durationLabel,caption,canAutoplay,onDialogOpen,metadata}) {
  let available=false,completed=false,revision='',opening=false;
  const completionKey=()=>`tt-hero-film-finished:${revision}`;
  const finishedRecord=()=>{try{const value=sessionStorage.getItem(completionKey());return value==='yes'?{finished:true}:JSON.parse(value||'null');}catch{return null;}};
@@ -38,9 +52,7 @@ export function setupHeroFilm({video,container,dialog,stage,watchButton,duration
  });
  dialog.addEventListener('close',()=>{video.pause();video.controls=false;video.classList.remove('is-expanded');container.append(video);sync();});
  document.addEventListener('visibilitychange',sync);
- const ready=fetch('/api/hero-film',{headers:{Accept:'application/json'}}).then(async response=>{
-  if(!response.ok)throw new Error('Film availability could not be checked');
-  const data=await response.json();
+ const ready=Promise.resolve(metadata).then(data=>{
   if(data.available!==true||!['/media/hero-road-trip.mp4',stockFilm.src].includes(data.src)){showFallback();return;}
   revision=String(data.revision||data.src);const previous=finishedRecord();completed=previous?.finished===true;available=true;
   if(data.poster==='/media/hero-road-trip-poster.jpg')video.poster=data.poster;
