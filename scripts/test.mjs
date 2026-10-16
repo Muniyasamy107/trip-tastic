@@ -15,6 +15,15 @@ assert.ok(Math.abs(await page.locator('#hero-video').evaluate(v=>v.duration)-15)
 assert.equal(await page.locator('#hero-video').evaluate(v=>v.muted&&v.loop&&v.playsInline),true);
 await page.waitForTimeout(1600);
 assert.equal(await page.locator('#journey-grid .journey-card').count(),6);
+for(const selector of ['.site-header .brand-logo','.site-footer .brand-logo','.about-mark img']){
+ const logo=page.locator(selector);await logo.scrollIntoViewIfNeeded();await logo.evaluate(img=>img.decode());assert.equal(await logo.getAttribute('src'),'/trip-tastic-logo.jpeg');
+ assert.equal(await logo.evaluate(img=>img.complete&&img.naturalWidth>0&&getComputedStyle(img).objectFit!=='cover'),true);
+}
+assert.equal(await page.locator('.brand-seal').count(),0);
+const manifest=await page.request.get(base+'/site.webmanifest');assert.equal(manifest.status(),200);
+assert.equal((await manifest.json()).name,'Trip-Tastic Holidays');
+for(const asset of ['/brand/favicon-32.png','/brand/favicon-48.png','/brand/apple-touch-icon.png','/brand/favicon-192.png','/brand/favicon-512.png','/brand/share-logo.jpg','/favicon.ico'])assert.equal((await page.request.get(base+asset)).status(),200);
+assert.equal(await page.locator('meta[property="og:image"]').getAttribute('content'),'/brand/share-logo.jpg');
 await page.getByRole('button',{name:'Hills & tea',exact:true}).click();assert.equal(await page.locator('#journey-grid .journey-card').count(),3);
 await page.getByRole('button',{name:'Wild & offbeat',exact:true}).click();assert.equal(await page.locator('#journey-grid .journey-card').count(),2);
 await page.getByRole('button',{name:'Water & wellness',exact:true}).click();assert.equal(await page.locator('#journey-grid .journey-card').count(),1);
@@ -36,7 +45,7 @@ await page.goto(base+'/#/journey/munnar-mist');await page.locator('.detail-hero 
 await page.locator('.itinerary-day').nth(1).locator('summary').click();assert.equal(await page.locator('.itinerary-day').nth(1).evaluate(d=>d.open),true);
 await page.getByRole('tab',{name:'What can be arranged'}).focus();await page.keyboard.press('ArrowRight');assert.equal(await page.getByRole('tab',{name:'What’s extra'}).getAttribute('aria-selected'),'true');assert.match(await page.locator('#inclusion-panel').innerText(),/Flights and rail tickets/);
 const itineraryDownload=page.waitForEvent('download');await page.getByRole('button',{name:'Keep this suggested itinerary'}).click();const itinerary=await itineraryDownload;assert.match(itinerary.suggestedFilename(),/munnar-mist/);
-await page.getByRole('button',{name:'Design this journey',exact:true}).click();assert.equal(await page.locator('#planner-destination').inputValue(),'munnar-mist');
+await page.getByRole('button',{name:'Design this journey',exact:true}).click();assert.equal(await page.locator('#planner-destination').inputValue(),'munnar-mist');assert.equal(await page.locator('.planner-brand img').getAttribute('src'),'/trip-tastic-logo.jpeg');
 await page.locator('#planner-form [name=date]').fill(date);await page.locator('#wizard-next').click();await page.locator('#planner-form [name=budget]').selectOption('25000-40000');await page.getByLabel('A bit of both',{exact:true}).check();await page.locator('#planner-form [name=notes]').fill('Automated QA record — safe to remove.');await page.locator('#wizard-next').click();
 await page.locator('#planner-form [name=name]').fill('Automated QA');await page.locator('#planner-form [name=email]').fill(email);await page.locator('#planner-form [name=consent]').check();
 await page.locator('#planner-form [data-info=privacy]').click();assert.equal(await page.locator('#planner-dialog').evaluate(d=>d.open),true);await page.getByRole('button',{name:'Close window',exact:true}).click();assert.equal(await page.locator('body').evaluate(b=>b.style.overflow),'hidden');
@@ -50,7 +59,7 @@ await page.goto(base+'/#/journal/packing-light');assert.match(await page.locator
 await page.goto(base);await page.waitForTimeout(1300);await page.getByRole('button',{name:'Pause decorative motion',exact:true}).click();assert.equal(await page.locator('#hero-video').evaluate(v=>v.paused),true);assert.equal(await page.locator('.statement-marquee>div').evaluate(e=>getComputedStyle(e).animationPlayState),'paused');
 await page.getByRole('button',{name:'Play decorative motion',exact:true}).click();await page.locator('#watch-film').click();await page.waitForFunction(()=>document.querySelector('#film-dialog video').currentTime>.15);assert.equal(await page.locator('#hero-video').evaluate(v=>v.paused),true);await page.keyboard.press('Escape');
 for(const width of [360,390,768,1440]){await page.setViewportSize({width,height:844});await page.waitForTimeout(100);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`Horizontal overflow at ${width}`);}
-await page.setViewportSize({width:390,height:844});await page.getByRole('button',{name:'Open menu',exact:true}).click();await page.locator('.main-nav').getByRole('link',{name:'Road notes',exact:true}).click();assert.equal(await page.locator('#menu-toggle').getAttribute('aria-expanded'),'false');
+await page.setViewportSize({width:390,height:844});assert.equal(await page.locator('.site-header .brand-logo').isVisible(),true);await page.getByRole('button',{name:'Open menu',exact:true}).click();await page.locator('.main-nav').getByRole('link',{name:'Road notes',exact:true}).click();assert.equal(await page.locator('#menu-toggle').getAttribute('aria-expanded'),'false');
 await page.emulateMedia({reducedMotion:'reduce'});await page.waitForFunction(()=>document.documentElement.classList.contains('motion-paused'));assert.equal(await page.locator('#hero-video').evaluate(v=>v.paused),true);
 await page.goto(base+'/#/journey/not-a-place');assert.match(await page.locator('.not-found h1').innerText(),/Off the map/);
 // API protections and validation. No public read endpoint exposes enquiries.
@@ -66,7 +75,7 @@ const duplicatePayload={name:'Automated QA',email,destination:'munnar-mist',date
 const duplicate=await request.post(base+'/api/enquiries',{data:duplicatePayload});assert.equal(duplicate.status(),200);assert.equal((await duplicate.json()).reference,savedReference);
 const past=await request.post(base+'/api/enquiries',{data:{...duplicatePayload,date:'2020-01-01'}});assert.equal(past.status(),422);assert.ok((await past.json()).fields.date);
 assert.deepEqual(errors,[]);
-console.log('PASS: cinematic autoplay, six journeys, filters/search/sort/finder, saved persistence, compare limit/table, route pages, itinerary downloads, keyboard tabs, 3-step enquiry + SQLite receipt, nested privacy dialog, brief download, journal, persistent checklist, motion controls, film, 4 responsive widths, mobile menu, reduced motion, 404 page, API validation/origin/size/privacy/idempotency.');
+console.log('PASS: original-logo placements and brand icons, cinematic autoplay, six journeys, filters/search/sort/finder, saved persistence, compare limit/table, route pages, itinerary downloads, keyboard tabs, 3-step enquiry + SQLite receipt, nested privacy dialog, brief download, journal, persistent checklist, motion controls, film, 4 responsive widths, mobile menu, reduced motion, 404 page, API validation/origin/size/privacy/idempotency.');
 }finally{
  // Test records contain no real personal data; remove them after verifying storage.
  if(savedReference){const db=new DatabaseSync('.data/enquiries.sqlite');db.prepare('DELETE FROM enquiries WHERE id=? AND email=?').run(savedReference,email);db.close();}

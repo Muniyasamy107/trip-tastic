@@ -160,3 +160,12 @@ idempotency and the absence of a public personal-data API. QA records use reserv
 `npm run visual:check` creates ignored desktop/mobile screenshots for review.
 The browser helper uses npm-distributed Chromium and its bundled Linux libraries;
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can override the executable.
+
+## Original logo placements
+
+The supplied `trip-tastic-logo.jpeg` is used, uncropped and without colour filters,
+in the desktop/mobile/sticky header, footer, About section, enquiry planner and
+receipt area, and cinematic player branding. Browser favicons, Apple/home-screen
+icons, web-app manifest icons and the share-preview image are generated from the
+same original artwork, rather than the former generic road icon. Regenerate them
+with `.venv/bin/python scripts/brand-assets.py` (Pillow required).
