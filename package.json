@@ -1,0 +1,29 @@
+{
+  "name": "trip-tastic",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "node scripts/test.mjs",
+    "render:film": ".venv/bin/python scripts/photoreal-film.py",
+    "start": "node server.mjs",
+    "enquiries": "node scripts/enquiries.mjs",
+    "visual:check": "node scripts/visual-check.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.0",
+    "@sparticuz/chromium": "^153.0.0",
+    "vite": "^6.1.0"
+  },
+  "dependencies": {
+    "@fontsource-variable/cormorant-garamond": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "gsap": "^3.15.0"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  }
+}
