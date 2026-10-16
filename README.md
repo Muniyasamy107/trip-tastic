@@ -121,8 +121,11 @@ used. The original provided logo remains in the repository and About section.
 The header now streams **“A Jeep Moving on the Road” by Syam Krishnan / Pexels**
 (clip 9117219), a landscape driving film with Kerala/Munnar publisher metadata.
 It is not the rejected photo/car-cutout animation. The poster is an actual preview
-of that film, and the custom scenic-aperture layout keeps the footage separate
-from the editorial headline. A slim in-frame progress line tracks the single film.
+of that film, and the full-bleed layout covers the entire header on desktop and phones. Dark emerald
+gradients, champagne-gold accents and oversized editorial typography provide the
+royal presentation without replacing the filmed movement with animation. Landscape
+footage uses responsive cover cropping on narrow screens. A slim progress line
+tracks the same single film.
 
 Source and licence: [`public/media/FOOTAGE-LICENSE.md`](public/media/FOOTAGE-LICENSE.md).
 This is non-exclusive licensed stock, not a commissioned/exclusive shoot. Its
