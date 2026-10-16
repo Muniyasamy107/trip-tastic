@@ -15,10 +15,20 @@ db.exec(`PRAGMA journal_mode=WAL; CREATE TABLE IF NOT EXISTS enquiries (
 const limits=new Map();
 function json(res,status,data){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(data));}
 function clean(value,max=200){return typeof value==='string'?value.trim().replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g,'').slice(0,max):'';}
-export function api(req,res,next){
+export function api(req,res,next,{mediaRoot=path.resolve('public/media')}={}){
  const pathname=new URL(req.url,'http://localhost').pathname;
  if(!pathname.startsWith('/api/'))return next?.();
  if(req.method==='GET' && pathname==='/api/health')return json(res,200,{ok:true,service:'Trip-Tastic enquiries'});
+ if(req.method==='GET' && pathname==='/api/hero-film'){
+  const file=path.join(mediaRoot,'hero-road-trip.mp4');
+  try{
+   const stat=fs.statSync(file);
+   if(!stat.isFile()||stat.size===0)return json(res,200,{available:false});
+   const poster=fs.existsSync(path.join(mediaRoot,'hero-road-trip-poster.jpg'))?'/media/hero-road-trip-poster.jpg':null;
+   return json(res,200,{available:true,src:'/media/hero-road-trip.mp4',revision:`${stat.size}-${stat.mtimeMs}`,poster});
+  }catch{return json(res,200,{available:false});}
+ }
+
  if(pathname!=='/api/enquiries')return json(res,404,{error:'Not found.'});
  if(req.method!=='POST')return json(res,405,{error:'Method not allowed.'});
  const origin=req.headers.origin;

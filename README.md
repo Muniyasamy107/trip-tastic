@@ -60,17 +60,17 @@ single-server backend; scale-out needs shared storage or a managed database.
 - Three readable journal pages and a persistent interactive packing checklist.
 - Responsive navigation, native focus-trapping dialogs, nested privacy details,
   Escape dismissal, meaningful empty/error/404 states and keyboard focus styles.
-- GSAP headline entrances and scroll reveals, a scrubbed hero parallax,
+- GSAP headline entrances and scroll reveals,
   image/CTA interactions, route tracing, rotating seal, marquee and scroll progress.
 - Decorative-motion pause/play, reduced-motion preferences (including live
-  changes), silent inline video autoplay, offscreen decode pausing and a larger
-  cinematic player.
+  changes), a single owner-footage player with offscreen pausing and an enlarged
+  view. A supplied film plays once; it is not looped or duplicated.
 
 ## Enquiries: real storage, not a simulated success screen
 
 `POST /api/enquiries` validates the request, requires consent and stores accepted
-requests in `.data/enquiries.sqlite`. `GET /api/health` is the only public read
-endpoint. **There is no public enquiry-list or personal-data retrieval API.**
+requests in `.data/enquiries.sqlite`. Public read endpoints are `GET /api/health`
+and `GET /api/hero-film` (film availability only). **There is no public enquiry-list or personal-data retrieval API.**
 
 Protections include same-origin checks, JSON-only POSTs, a 16 KB body limit,
 server-side field/date/party-size validation, a honeypot, request rate limits,
@@ -114,26 +114,39 @@ used. The original provided logo remains in the repository and About section.
 
 ## Visuals and transparency
 
-The current hero is an **AI-created photoreal animated scene**, not real filmed
-footage. A photographic-style SUV cutout travels along a clean road plate with
-perspective scaling, camera drift and a cyclic dissolve. It replaces the previous
-low-poly scene. The 15-second 1376×768 MP4 is about 2.1 MB and is hosted locally.
+### Real-footage header: replacement file still required
 
-Destination/editorial images are also original AI-created mood visuals. They are
-not evidence of an exact property, vehicle, included activity or destination view.
-The film player, image descriptions and Visuals & Transparency panel disclose
-this. Before using actual stock footage, verify its licence and attribution.
+The rejected car-cutout animation and its generator have been removed. **There is
+currently no approved real filmed clip in this repository.** Until the owner
+supplies one, the header deliberately shows a static AI-created creative image;
+the film button is hidden. It does not pretend that the image is real footage.
+Hero image zoom/parallax has also been removed rather than simulating a camera.
 
-To regenerate the cinematic film:
+To add the actual footage locally:
 
-```sh
-python -m venv .venv
-.venv/bin/pip install pillow imageio-ffmpeg
-npm run render:film
-```
+1. Obtain an original or properly licensed South India hill-road driving clip,
+   ideally a landscape H.264 MP4 (with actual vehicle/camera/landscape motion).
+2. Save it as **`public/media/hero-road-trip.mp4`**. Optionally add a real frame as
+   `public/media/hero-road-trip-poster.jpg`.
+3. Restart the dev server, or run `npm run build` and restart production.
+4. Verify the location, licence and any required credits before public launch.
 
-The source photograph and clean plate are in `public/media/`; temporary render
-files stay in ignored `.cache/`. `scripts/photoreal-film.py` documents the process.
+`/api/hero-film` checks the appropriate public/build media directory. No broken
+movie URL is requested when the file is missing. Corrupt/unsupported files fall
+back to the still image without a misleading film button.
+
+There is exactly **one** video element. Enlarging the film moves that same element
+into the dialog without rewinding or creating another player. It plays once and
+stops; scrolling, SPA navigation, closing the dialog and motion toggles cannot
+restart a completed film. Completion and a captured final frame are kept in
+session storage, so refreshing the same tab shows that final frame without
+requesting the movie again. If session storage is blocked, the in-memory guard
+still prevents replay within the current page. Replacing the file creates a new
+revision, allowing that genuinely new film to be shown once.
+
+Destination/editorial images remain original AI-created mood visuals, not evidence
+of an exact property, vehicle, included activity or destination view. The Visuals
+& Transparency panel explains the difference.
 
 Manrope and Cormorant Garamond fonts are self-hosted under the SIL Open Font
 License. Their licences are in `public/fonts/`.
@@ -149,7 +162,10 @@ npm run build
 
 For the production server: `TEST_URL=http://localhost:3000 npm test`.
 
-The browser/API suite checks actual video playback; filters/search/sorting/finder;
+The browser/API suite uses a small synthetic colour-chart fixture (intercepted
+in browser tests only, never deployed as hero footage) to check video playback,
+no-loop behaviour, a single shared player, final-frame/session persistence and
+the missing-footage fallback; filters/search/sorting/finder;
 save persistence; comparison limits; route pages; keyboard tabs; downloads; all
 three enquiry steps; **the actual saved SQLite record**; nested dialogs; journal;
 packing persistence; motion controls; responsive widths (360/390/768/1440); mobile

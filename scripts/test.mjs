@@ -1,18 +1,33 @@
 import { launchBrowser } from './browser.mjs';
+import { filmFixture } from './film-fixture.mjs';
+import { api } from '../server/api.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 const base=process.env.TEST_URL||'http://localhost:5173';
+fs.mkdirSync('.cache',{recursive:true});
+const testMedia=fs.mkdtempSync('.cache/hero-metadata-');
+try{
+ const readMetadata=()=>{let output;api({method:'GET',url:'/api/hero-film'},{writeHead(status){assert.equal(status,200);},end(body){output=JSON.parse(body);}},()=>assert.fail('Media metadata route was not handled'),{mediaRoot:testMedia});return output;};
+ assert.deepEqual(readMetadata(),{available:false});
+ fs.writeFileSync(`${testMedia}/hero-road-trip.mp4`,'');assert.deepEqual(readMetadata(),{available:false});
+ fs.copyFileSync(new URL('./fixtures/player-test.mp4',import.meta.url),`${testMedia}/hero-road-trip.mp4`);
+ const metadata=readMetadata();assert.equal(metadata.available,true);assert.equal(metadata.src,'/media/hero-road-trip.mp4');assert.equal(metadata.poster,null);assert.ok(metadata.revision);
+ fs.copyFileSync('public/trip-tastic-logo.jpeg',`${testMedia}/hero-road-trip-poster.jpg`);assert.equal(readMetadata().poster,'/media/hero-road-trip-poster.jpg');
+}finally{fs.rmSync(testMedia,{recursive:true,force:true});}
+
 const browser=await launchBrowser();
-const page=await browser.newPage({viewport:{width:1440,height:1000}});
+const context=await browser.newContext({viewport:{width:1440,height:1000}});
+const page=await context.newPage();
 const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await filmFixture(page);
 const future=new Date();future.setDate(future.getDate()+40);const date=future.toISOString().slice(0,10);
 const email=`qa-${Date.now()}@example.test`;
 let savedReference;
 try{
 await page.goto(base);await page.waitForFunction(()=>document.querySelector('#hero-video').currentTime>.2);
 assert.ok(Math.abs(await page.locator('#hero-video').evaluate(v=>v.duration)-15)<.15);
-assert.equal(await page.locator('#hero-video').evaluate(v=>v.muted&&v.loop&&v.playsInline),true);
+assert.equal(await page.locator('#hero-video').evaluate(v=>v.muted&&!v.loop&&v.playsInline),true);
 await page.waitForTimeout(1600);
 assert.equal(await page.locator('#journey-grid .journey-card').count(),6);
 for(const selector of ['.site-header .brand-logo','.site-footer .brand-logo','.about-mark img']){
@@ -57,7 +72,12 @@ const db=new DatabaseSync('.data/enquiries.sqlite');const row=db.prepare('SELECT
 await page.getByRole('button',{name:'Close journey planner',exact:true}).click();
 await page.goto(base+'/#/journal/packing-light');assert.match(await page.locator('.article-hero h1').innerText(),/Pack lighter/);await page.locator('#article-packing').click();await page.getByRole('checkbox',{name:'Photo ID & travel documents',exact:true}).check();assert.match(await page.locator('#packing-progress').innerText(),/1 of 12/);await page.getByRole('button',{name:'Close window',exact:true}).click();await page.reload();await page.locator('#article-packing').click();assert.equal(await page.getByRole('checkbox',{name:'Photo ID & travel documents',exact:true}).isChecked(),true);await page.locator('#reset-packing').click();assert.match(await page.locator('#packing-progress').innerText(),/0 of 12/);await page.keyboard.press('Escape');
 await page.goto(base);await page.waitForTimeout(1300);await page.getByRole('button',{name:'Pause decorative motion',exact:true}).click();assert.equal(await page.locator('#hero-video').evaluate(v=>v.paused),true);assert.equal(await page.locator('.statement-marquee>div').evaluate(e=>getComputedStyle(e).animationPlayState),'paused');
-await page.getByRole('button',{name:'Play decorative motion',exact:true}).click();await page.locator('#watch-film').click();await page.waitForFunction(()=>document.querySelector('#film-dialog video').currentTime>.15);assert.equal(await page.locator('#hero-video').evaluate(v=>v.paused),true);await page.keyboard.press('Escape');
+await page.getByRole('button',{name:'Play decorative motion',exact:true}).click();
+await page.evaluate(()=>{window.originalPlayer=document.querySelector('#hero-video');window.originalTime=window.originalPlayer.currentTime;});
+await page.locator('#watch-film').click();await page.waitForFunction(()=>document.querySelector('#film-dialog video')?.currentTime>.15);
+assert.equal(await page.locator('video').count(),1);assert.equal(await page.evaluate(()=>document.querySelector('#film-dialog video')===window.originalPlayer),true);
+assert.equal(await page.evaluate(()=>document.querySelector('#hero-video').currentTime>=window.originalTime-.1),true);
+await page.keyboard.press('Escape');await page.locator('.hero-visual #hero-video').waitFor();assert.equal(await page.locator('.hero-visual #hero-video').count(),1);
 for(const width of [360,390,768,1440]){await page.setViewportSize({width,height:844});await page.waitForTimeout(100);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`Horizontal overflow at ${width}`);}
 await page.setViewportSize({width:390,height:844});assert.equal(await page.locator('.site-header .brand-logo').isVisible(),true);await page.getByRole('button',{name:'Open menu',exact:true}).click();await page.locator('.main-nav').getByRole('link',{name:'Road notes',exact:true}).click();assert.equal(await page.locator('#menu-toggle').getAttribute('aria-expanded'),'false');
 await page.emulateMedia({reducedMotion:'reduce'});await page.waitForFunction(()=>document.documentElement.classList.contains('motion-paused'));assert.equal(await page.locator('#hero-video').evaluate(v=>v.paused),true);
@@ -75,7 +95,27 @@ const duplicatePayload={name:'Automated QA',email,destination:'munnar-mist',date
 const duplicate=await request.post(base+'/api/enquiries',{data:duplicatePayload});assert.equal(duplicate.status(),200);assert.equal((await duplicate.json()).reference,savedReference);
 const past=await request.post(base+'/api/enquiries',{data:{...duplicatePayload,date:'2020-01-01'}});assert.equal(past.status(),422);assert.ok((await past.json()).fields.date);
 assert.deepEqual(errors,[]);
-console.log('PASS: original-logo placements and brand icons, cinematic autoplay, six journeys, filters/search/sort/finder, saved persistence, compare limit/table, route pages, itinerary downloads, keyboard tabs, 3-step enquiry + SQLite receipt, nested privacy dialog, brief download, journal, persistent checklist, motion controls, film, 4 responsive widths, mobile menu, reduced motion, 404 page, API validation/origin/size/privacy/idempotency.');
+// Verify the unconfigured site never downloads or plays the rejected animation.
+const fallback=await page.context().newPage();await filmFixture(fallback,{available:false});const fallbackRequests=[];fallback.on('request',r=>fallbackRequests.push(r.url()));
+await fallback.goto(base);await fallback.waitForTimeout(400);
+assert.equal(await fallback.locator('#watch-film').isVisible(),false);
+assert.equal(await fallback.locator('#hero-video').evaluate(v=>!v.getAttribute('src')&&v.paused),true);
+assert.equal(fallbackRequests.some(url=>url.includes('cinematic-drive.mp4')),false);
+await fallback.close();
+// A completed film stays completed after scroll, SPA navigation, motion toggles,
+// enlargement and page reload in the same tab. No duplicate media element.
+const once=await page.context().newPage();await once.setViewportSize({width:1440,height:1000});await filmFixture(once);await once.goto(base);
+await once.waitForFunction(()=>document.querySelector('#hero-video').currentTime>.1);
+await once.locator('#hero-video').evaluate(v=>{v.currentTime=v.duration-.25;v.play();});
+await once.waitForFunction(()=>document.querySelector('#hero-video').ended);
+await once.evaluate(()=>scrollTo({top:innerHeight*2,behavior:'instant'}));await once.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
+await once.getByRole('button',{name:'Pause decorative motion',exact:true}).click();await once.getByRole('button',{name:'Play decorative motion',exact:true}).click();
+await once.evaluate(()=>location.hash='/journey/nilgiri-slowdown');await once.locator('.detail-hero h1').waitFor();await once.evaluate(()=>location.hash='');await once.locator('.hero').waitFor();
+await once.locator('#watch-film').click();assert.equal(await once.locator('video').count(),1);assert.equal(await once.locator('#hero-video').evaluate(v=>v.paused&&v.currentTime>14.8),true);await once.keyboard.press('Escape');
+const repeatedRequests=[];once.on('request',r=>repeatedRequests.push(r.url()));
+await once.reload();await once.waitForFunction(()=>document.querySelector('#hero-video').poster.startsWith('data:image/jpeg'));
+await once.waitForTimeout(500);assert.equal(await once.locator('#hero-video').evaluate(v=>v.paused&&!v.loop&&!v.getAttribute('src')),true);assert.equal(repeatedRequests.some(url=>url.endsWith('/media/hero-road-trip.mp4')),false);await once.close();
+console.log('PASS: owner-footage fallback, single shared player, once-only/session-persistent playback, original-logo placements and brand icons, test-fixture autoplay, six journeys, filters/search/sort/finder, saved persistence, compare limit/table, route pages, itinerary downloads, keyboard tabs, 3-step enquiry + SQLite receipt, nested privacy dialog, brief download, journal, persistent checklist, motion controls, film, 4 responsive widths, mobile menu, reduced motion, 404 page, API validation/origin/size/privacy/idempotency.');
 }finally{
  // Test records contain no real personal data; remove them after verifying storage.
  if(savedReference){const db=new DatabaseSync('.data/enquiries.sqlite');db.prepare('DELETE FROM enquiries WHERE id=? AND email=?').run(savedReference,email);db.close();}

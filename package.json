@@ -8,7 +8,6 @@
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "node scripts/test.mjs",
-    "render:film": ".venv/bin/python scripts/photoreal-film.py",
     "start": "node server.mjs",
     "enquiries": "node scripts/enquiries.mjs",
     "visual:check": "node scripts/visual-check.mjs"

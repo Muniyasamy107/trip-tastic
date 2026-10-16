@@ -22,5 +22,5 @@ http.createServer((req,res)=>{
  if(start> end||start>=size){res.writeHead(416,{'Content-Range':`bytes */${size}`});return res.end();}
  res.writeHead(206,{'Content-Range':`bytes ${start}-${end}/${size}`,'Content-Length':end-start+1});if(req.method==='HEAD')return res.end();return fs.createReadStream(file,{start,end}).pipe(res);}
  res.writeHead(200,{'Content-Length':size});if(req.method==='HEAD')return res.end();fs.createReadStream(file).pipe(res);
- });
+ },{mediaRoot:path.join(root,'media')});
 }).listen(Number(process.env.PORT)||3000,'0.0.0.0',()=>console.log(`Trip-Tastic is live on port ${process.env.PORT||3000}`));
