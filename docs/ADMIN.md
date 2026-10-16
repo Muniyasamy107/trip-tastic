@@ -82,15 +82,41 @@ estimates—not live inventory, offers, confirmed supplier rates or payment char
 
 ### Social & contact
 
-Publish your **actual** business WhatsApp number (country code included) and HTTPS
-Instagram profile URL. No contact details were invented: the user has not supplied
-them yet. Until configured, the styled footer channels are visibly disabled and
-have no outbound URL. Emptying a field disables that channel again.
+The owner-supplied public business contacts are prefilled:
 
-Only international WhatsApp numbers and plain Instagram profile URLs are accepted;
-redirects, other hosts, credentials, tracking parameters and non-profile paths are
-rejected. These settings are deliberately public business contact information.
-They are separate from a customer's private contact details/WhatsApp consent.
+- Call: **+91 73032 15348** (`tel:+917303215348`), also available in the header.
+- Email: **triptasticholidays1430@gmail.com**.
+- WhatsApp: **+91 73032 15348**.
+- Instagram: **https://www.instagram.com/triptastic_holidays_/** (trailing
+  underscore retained; QR/referral tracking removed).
+
+Edit all four in **Social & contact**. Clearing a field disables that channel after
+public settings load. A fresh or previously untouched installation gets these
+supplied defaults. Existing owner-edited socials are preserved; migration adds
+phone/email without clearing prices, enquiries or account data. Once an owner
+changes/clears a field, restarts and builds do not reseed it. The original supplied
+contacts are also the HTML fallback if JavaScript/the settings API is unavailable.
+
+Call links open a device's dialer/calling app; laptops need a configured calling
+application. Email links open an email app. Neither action places a call or sends
+an email automatically. WhatsApp availability depends on the number's WhatsApp
+account and the visitor's app/browser; publishing a link does not verify ownership
+or delivery. No external contact action is triggered by tests.
+
+International call/WhatsApp numbers, valid business emails and plain Instagram
+profile URLs are accepted. Instagram redirects, other hosts, credentials, tracking
+parameters and non-profile paths are rejected. These are deliberately public
+business contacts, separate from customers' private enquiry data/WhatsApp consent.
+
+### Responsive verification
+
+`npm run test:contacts` runs browser checks against the running app (`TEST_URL`
+overrides localhost:5173). It covers 320, 360, 390, 768, 820, 1024, 1280, 1440 and
+1920-pixel widths, plus 844×390 landscape: document overflow, header collisions,
+44px contact targets, mobile menu, planner width and contact URL propagation.
+`npm run test:admin` independently tests persistence, migration, validation and
+public contact updates from the owner studio. Tests emulate representative screen
+sizes; they do not claim physical-device, OS dialer or email-delivery verification.
 
 ### Account security
 

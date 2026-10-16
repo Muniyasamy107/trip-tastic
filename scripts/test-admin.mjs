@@ -3,12 +3,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {createServer} from 'vite';
 import {spawnSync} from 'node:child_process';
+import {DatabaseSync} from 'node:sqlite';
+import {businessContacts} from '../business-contacts.js';
 import {launchBrowser} from './browser.mjs';
 import {thumbnailFixture} from './thumbnail-fixture.mjs';
 fs.mkdirSync('.cache',{recursive:true});
 const directory=fs.mkdtempSync('.cache/admin-qa-');process.env.DATA_DIR=path.resolve(directory);delete process.env.PUBLIC_ORIGIN;delete process.env.TRUST_PROXY;
 const {api,db}=await import('../server/api.mjs');
-const {createAdminAccount}=await import('../server/admin.mjs');
+const {createAdminAccount,initializeAdminSchema}=await import('../server/admin.mjs');
+const legacy=new DatabaseSync(':memory:');legacy.exec("CREATE TABLE enquiries(id TEXT PRIMARY KEY);CREATE TABLE site_settings(id INTEGER PRIMARY KEY,whatsapp TEXT,instagram TEXT,version INTEGER);INSERT INTO site_settings VALUES(1,'14155552671','https://www.instagram.com/previous.owner/',7)");initializeAdminSchema(legacy);assert.equal(legacy.prepare('SELECT whatsapp FROM site_settings').get().whatsapp,'14155552671');assert.equal(legacy.prepare('SELECT phone FROM site_settings').get().phone,businessContacts.phone);legacy.exec("UPDATE site_settings SET whatsapp='',instagram='',phone='',email='',version=8");initializeAdminSchema(legacy);assert.equal(legacy.prepare('SELECT phone FROM site_settings').get().phone,'');assert.equal(legacy.prepare('SELECT whatsapp FROM site_settings').get().whatsapp,'');legacy.close();
 const server=await createServer({configFile:false,root:process.cwd(),logLevel:'error',server:{host:'127.0.0.1',port:4187,strictPort:false},plugins:[{name:'private-admin-qa-api',configureServer(s){s.middlewares.use(api);}}]});
 let browser;
 try{
@@ -31,8 +34,10 @@ try{
  assert.equal((await request(pricePath,'PUT',{min:-1,max:1,version:initial.version})).response.status,422);
  assert.equal((await request(pricePath,'PUT',{min:31000,max:42000,version:initial.version})).response.status,200);
  assert.equal((await request(pricePath,'PUT',{min:33000,max:44000,version:initial.version})).response.status,409);
- const published=(await request('/api/site-settings','GET',undefined,{authorized:false})).data;assert.equal(published.prices.find(p=>p.id===initial.id).min,31000);assert.equal(JSON.stringify(published).includes('password'),false);
+ const published=(await request('/api/site-settings','GET',undefined,{authorized:false})).data;assert.equal(published.prices.find(p=>p.id===initial.id).min,31000);assert.equal(published.socials.phone,businessContacts.phone);assert.equal(published.socials.email,businessContacts.email);assert.equal(published.socials.instagram,businessContacts.instagram);assert.equal(JSON.stringify(published).includes('password'),false);
  const version=(await request('/api/admin/settings')).data.version;
+ assert.equal((await request('/api/admin/settings','PUT',{phone:'not-a-number',email:businessContacts.email,version})).response.status,422);
+ assert.equal((await request('/api/admin/settings','PUT',{phone:businessContacts.phone,email:'broken\r\nBcc:attacker@example.test',version})).response.status,422);
  assert.equal((await request('/api/admin/settings','PUT',{whatsapp:'123',instagram:'javascript:alert(1)',version})).response.status,422);
  assert.equal((await request('/api/admin/settings','PUT',{whatsapp:'+14155552671',instagram:'https://www.instagram.com/triptastic.qa/',version})).response.status,200);
  assert.equal((await request('/api/admin/settings','PUT',{whatsapp:'',instagram:'',version})).response.status,409);
@@ -56,8 +61,8 @@ try{
  await page.locator(`[data-enquiry="${noWhatsapp.data.reference}"]`).click();assert.equal(await page.locator('#whatsapp-draft').getAttribute('aria-disabled'),'true');assert.equal(await page.locator('#whatsapp-draft').getAttribute('href'),null);
  await page.locator(`[data-enquiry="${ref}"]`).click();await page.locator('#status-form select').selectOption('contacted');await page.locator('#status-form button').click();await page.locator('#studio-notice').filter({hasText:'Follow-up status saved'}).waitFor();assert.equal(db.prepare('SELECT status FROM enquiries WHERE id=?').get(ref).status,'contacted');
  await page.locator('[data-tab=pricing]').click();const priceForm=page.locator(`[data-price="${initial.id}"]`);await priceForm.locator('[name=min]').fill('32000');await priceForm.locator('[name=max]').fill('44000');await priceForm.locator('button').click();await priceForm.locator('.row-feedback').filter({hasText:'Saved.'}).waitFor();
- const publicPage=await context.newPage();await publicPage.emulateMedia({reducedMotion:'reduce'});await thumbnailFixture(publicPage);await publicPage.goto(base);await publicPage.locator(`[data-journey="${initial.id}"] .card-budget`).filter({hasText:'32,000'}).waitFor();assert.match(await publicPage.locator('#footer-whatsapp').getAttribute('href'),/14155552671/);assert.equal(await publicPage.locator('#footer-instagram').getAttribute('href'),'https://www.instagram.com/triptastic.qa/');await publicPage.close();
- await page.locator('[data-tab=settings]').click();await page.locator('#settings-form [name=whatsapp]').fill('+14155552672');await page.locator('#settings-form button').click();await page.locator('#studio-notice').filter({hasText:'contact links saved'}).waitFor();assert.equal(db.prepare('SELECT whatsapp FROM site_settings WHERE id=1').get().whatsapp,'14155552672');
+ const publicPage=await context.newPage();await publicPage.emulateMedia({reducedMotion:'reduce'});await thumbnailFixture(publicPage);await publicPage.goto(base);await publicPage.locator(`[data-journey="${initial.id}"] .card-budget`).filter({hasText:'32,000'}).waitFor();assert.match(await publicPage.locator('#footer-whatsapp').getAttribute('href'),/14155552671/);assert.equal(await publicPage.locator('#footer-instagram').getAttribute('href'),'https://www.instagram.com/triptastic.qa/');assert.equal(await publicPage.locator('#footer-call').getAttribute('href'),`tel:+${businessContacts.phone}`);assert.equal(await publicPage.locator('#footer-email').getAttribute('href'),`mailto:${businessContacts.email}`);
+ await page.locator('[data-tab=settings]').click();await page.locator('#settings-form [name=whatsapp]').fill('+14155552672');await page.locator('#settings-form [name=phone]').fill('+14155552673');await page.locator('#settings-form [name=email]').fill('business-qa@example.test');await page.locator('#settings-form button').click();await page.locator('#studio-notice').filter({hasText:'contact links saved'}).waitFor();assert.equal(db.prepare('SELECT whatsapp FROM site_settings WHERE id=1').get().whatsapp,'14155552672');await publicPage.evaluate(()=>window.dispatchEvent(new Event('focus')));await publicPage.waitForFunction(()=>document.querySelector('#footer-call').getAttribute('href')==='tel:+14155552673');assert.equal(await publicPage.locator('#footer-email').getAttribute('href'),'mailto:business-qa@example.test');await publicPage.close();
  for(const width of [390,768,1440]){await page.setViewportSize({width,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`Admin overflow at ${width}`);}
  await page.screenshot({path:'.cache/admin-studio-settings.png'});
  await page.locator('[data-tab=inbox]').click();await page.locator(`[data-enquiry="${ref}"]`).click();page.once('dialog',d=>d.accept());await page.locator('#delete-enquiry').click();await page.locator('#studio-notice').filter({hasText:'Enquiry deleted'}).waitFor();assert.equal(db.prepare('SELECT id FROM enquiries WHERE id=?').get(ref),undefined);

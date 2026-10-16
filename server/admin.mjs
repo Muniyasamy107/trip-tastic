@@ -1,5 +1,6 @@
 import {randomBytes,scryptSync,timingSafeEqual,createHash} from 'node:crypto';
 import {journeys} from '../journeys.js';
+import {businessContacts} from '../business-contacts.js';
 const SESSION_MS=8*60*60*1000;
 const digest=value=>createHash('sha256').update(value).digest('hex');
 const hashPassword=password=>{const salt=randomBytes(16).toString('hex');return `${salt}:${scryptSync(password,salt,64).toString('hex')}`;};
@@ -22,6 +23,12 @@ export function initializeAdminSchema(db){
  CREATE TABLE IF NOT EXISTS site_settings(id INTEGER PRIMARY KEY CHECK(id=1),whatsapp TEXT NOT NULL DEFAULT '',instagram TEXT NOT NULL DEFAULT '',version INTEGER NOT NULL DEFAULT 0);
  INSERT OR IGNORE INTO site_settings(id) VALUES(1);
  CREATE TABLE IF NOT EXISTS admin_audit(id INTEGER PRIMARY KEY,created_at TEXT NOT NULL,action TEXT NOT NULL,target TEXT NOT NULL);`);
+ const settingColumns=db.prepare('PRAGMA table_info(site_settings)').all().map(c=>c.name);
+ if(!settingColumns.includes('phone')){db.exec("ALTER TABLE site_settings ADD COLUMN phone TEXT NOT NULL DEFAULT ''");db.prepare('UPDATE site_settings SET phone=? WHERE id=1').run(businessContacts.phone);}
+ if(!settingColumns.includes('email')){db.exec("ALTER TABLE site_settings ADD COLUMN email TEXT NOT NULL DEFAULT ''");db.prepare('UPDATE site_settings SET email=? WHERE id=1').run(businessContacts.email);}
+ // Fill previously unconfigured installs only. Owner edits/intentional clearing
+ // (version > 0) survive restarts and future builds.
+ db.prepare("UPDATE site_settings SET whatsapp=?,instagram=? WHERE id=1 AND version=0 AND whatsapp='' AND instagram=''").run(businessContacts.whatsapp,businessContacts.instagram);
  const columns=db.prepare('PRAGMA table_info(enquiries)').all().map(c=>c.name);
  if(!columns.includes('status'))db.exec("ALTER TABLE enquiries ADD COLUMN status TEXT NOT NULL DEFAULT 'new'");
  if(!columns.includes('whatsapp_consent'))db.exec('ALTER TABLE enquiries ADD COLUMN whatsapp_consent INTEGER NOT NULL DEFAULT 0');
@@ -41,7 +48,7 @@ export function createAdminApi(db){
  const session=req=>{const raw=String(req.headers.cookie||'').split(';').map(s=>s.trim()).find(s=>s.startsWith('tt_admin_session='))?.slice('tt_admin_session='.length);if(!raw||!/^[a-f0-9]{64}$/.test(raw))return null;const hash=digest(raw);const row=db.prepare('SELECT * FROM admin_sessions WHERE token_hash=? AND expires_at>?').get(hash,Date.now());return row?{...row,hash}:null;};
  return async function adminApi(req,res){
   const url=new URL(req.url,'http://localhost'),pathname=url.pathname;
-  if(pathname==='/api/site-settings'&&req.method==='GET'){try{return json(res,200,{prices:db.prepare('SELECT id,min,max,version FROM journey_prices').all(),socials:db.prepare('SELECT whatsapp,instagram,version FROM site_settings WHERE id=1').get()});}catch{return json(res,503,{error:'Published settings are temporarily unavailable.'});}}
+  if(pathname==='/api/site-settings'&&req.method==='GET'){try{return json(res,200,{prices:db.prepare('SELECT id,min,max,version FROM journey_prices').all(),socials:db.prepare('SELECT whatsapp,instagram,phone,email,version FROM site_settings WHERE id=1').get()});}catch{return json(res,503,{error:'Published settings are temporarily unavailable.'});}}
   if(!pathname.startsWith('/api/admin/'))return json(res,404,{error:'Not found.'});
   const mutation=!['GET','HEAD'].includes(req.method);
   if(mutation&&!originAllowed(req))return json(res,403,{error:'Use this website to make admin changes.'});
@@ -82,12 +89,14 @@ export function createAdminApi(db){
     const result=db.prepare('UPDATE journey_prices SET min=?,max=?,version=version+1,updated_at=? WHERE id=? AND version=?').run(raw.min,raw.max,new Date().toISOString(),id,raw.version);
     if(!result.changes)return json(res,409,{error:'This price changed in another session. Reload prices before saving.'});audit('price.update',id);return json(res,200,{price:db.prepare('SELECT * FROM journey_prices WHERE id=?').get(id)});
    }
-   if(pathname==='/api/admin/settings'&&req.method==='GET')return json(res,200,db.prepare('SELECT whatsapp,instagram,version FROM site_settings WHERE id=1').get());
+   if(pathname==='/api/admin/settings'&&req.method==='GET')return json(res,200,db.prepare('SELECT whatsapp,instagram,phone,email,version FROM site_settings WHERE id=1').get());
    if(pathname==='/api/admin/settings'&&req.method==='PUT'){
-    const raw=await body(req),phone=String(raw.whatsapp||'').replace(/[+\s()\-]/g,''),input=String(raw.instagram||'').trim();let instagram='';
+    const raw=await body(req),previous=db.prepare('SELECT phone,email FROM site_settings WHERE id=1').get(),callPhone=String(raw.phone??previous.phone).replace(/[+\s()\-]/g,''),email=String(raw.email??previous.email).trim().toLowerCase(),phone=String(raw.whatsapp||'').replace(/[+\s()\-]/g,''),input=String(raw.instagram||'').trim();let instagram='';
+    if(callPhone&&!/^[1-9]\d{7,14}$/.test(callPhone))return json(res,422,{error:'Use an international call number with country code (8–15 digits).'});
+    if(email&&(email.length>160||!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email)))return json(res,422,{error:'Enter a valid business email address.'});
     if(phone&&!/^[1-9]\d{7,14}$/.test(phone))return json(res,422,{error:'Use an international WhatsApp number with country code (8–15 digits).'});
     if(input){let u;try{u=new URL(input);}catch{}const match=u&&/^\/([a-zA-Z0-9._]{1,30})\/?$/.exec(u.pathname);if(!u||u.protocol!=='https:'||!['instagram.com','www.instagram.com'].includes(u.hostname)||u.port||u.username||u.password||u.search||u.hash||!match||['accounts','p','reel','reels','explore','direct','stories'].includes(match[1].toLowerCase()))return json(res,422,{error:'Use an https://www.instagram.com/your-profile/ link, without tracking parameters.'});instagram=`https://www.instagram.com/${match[1]}/`;}
-    if(!Number.isInteger(raw.version))return json(res,422,{error:'Reload settings before saving.'});const result=db.prepare('UPDATE site_settings SET whatsapp=?,instagram=?,version=version+1 WHERE id=1 AND version=?').run(phone,instagram,raw.version);
+    if(!Number.isInteger(raw.version))return json(res,422,{error:'Reload settings before saving.'});const result=db.prepare('UPDATE site_settings SET whatsapp=?,instagram=?,phone=?,email=?,version=version+1 WHERE id=1 AND version=?').run(phone,instagram,callPhone,email,raw.version);
     if(!result.changes)return json(res,409,{error:'Settings changed in another session. Reload before saving.'});audit('settings.update','socials');return json(res,200,{ok:true});
    }
    if(pathname==='/api/admin/enquiries'&&req.method==='GET'){

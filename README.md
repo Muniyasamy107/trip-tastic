@@ -23,7 +23,7 @@ embeds the selected YouTube film without needing a video download/upload. The se
 ## Super Admin / Owner Studio
 
 The private dashboard is **`/admin.html`**, with consented enquiry inbox,
-email/WhatsApp reply drafts, editable journey price ranges, verified footer social
+email/WhatsApp reply drafts, editable journey price ranges, business contact
 settings and password/session management. Anonymous visitors' emails cannot be
 identified; only submitted enquiries appear. Messages open your own apps and must
 be sent there manually—there is no automatic delivery service.
@@ -37,9 +37,18 @@ npm run dev -- --port 5173
 Open http://localhost:5173/admin.html and use the generated credentials. No live
 owner account or shared password is shipped. Recovery: `npm run admin:setup -- --reset`.
 Setup must run against the same private `DATA_DIR` as your server. Prices/contact
-links persist in SQLite and refresh publicly on reload/focus. Add your real
-business WhatsApp number and Instagram profile in **Social & contact**; footer
-channels remain disabled until those details are published.
+links persist in SQLite and refresh publicly on reload/focus. **Social & contact**
+lets you edit call, email, WhatsApp and Instagram channels. Owner-supplied defaults:
+**+91 73032 15348**, **triptasticholidays1430@gmail.com** and
+**https://www.instagram.com/triptastic_holidays_/**. Tap-to-call is available in the
+header and footer; email opens an email app. Calls/emails are not automatically
+placed/sent; desktops require a suitable configured app. Existing owner edits and
+intentional cleared fields are preserved. The supplied contacts remain the static
+HTML fallback if settings cannot load.
+
+Responsive contact checks: `npm run test:contacts` (running app required), covering
+10 phone/tablet/laptop/desktop/landscape viewports, 320–1920px widths. These are
+browser-emulated layouts, not a guarantee of every physical device/OS.
 
 Full setup/security/messaging/deployment guide: **[docs/ADMIN.md](docs/ADMIN.md)**.
 
