@@ -48,6 +48,8 @@ body {
   font-size: 16px;
   line-height: 1.6;
   overflow-x: hidden;
+  /* clip keeps position: sticky / ScrollTrigger pinning working */
+  overflow-x: clip;
   font-synthesis-weight: none;
 }
 
