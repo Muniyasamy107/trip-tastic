@@ -115,6 +115,15 @@ fields, shows a success state and offers a WhatsApp hand-off. To capture leads, 
 
 ## Motion notes
 
+- **Cinematic hero** — a four-shot sequence (Western Ghats → Ladakh → Ubud → Alleppey) crossfades behind the
+  headline every ~7s with a settle zoom, a live shot counter, an editorial caption and a one-off light sweep
+  when the intro curtain lifts.
+- **Journey rail** — a fixed dashed route with a plane that travels down it as you scroll (1360px+), with
+  ticks that light up for the section you're reading and label tooltips on hover.
+- **3D tilt cards** — destination portraits and postcards lean toward the pointer with a soft light glare
+  (pointer devices only).
+- **Curtain reveals** — story and way images wipe open with a clip-path curtain while the photo settles from
+  a slow zoom.
 - Lenis drives scrolling and is advanced from the GSAP ticker; every scroll animation uses `ScrollTrigger`.
 - `gsap.matchMedia()` owns the pinned destinations rail, so it only builds on desktop and fully reverts on
   resize or when the user prefers reduced motion.

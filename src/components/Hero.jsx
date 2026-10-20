@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { gsap, scrollToId } from '../lib/scroll'
 import { useIsoLayoutEffect } from '../lib/hooks'
 import { Magnetic, RotatingSeal } from './ui'
@@ -6,10 +6,17 @@ import { heroImg, destinations } from '../data'
 
 const featured = destinations[0]
 
+const shots = [
+  { src: heroImg, label: 'The western ghats, at dusk' },
+  { src: destinations[1].image, label: 'Pangong Tso, Ladakh' },
+  { src: destinations[3].image, label: 'Rice terraces, Ubud' },
+  { src: destinations[0].image, label: 'Backwaters, Alleppey' },
+]
+
 export default function Hero({ ready }) {
   const root = useRef(null)
   const media = useRef(null)
-  const img = useRef(null)
+  const [shot, setShot] = useState(0)
 
   // scroll parallax + pointer drift
   useIsoLayoutEffect(() => {
@@ -20,8 +27,8 @@ export default function Hero({ ready }) {
         ease: 'none',
         scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
       })
-      gsap.to(img.current, {
-        scale: 1.18,
+      gsap.to('.hero__slides', {
+        scale: 1.08,
         ease: 'none',
         scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
       })
@@ -34,7 +41,7 @@ export default function Hero({ ready }) {
 
       if (!window.matchMedia('(hover: none)').matches) {
         const xTo = gsap.quickTo(media.current, 'x', { duration: 1.4, ease: 'power3.out' })
-        const yTo = gsap.quickTo(img.current, 'y', { duration: 1.6, ease: 'power3.out' })
+        const yTo = gsap.quickTo('.hero__slides', 'y', { duration: 1.6, ease: 'power3.out' })
         const onMove = (e) => {
           const rx = e.clientX / window.innerWidth - 0.5
           const ry = e.clientY / window.innerHeight - 0.5
@@ -59,6 +66,7 @@ export default function Hero({ ready }) {
         .from('.hero__rail', { opacity: 0, duration: 1.2, stagger: 0.1 }, 0.1)
         .from('.hero__kicker > *', { y: 16, opacity: 0, duration: 0.9, stagger: 0.07 }, 0.15)
         .from('.hero__title .line > span', { yPercent: 116, rotate: 2, duration: 1.5, stagger: 0.12 }, 0.2)
+        .from('.hero__caption', { opacity: 0, y: 14, duration: 0.9 }, 0.6)
         .from('.hero__lower', { opacity: 0, y: 30, duration: 1.1 }, 0.75)
         .from('.hero__actions .btn', { opacity: 0, y: 18, duration: 0.9, stagger: 0.08 }, 0.9)
         .from('.hero__seal', { scale: 0.7, opacity: 0, duration: 1.2 }, 1)
@@ -68,18 +76,57 @@ export default function Hero({ ready }) {
     return () => ctx.revert()
   }, [ready])
 
+  // cinematic shot sequence — slow crossfades with a settle zoom
+  useIsoLayoutEffect(() => {
+    const host = media.current
+    if (!host) return
+    const els = Array.from(host.querySelectorAll('.hero__slide'))
+    if (!els.length) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    gsap.set(els, { opacity: 0, scale: 1.12 })
+    gsap.set(els[0], { opacity: 1, scale: 1.04 })
+
+    let idx = 0
+    const go = () => {
+      const cur = els[idx]
+      idx = (idx + 1) % els.length
+      const next = els[idx]
+      gsap.to(cur, { opacity: 0, duration: 1.7, ease: 'power2.inOut' })
+      gsap.fromTo(
+        next,
+        { opacity: 0, scale: 1.12 },
+        { opacity: 1, scale: 1.03, duration: 2, ease: 'power2.inOut' },
+      )
+      setShot(idx)
+    }
+
+    const id = window.setInterval(go, 6800)
+    return () => {
+      window.clearInterval(id)
+      gsap.killTweensOf(els)
+    }
+  }, [])
+
   return (
     <section className="hero" id="top" ref={root}>
       <div className="hero__bg" ref={media}>
-        <img
-          ref={img}
-          src={heroImg}
-          alt="A winding road through emerald mountains and a waterfall at sunset"
-          fetchPriority="high"
-        />
+        <div className="hero__slides">
+          {shots.map((item, i) => (
+            <div className={`hero__slide ${i === 0 ? 'is-active' : ''}`} key={item.src}>
+              <img
+                src={item.src}
+                alt={i === 0 ? 'A winding road through emerald mountains and a waterfall at sunset' : ''}
+                fetchPriority={i === 0 ? 'high' : 'low'}
+                loading={i === 0 ? 'eager' : 'lazy'}
+              />
+            </div>
+          ))}
+        </div>
       </div>
       <div className="hero__veil" />
       <div className="hero__glow" />
+      <span className="hero__sweep" aria-hidden="true" />
 
       <div className="hero__frame" aria-hidden="true">
         <span className="bracket bracket--tl" />
@@ -96,6 +143,9 @@ export default function Hero({ ready }) {
       <div className="hero__rail hero__rail--right" aria-hidden="true">
         <span>Scroll</span>
         <i />
+        <span className="hero__shotcount">
+          0{shot + 1} / 0{shots.length}
+        </span>
       </div>
 
       <div className="hero__content shell">
@@ -119,6 +169,11 @@ export default function Hero({ ready }) {
             </span>
           </span>
         </h1>
+
+        <p className="hero__caption" aria-hidden="true" key={shot}>
+          <span className="hero__caption-line" />
+          {shots[shot].label}
+        </p>
 
         <div className="hero__lower">
           <p className="hero__lede">

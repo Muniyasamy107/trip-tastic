@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { gsap, ScrollTrigger, scrollToId } from '../lib/scroll'
 import { useIsoLayoutEffect } from '../lib/hooks'
-import { SectionHead } from './ui'
+import { SectionHead, Tilt } from './ui'
 import { destinations } from '../data'
 
 function pick(name) {
@@ -77,8 +77,11 @@ export default function Destinations() {
         <div className="dest__track" ref={track}>
           {destinations.map((d, i) => (
             <article className="dest-card" key={d.id}>
-              <a
+              <Tilt
+                as="a"
+                max={6}
                 className="dest-card__media"
+                data-cursor="plan"
                 href="#enquiry"
                 onClick={(e) => {
                   e.preventDefault()
@@ -92,7 +95,7 @@ export default function Destinations() {
                   Plan this trip <span aria-hidden="true">↗</span>
                 </span>
                 <span className="dest-card__num">{String(i + 1).padStart(2, '0')}</span>
-              </a>
+              </Tilt>
               <div className="dest-card__body">
                 <div className="dest-card__title">
                   <h3>{d.name}</h3>

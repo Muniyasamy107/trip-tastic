@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { gsap, ScrollTrigger } from '../lib/scroll'
 import { useIsoLayoutEffect } from '../lib/hooks'
-import { SplitHeading, Reveal, Parallax, RotatingSeal } from './ui'
+import { SplitHeading, Reveal, Parallax, RotatingSeal, FrameReveal } from './ui'
 import { stats } from '../data'
 import ooty from '../assets/ooty.webp'
 import kerala from '../assets/kerala.webp'
@@ -71,9 +71,9 @@ export default function Story() {
         <div className="story__grid">
           <div className="story__visual">
             <Parallax speed={7}>
-              <div className="story__main frame">
+              <FrameReveal className="story__main frame">
                 <img src={ooty} alt="Misty tea plantations in the Nilgiri hills near Ooty" loading="lazy" />
-              </div>
+              </FrameReveal>
             </Parallax>
 
             <Parallax speed={-11} className="story__small">

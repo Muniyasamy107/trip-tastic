@@ -305,7 +305,7 @@
   isolation: isolate;
   background: var(--jade);
   box-shadow: 0 40px 80px -50px rgba(0, 0, 0, 0.95);
-  transition: transform 0.8s var(--ease-out), box-shadow 0.8s var(--ease);
+  transition: box-shadow 0.8s var(--ease);
 }
 .dest-card__media::before {
   content: '';
@@ -331,7 +331,6 @@
   filter: saturate(1.02);
 }
 .dest-card:hover .dest-card__media {
-  transform: translateY(-10px);
   box-shadow: 0 60px 100px -50px rgba(0, 0, 0, 1);
 }
 .dest-card:hover .dest-card__media img {

@@ -226,3 +226,90 @@ export function SectionHead({ index, label, title, aside, align = 'left' }) {
     </header>
   )
 }
+
+/* ------------------------------------------------------------------ *
+ * Tilt — pointer-reactive 3D card (disabled on touch / reduced motion)
+ * ------------------------------------------------------------------ */
+export function Tilt({ children, as: Tag = 'div', max = 7, className = '', ...rest }) {
+  const ref = useRef(null)
+
+  useIsoLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    gsap.set(el, { transformPerspective: 1000, transformStyle: 'preserve-3d' })
+    const rx = gsap.quickTo(el, 'rotationX', { duration: 0.55, ease: 'power3.out' })
+    const ry = gsap.quickTo(el, 'rotationY', { duration: 0.55, ease: 'power3.out' })
+    const sc = gsap.quickTo(el, 'scale', { duration: 0.6, ease: 'power3.out' })
+
+    const onMove = (e) => {
+      const r = el.getBoundingClientRect()
+      const px = (e.clientX - r.left) / r.width - 0.5
+      const py = (e.clientY - r.top) / r.height - 0.5
+      ry(px * max * 2)
+      rx(-py * max * 2)
+      el.style.setProperty('--tilt-x', `${(px + 0.5) * 100}%`)
+      el.style.setProperty('--tilt-y', `${(py + 0.5) * 100}%`)
+    }
+    const onEnter = () => sc(1.015)
+    const onLeave = () => {
+      rx(0)
+      ry(0)
+      sc(1)
+    }
+
+    el.addEventListener('pointermove', onMove)
+    el.addEventListener('pointerenter', onEnter)
+    el.addEventListener('pointerleave', onLeave)
+    return () => {
+      el.removeEventListener('pointermove', onMove)
+      el.removeEventListener('pointerenter', onEnter)
+      el.removeEventListener('pointerleave', onLeave)
+    }
+  }, [max])
+
+  return (
+    <Tag ref={ref} className={`tilt ${className}`} {...rest}>
+      {children}
+      <span className="tilt__glare" aria-hidden="true" />
+    </Tag>
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * FrameReveal — curtain wipe for images, with a slow settle zoom
+ * ------------------------------------------------------------------ */
+export function FrameReveal({ children, className = '', delay = 0 }) {
+  const ref = useRef(null)
+
+  useIsoLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const img = el.querySelector('img')
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: el, start: 'top 86%', once: true },
+      delay,
+    })
+    tl.fromTo(
+      el,
+      { clipPath: 'inset(0 0 100% 0)' },
+      { clipPath: 'inset(0 0 0% 0)', duration: 1.5, ease: 'expo.inOut' },
+    )
+    if (img) tl.fromTo(img, { scale: 1.22 }, { scale: 1, duration: 1.9, ease: 'expo.out' }, 0.12)
+
+    return () => {
+      tl.scrollTrigger?.kill()
+      tl.kill()
+    }
+  }, [delay])
+
+  return (
+    <div ref={ref} className={`frame-reveal ${className}`}>
+      {children}
+    </div>
+  )
+}

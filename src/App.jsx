@@ -3,6 +3,7 @@ import { initSmoothScroll, ScrollTrigger, scrollToId } from './lib/scroll'
 import Preloader from './components/Preloader'
 import Cursor from './components/Cursor'
 import ScrollProgress from './components/ScrollProgress'
+import JourneyRail from './components/JourneyRail'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Marquee from './components/Marquee'
@@ -65,6 +66,7 @@ export default function App() {
       <Preloader onDone={onIntroDone} />
       <Cursor />
       <ScrollProgress />
+      <JourneyRail />
       <Nav />
 
       <main id="main">

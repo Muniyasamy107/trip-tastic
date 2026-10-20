@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { ScrollTrigger, scrollToId } from '../lib/scroll'
 import { useIsoLayoutEffect } from '../lib/hooks'
-import { SectionHead, RotatingSeal } from './ui'
+import { SectionHead, RotatingSeal, FrameReveal } from './ui'
 import { steps } from '../data'
 import himachal from '../assets/himachal.webp'
 
@@ -27,9 +27,9 @@ export default function Way() {
     <section className="section section--cream way" id="way">
       <div className="shell way__grid">
         <div className="way__sticky">
-          <div className="way__frame frame">
+          <FrameReveal className="way__frame frame">
             <img src={himachal} alt="Snow-dusted pines and a mountain road in Himachal Pradesh" loading="lazy" />
-          </div>
+          </FrameReveal>
           <div className="way__seal">
             <RotatingSeal size={126} text="TRIP TASTIC HOLIDAYS · HANDCRAFTED, NOT PACKAGED · " />
           </div>

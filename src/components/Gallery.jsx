@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { gsap } from '../lib/scroll'
-import { SectionHead, Reveal } from './ui'
+import { SectionHead, Reveal, Tilt } from './ui'
 import { gallery } from '../data'
 import { lockScroll, unlockScroll } from '../lib/scroll'
 
@@ -55,12 +55,14 @@ export default function Gallery() {
         <div className="gallery__grid">
           {gallery.map((g, i) => (
             <Reveal key={g.label} delay={i * 0.04}>
-              <button
-                type="button"
+              <Tilt
+                as="button"
+                max={5}
                 className={`gallery__item gallery__item--${g.span || 'wide'}`}
                 onClick={() => setOpenItem(g)}
                 data-cursor="open"
                 aria-label={`Open photo: ${g.label}`}
+                type="button"
               >
                 <img src={g.src} alt={g.alt} loading="lazy" />
                 <span className="gallery__cap">
@@ -72,7 +74,7 @@ export default function Gallery() {
                     ⤢
                   </span>
                 </span>
-              </button>
+              </Tilt>
             </Reveal>
           ))}
         </div>
