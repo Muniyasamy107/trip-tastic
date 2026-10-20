@@ -1,4 +1,6 @@
 import gsap from 'gsap';
+import {setupSmoothScroll} from './smooth-scroll.js';
+import './luxury/luxury.css';
 import './world-flight.css';
 import './cinematic-motion.css';
 import {setupCinematicMotion} from './cinematic-motion.js';
@@ -20,7 +22,8 @@ const saved=new Set(Array.isArray(loadedSaved)?loadedSaved.filter(id=>validIds.h
 const comparison=new Set();
 let activeFilter='all',durationFilter='all',search='',sort='featured',motionPaused=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let contentKind='',toastTimer,activePage='home';
-const globeMotion=setupWorldFlight({stage:$('#world-globe'),canvas:$('#world-flight-canvas')});
+const smoothScroll=setupSmoothScroll({gsap,ScrollTrigger,initialPaused:motionPaused});
+const globeMotion=setupWorldFlight({stage:$('#world-globe'),canvas:$('#world-flight-canvas'),initialPaused:motionPaused,initialActive:!location.hash.startsWith('#/'),onLayout:()=>ScrollTrigger.refresh(),scrollTo:(top,options)=>smoothScroll.to(top,options)});
 const cinematicMotion=setupCinematicMotion({gsap,ScrollTrigger,initialPaused:motionPaused,initialActive:!location.hash.startsWith('#/')});
 const heroVideo=$('#hero-video'),filmDialog=$('#film-dialog');
 let heroInView=true;
@@ -44,7 +47,7 @@ $$('[data-filter]').forEach(button=>button.addEventListener('click',()=>{activeF
 $('#journey-search').addEventListener('input',e=>{search=e.target.value.trim();renderCollection();});
 $('#journey-sort').addEventListener('change',e=>{sort=e.target.value;renderCollection();});
 $('#clear-filters').addEventListener('click',resetFilters);$('#reset-search').addEventListener('click',resetFilters);
-$('#journey-finder').addEventListener('submit',e=>{e.preventDefault();const data=new FormData(e.target);activeFilter=data.get('landscape');durationFilter=data.get('duration');search='';$('#journey-search').value='';renderCollection();location.hash='journeys';$('#journeys').scrollIntoView({behavior:motionPaused?'instant':'smooth'});});
+$('#journey-finder').addEventListener('submit',e=>{e.preventDefault();const data=new FormData(e.target);activeFilter=data.get('landscape');durationFilter=data.get('duration');search='';$('#journey-search').value='';renderCollection();location.hash='journeys';smoothScroll.to($('#journeys'),{immediate:motionPaused,offset:-90});});
 function updateSavedUI(){
  $$('.saved-count').forEach(el=>el.textContent=saved.size);
  $$('[data-save]').forEach(b=>{const yes=saved.has(b.dataset.save),j=journeys.find(j=>j.id===b.dataset.save);b.classList.toggle('is-saved',yes);b.setAttribute('aria-pressed',String(yes));b.setAttribute('aria-label',`${yes?'Unsave':'Save'} ${j.name}`);});
@@ -123,12 +126,12 @@ function route(){
  if(j){renderJourney(j);document.title=`${j.name} | Trip-Tastic Holidays`;}
  else if(a){renderArticle(a);document.title=`${a.title} | Road Notes — Trip-Tastic`;}
  else{$('#detail-page').hidden=false;$('#detail-page').innerHTML='<section class="not-found"><span class="eyebrow">A DIFFERENT DIRECTION</span><h1>Off the map.</h1><p>That page doesn’t seem to be here. There are plenty of beautiful roads left.</p><a href="#journeys" class="button button-dark">Back to the collection ↗</a></section>';document.title='A different direction | Trip-Tastic';}
- window.scrollTo({top:0,behavior:'instant'});animateReveals(j?$('#detail-page'):$('#article-page'));
+ smoothScroll.to(0,{immediate:true});animateReveals(j?$('#detail-page'):$('#article-page'));
  requestAnimationFrame(()=>{const heading=$('#detail-page:not([hidden]) h1,#article-page:not([hidden]) h1');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}});
  }else{
  activePage='home';$('#home-page').hidden=false;$('#detail-page').hidden=true;$('#article-page').hidden=true;document.body.classList.remove('inner-page');document.title='Trip-Tastic Holidays | A different kind of away.';
  heroFilm.sync();
- if(hash&&/^#[a-z-]+$/.test(hash)){requestAnimationFrame(()=>{const el=$(hash);el?.scrollIntoView({behavior:motionPaused||!routeInitialized?'instant':'smooth'});});}else if(!wasHome||routeInitialized)window.scrollTo({top:0,behavior:motionPaused?'instant':'smooth'});
+ if(hash&&/^#[a-z-]+$/.test(hash)){requestAnimationFrame(()=>{const el=$(hash);if(el)smoothScroll.to(el,{immediate:motionPaused||!routeInitialized,offset:-90});});}else if(!wasHome||routeInitialized)smoothScroll.to(0,{immediate:motionPaused});
  animateReveals($('#home-page'));
  }
  globeMotion.setActive(activePage==='home');cinematicMotion.setActive(activePage==='home');routeInitialized=true;ScrollTrigger.refresh();updateScroll();
@@ -136,13 +139,13 @@ function route(){
 window.addEventListener('hashchange',route);
 function updateScroll(){const total=document.documentElement.scrollHeight-innerHeight;$('.scroll-progress').style.transform=`scaleX(${total>0?Math.min(1,scrollY/total):0})`;$('#header').classList.toggle('is-scrolled',scrollY>75);}
 let scrollScheduled=false;window.addEventListener('scroll',()=>{if(!scrollScheduled){scrollScheduled=true;requestAnimationFrame(()=>{updateScroll();scrollScheduled=false;});}},{passive:true});
-function setMotion(paused){motionPaused=paused;globeMotion.setPaused(paused);cinematicMotion.setPaused(paused);const globeButton=$('#globe-motion');globeButton.setAttribute('aria-pressed',String(paused));globeButton.setAttribute('aria-label',paused?'Resume globe animation':'Pause globe animation');globeButton.querySelector('span').textContent=paused?'▷':'Ⅱ';globeButton.querySelector('small').textContent=paused?'RESUME ANIMATION':'PAUSE ANIMATION';document.documentElement.classList.toggle('motion-paused',paused);$('#motion-toggle').setAttribute('aria-pressed',String(paused));$('#motion-toggle').setAttribute('aria-label',paused?'Play decorative motion':'Pause decorative motion');$('#motion-symbol').textContent=paused?'▷':'Ⅱ';$('#motion-label').textContent=paused?'PLAY MOTION':'PAUSE MOTION';
+function setMotion(paused){motionPaused=paused;smoothScroll.setPaused(paused);globeMotion.setPaused(paused);cinematicMotion.setPaused(paused);const globeButton=$('#globe-motion');globeButton.setAttribute('aria-pressed',String(paused));globeButton.setAttribute('aria-label',paused?'Resume globe animation':'Pause globe animation');globeButton.querySelector('span').textContent=paused?'▷':'Ⅱ';globeButton.querySelector('small').textContent=paused?'RESUME ANIMATION':'PAUSE ANIMATION';document.documentElement.classList.toggle('motion-paused',paused);$('#motion-toggle').setAttribute('aria-pressed',String(paused));$('#motion-toggle').setAttribute('aria-label',paused?'Play decorative motion':'Pause decorative motion');$('#motion-symbol').textContent=paused?'▷':'Ⅱ';$('#motion-label').textContent=paused?'PLAY MOTION':'PAUSE MOTION';
  if(paused){heroFilm.pause();gsap.getTweensOf('.word-line>*,.hero-copy>p,.hero-actions,.hero-topline,.hero-kicker,.hero-caption,.reveal').forEach(t=>{t.progress(1);t.kill();});}else heroFilm.sync();
 }
 $('#motion-toggle').addEventListener('click',()=>setMotion(!motionPaused));$('#globe-motion').addEventListener('click',()=>setMotion(!motionPaused));reduced.addEventListener('change',e=>setMotion(e.matches));
 new IntersectionObserver(([entry])=>{heroInView=entry.isIntersecting;heroFilm.sync();},{threshold:.05}).observe($('.hero'));
-function lockScroll(){document.body.style.overflow='hidden';}
-function unlockScroll(){if(!$('dialog[open]:not(.youtube-embedded)'))document.body.style.overflow='';}
+function lockScroll(){smoothScroll.setOverlay(true);globeMotion.setOverlay(true);document.body.style.overflow='hidden';}
+function unlockScroll(){if(!$('dialog[open]:not(.youtube-embedded)')){document.body.style.overflow='';smoothScroll.setOverlay(false);globeMotion.setOverlay(false);}}
 $$('dialog').forEach(dialog=>{
  $('.dialog-close',dialog).addEventListener('click',()=>dialog.close());
  dialog.addEventListener('close',unlockScroll);

@@ -5,12 +5,13 @@ import {filmFixture} from './film-fixture.mjs';
 const base=process.env.TEST_URL||'http://localhost:5173';
 fs.mkdirSync('.cache',{recursive:true});
 const browser=await launchBrowser();const context=await browser.newContext({viewport:{width:1440,height:1000}});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));await filmFixture(page,{available:false});
+await page.addInitScript(()=>{const original=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(type,...args){return type==='webgl'||type==='webgl2'?null:original.call(this,type,...args);};});
 const phase=()=>page.locator('#world-flight-canvas').getAttribute('data-phase');
 try{
- await page.goto(base);await page.waitForFunction(()=>document.querySelector('#world-globe').dataset.renderer==='canvas2d');
+ await page.goto(base);await page.waitForFunction(()=>['poster','canvas2d'].includes(document.querySelector('#world-globe').dataset.renderer));
  // No perpetual drawing while the feature is below the fold.
  assert.equal(await page.locator('#world-globe').getAttribute('data-motion'),'paused');
- await page.locator('#world-globe').scrollIntoViewIfNeeded();await page.waitForFunction(()=>document.querySelector('#world-globe').dataset.motion==='running');
+ await page.locator('#world-globe').scrollIntoViewIfNeeded();await page.waitForFunction(()=>document.querySelector('#world-globe').dataset.renderer==='canvas2d');await page.waitForFunction(()=>document.querySelector('#world-globe').dataset.motion==='running');
  const start=await phase();await page.waitForFunction(start=>document.querySelector('#world-flight-canvas').dataset.phase!==start,start);
  await page.locator('#world-of-wonder').screenshot({style:'.site-header,.skip-link{visibility:hidden!important}',path:'.cache/world-flight-desktop.png'});
 

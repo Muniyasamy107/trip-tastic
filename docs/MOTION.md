@@ -1,5 +1,12 @@
 # Cinematic travel motion
 
+**Current upgrade:** the default capable-browser globe now uses React Three Fiber /
+Three.js; the former Canvas 2D implementation is retained as a tested fallback.
+React Private Edit adds desktop pinning and Framer Motion captions; Lenis handles
+desktop wheel interpolation. See [REACT-LUXURY.md](REACT-LUXURY.md) for ownership,
+lifecycle, accessibility, delivery and test details. The notes below describe the
+existing editorial choreography and retained fallback, not the entire new stack.
+
 ## Cinematic scrolling and rotating details
 
 `cinematic-motion.js` adds homepage choreography without replacing native scroll:
@@ -14,8 +21,8 @@
   actual hero video/iframe geometry, selected source and once-only logic are not
   touched. Hero text gently recedes; process icons and rules follow the scroll.
 - Rotating SVG square bounds are contained so their empty corners cannot widen
-  narrow screens. No pinning, wheel/touch interception, forced scroll or new
-  runtime dependency is introduced.
+  narrow screens. These editorial scenes are not pinned; the separate React Private
+  Edit is the only desktop-pinned scene. Touch and keyboard scrolling stay native.
 
 A GSAP context owns the scroll scenes; pause, hidden tab and route changes revert
 it. Resize reconstructs a single context for the current breakpoint. Completed
@@ -27,7 +34,7 @@ are pruned. Pausing completes pending reveals and restores readable text and
 neutral photo framing. Reduced-motion preference is honored on load and change.
 CSS rotation only runs for visible rotors while the homepage is active.
 
-`npm run test:cinematic` verifies actual transform/path changes on scroll, visible
+`npm run test:cinematic` verifies the original editorial transform/path changes on scroll, visible
 rotation, pause/readability, tab and repeated-route lifecycle, reduced motion,
 filter rerendering and 10 representative viewports. Worst-angle rotation bounds
 are checked explicitly. Screenshots of phone/desktop introduction and editorial
@@ -37,7 +44,8 @@ verify full-cover player geometry and once-only playback.
 
 ## Experience
 
-The new section follows the journey finder and precedes the introduction. The
+The globe follows the journey finder; React Private Edit now sits between it
+and the introduction. The
 hero's down-arrow links to `#world-of-wonder`. Emerald oceans, geographic champagne
 land dots, meridians, a South India origin marker and an inclined orbital trail
 create a dimensional globe. The aircraft rotates along its tangent; the planet
@@ -58,7 +66,8 @@ neither loops nor reloads the film.
 - Latitude/longitude vectors and grid lines are precomputed. Land is batched into
   six depth bands instead of individually submitting each point's fill.
 - A small CPU-raster Canvas 2D illustration avoids software-GPU bottlenecks; DPR is
-  capped at 2. No Three.js/WebGL stack, animation library or map provider is added.
+  capped at 2. This is the fallback path; capable browsers use the lazy React Three Fiber
+  renderer described in REACT-LUXURY.md. No external map provider is used.
 - IntersectionObserver stops offscreen frames; Page Visibility and route state
   stop inactive drawing. ResizeObserver redraws even when motion is paused.
 - Normal compositing is intentional: desynchronized canvases can disappear from
@@ -91,7 +100,7 @@ npm run test:world
 TEST_URL=http://localhost:4173 npm run test:world
 ```
 
-The browser suite verifies a full front/back/front orbit, phase progression,
+The fallback browser suite deliberately blocks WebGL and verifies a full front/back/front orbit, phase progression,
 identical paused canvas pixels, shared control state, hidden-tab/route/offscreen
 suspension, reduced-motion on first load and preference change, planner launch and
 canvas-unavailable SVG fallback. It checks document/globe bounds and rendered

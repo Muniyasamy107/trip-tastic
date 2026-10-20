@@ -10,7 +10,7 @@ try{
  await page.goto(base);await page.waitForFunction(()=>document.querySelector('#home-page').dataset.cinema==='running');
  assert.equal(await page.locator('.world-copy h2').innerText(),'One world.\nEndless wonder.');
  assert.equal(await page.locator('#world-globe').evaluate(el=>getComputedStyle(el).contain.includes('paint')&&getComputedStyle(el).transform!=='none'),true,'Continuous canvas retains its isolated compositor surface');
- assert.equal(await page.locator('.pin-spacer').count(),0,'No scroll pinning');
+ assert.equal(await page.locator('.pin-spacer').evaluateAll(nodes=>nodes.every(node=>!!node.closest('#luxury-chapters'))),true,'Only the dedicated React signature chapter may pin');
  await scrollScene('#introduction',.8);const needleBefore=await transform('.cine-compass-needle'),dashBefore=await page.locator('.mini-route path').evaluate(el=>getComputedStyle(el).strokeDashoffset);
  await scrollScene('#introduction',.15);await page.waitForFunction(before=>getComputedStyle(document.querySelector('.cine-compass-needle')).transform!==before,needleBefore);await page.waitForTimeout(800);assert.notEqual(await page.locator('.mini-route path').evaluate(el=>getComputedStyle(el).strokeDashoffset),dashBefore);
  const compass=await transform('.cine-compass-ring');await page.waitForFunction(before=>getComputedStyle(document.querySelector('.cine-compass-ring')).transform!==before,compass);
@@ -41,5 +41,5 @@ try{
  assert.equal(await page.locator('.cine-title').first().evaluate(el=>getComputedStyle(el.querySelector('.cine-line-inner')).transform),'none');
  await page.getByRole('button',{name:'Hills & tea',exact:true}).click();assert.equal(await page.locator('#journey-grid .journey-card').count(),3);assert.equal(await page.locator('#journey-grid .journey-card').first().evaluate(el=>getComputedStyle(el).opacity),'1');
  await page.getByRole('button',{name:'All journeys',exact:false}).click();assert.equal(await page.locator('#journey-grid .journey-card').count(),6);
- assert.deepEqual(errors,[]);console.log('PASS: masked headings, scroll-linked compass/road/type band/parallax, visible rotation, global pause/readability, hidden-tab and route lifecycle, reduced-motion initial/change, 10 responsive sizes, filters, no pinning or page errors. Hero footage geometry/source unchanged.');
+ assert.deepEqual(errors,[]);console.log('PASS: masked headings, scroll-linked compass/road/type band/parallax, visible rotation, global pause/readability, hidden-tab and route lifecycle, reduced-motion initial/change, 10 responsive sizes, filters, pinning confined to the React story, no page errors. Hero footage geometry/source unchanged.');
 }catch(error){await page.screenshot({path:'.cache/cinema-failure.png',fullPage:true}).catch(()=>{});throw error;}finally{await browser.close();}

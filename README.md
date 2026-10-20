@@ -2,8 +2,11 @@
 
 A complete, responsive South India travel website with a petrol / champagne / warm
 ivory design system, original photoreal creative imagery, cinematic motion and a
-working server-backed journey-enquiry flow. Built with Vite, vanilla JavaScript,
-GSAP/ScrollTrigger and Node's SQLite database.
+working server-backed journey-enquiry flow. Built with Vite, React, React Three
+Fiber / Three.js, GSAP/ScrollTrigger, Lenis, Framer Motion and Node's SQLite
+database. The new luxury experience uses React islands; existing public routing,
+forms and secure Owner Studio are preserved rather than misleadingly claiming a
+complete React rewrite of every page.
 
 ## Run locally
 
@@ -151,6 +154,33 @@ used. The original provided logo remains in the repository and About section.
 
 ## Visuals and transparency
 
+### React luxury experience — requested technology stack
+
+| Technology | Actual use |
+| --- | --- |
+| React + Vite React plugin | Lazy homepage component boundaries; existing secure owner/API flows retained |
+| Three.js + React Three Fiber | Real WebGL2 globe, geographic dot mesh, extruded orbiting airplane, floating metallic objects, drag/keyboard/reset controls |
+| GSAP + ScrollTrigger | Desktop pinned **Private Edit**, image zoom/crossfade, chapter progress and existing editorial choreography |
+| Lenis | Desktop smooth-wheel interpolation synchronized with the GSAP ticker; native touch/keyboard/dialog behavior |
+| Framer Motion | React chapter caption fade/slide/reveal and AnimatePresence transitions |
+
+Open `/#world-of-wonder` for the globe, or `/#luxury-chapters` for the three-scene
+**Private Edit** (Hills / Waters / Quiet). Pinning is restricted to wide, tall
+screens with motion enabled. Mobile/tablet use unpinned chapter buttons. Public
+price overrides, journey links, enquiry consent, contacts, logo and once-only hero
+film are unchanged.
+
+React/Framer and the Three renderer are loaded on approach, not over the opening
+hero. Three/R3F do not load on an initially reduced-motion visit unless the visitor
+explicitly resumes. The GPU loop pauses when offscreen, inactive, hidden or behind
+a dialog. WebGL failure/context loss falls back to the previous Canvas 2D globe;
+a blocked canvas retains the local SVG. No external map, model, HDR or flight API.
+
+The Three engine remains a large **lazy** chunk (Vite's >500KB warning is expected,
+not suppressed). Production static JS/CSS/SVG delivery now supports gzip; private
+API responses are not compressed. `test:delivery` checks actual gzip bytes,
+HEAD/q=0/ranges and compressed entry/engine budgets. See **[docs/REACT-LUXURY.md](docs/REACT-LUXURY.md)**.
+
 ### Cinematic scrolling and rotation
 
 The homepage now layers masked, line-by-line titles; perspective-staggered journey
@@ -158,8 +188,9 @@ cards; a reversible scroll-linked **Take the long way** type band; traced travel
 line; and a rotating travel compass whose needle follows the scroll position.
 Editorial manifesto/closing images have restrained depth/parallax; the original
 hero video/iframe is **not** transformed, recropped, replaced or restarted by these
-effects. Native wheel, touch, keyboard and anchor scrolling are preserved—no
-scroll hijacking or pinned sections.
+effects. Existing editorial sections stay unpinned. Lenis interpolates desktop
+wheel scrolling; touch, keyboard and dialogs stay native. Only the dedicated
+React Private Edit uses desktop pinning.
 
 Header/globe motion controls pause the same choreography. Reduced motion keeps
 text readable and images neutral; hidden tabs and non-home routes release the
@@ -178,14 +209,17 @@ a subtle South India marker, orbital trail and tangent-aligned aircraft.
 Local and header pause/resume controls stay synchronized. Offscreen sections,
 background tabs and non-home routes stop drawing. Reduced-motion preferences show
 a still globe by default; the visitor can explicitly resume. Canvas-unavailable
-browsers retain a local SVG illustration. No external map, flight API or WebGL is
-required; this is an illustration, not live flight data or a worldwide-service claim.
+browsers retain a local SVG illustration. WebGL2 enables the interactive React
+globe; the Canvas/SVG fallback does not require it. No external map or flight API
+is used; this is an illustration, not live flight data or a worldwide-service claim.
 
 Geography uses public-domain **Natural Earth 1:110m land** data, sampled into
 `world-land.js`; source: [Natural Earth land GeoJSON](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_110m_land.geojson).
 The design preserves the original logo, contact/admin flows and once-only hero film.
 See **[docs/MOTION.md](docs/MOTION.md)** for controls, rendering and verification.
-`npm run test:world` checks a full orbit, pause/resume, pixel persistence on resize,
+`npm run test:luxury` checks the real React/WebGL experience.
+`npm run test:world` explicitly blocks WebGL and checks the full fallback orbit,
+pause/resume, pixel persistence on resize,
 fallback and 10 responsive viewports against the running app.
 
 ### Selected YouTube header — no download or upload required
