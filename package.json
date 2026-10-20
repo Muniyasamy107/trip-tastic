@@ -7,7 +7,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "node scripts/test.mjs && node scripts/test-youtube.mjs && node scripts/test-admin.mjs && node scripts/test-contacts.mjs",
+    "test": "node scripts/test.mjs && node scripts/test-youtube.mjs && node scripts/test-admin.mjs && node scripts/test-contacts.mjs && node scripts/test-world-flight.mjs",
     "start": "node server.mjs",
     "enquiries": "node scripts/enquiries.mjs",
     "visual:check": "node scripts/visual-check.mjs",
@@ -15,7 +15,8 @@
     "test:youtube": "node scripts/test-youtube.mjs",
     "admin:setup": "node scripts/admin-setup.mjs",
     "test:admin": "node scripts/test-admin.mjs",
-    "test:contacts": "node scripts/test-contacts.mjs"
+    "test:contacts": "node scripts/test-contacts.mjs",
+    "test:world": "node scripts/test-world-flight.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.0",

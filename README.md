@@ -151,6 +151,27 @@ used. The original provided logo remains in the repository and About section.
 
 ## Visuals and transparency
 
+### Smooth world-flight animation
+
+The **One world. Endless wonder.** section, immediately below the journey finder,
+contains a locally drawn emerald/gold globe and an airplane that continuously
+orbits in front of and behind it. Use the hero’s **A WORLD OF POSSIBILITY** link or
+open `/#world-of-wonder`. The globe rotates independently with geographic land dots,
+a subtle South India marker, orbital trail and tangent-aligned aircraft.
+
+Local and header pause/resume controls stay synchronized. Offscreen sections,
+background tabs and non-home routes stop drawing. Reduced-motion preferences show
+a still globe by default; the visitor can explicitly resume. Canvas-unavailable
+browsers retain a local SVG illustration. No external map, flight API or WebGL is
+required; this is an illustration, not live flight data or a worldwide-service claim.
+
+Geography uses public-domain **Natural Earth 1:110m land** data, sampled into
+`world-land.js`; source: [Natural Earth land GeoJSON](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_110m_land.geojson).
+The design preserves the original logo, contact/admin flows and once-only hero film.
+See **[docs/MOTION.md](docs/MOTION.md)** for controls, rendering and verification.
+`npm run test:world` checks a full orbit, pause/resume, pixel persistence on resize,
+fallback and 10 responsive viewports against the running app.
+
 ### Selected YouTube header — no download or upload required
 
 The full-bleed header now embeds the user-selected film:
