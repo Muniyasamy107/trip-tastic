@@ -520,6 +520,13 @@ html.has-cursor button,
 html.has-cursor [role='button'] {
   cursor: none;
 }
+html.has-cursor input,
+html.has-cursor textarea {
+  cursor: text;
+}
+html.has-cursor select {
+  cursor: pointer;
+}
 
 /* ------------------------------------------------------------------ */
 /* Scroll progress                                                     */
