@@ -110,18 +110,26 @@ The hero now ships with a real 16-second cinematic loop:
 
 | File | What it is |
 | ---- | ---------- |
-| `public/video/hero-loop.mp4` | 1600×900 · 24fps · 16s seamless loop (4 plates, Ken Burns, crossfades, warm grade, grain, light sweep) · 2.5 MB |
-| `public/video/hero-poster.jpg` | First-frame poster, shown before the video can play |
-| `public/design/index.html` | **Design spec sheet** — live frame, annotations, mobile frame, tokens, motion table (`/design/`) |
+| `public/video/hero-loop.mp4` | 1600×900 · 24fps · 16s seamless loop (4 plates, Ken Burns, crossfades, warm grade, grain, light sweep) · 2.5 MB — what the site streams |
+| `public/video/hero-loop-1080.mp4` | 1920×1080 master of the same loop · 3.2 MB — presentations, ads, YouTube |
+| `public/video/hero-reel.mp4` | 1080×1920 vertical cut with safe-area branding · 13s · 4.1 MB — Reels, Shorts, Stories |
+| `public/video/brand-intro.mp4` | 1920×1080 title-baked opener · 10s · 1.9 MB — emblem, champagne wordmark, gold rule, tagline |
+| `public/video/*-poster.jpg` | Poster frames for every clip |
+| `public/design/index.html` | **Design spec sheet** — live frame, annotations, mobile frame, tokens, motion table, video pack (`/design/`) |
 | `public/design/hero-frame.svg` | 1440×900 hero frame with the plate baked in — drag into Figma, layers stay editable |
 
 Regenerate either asset locally:
 
 ```bash
-pip install --break-system-packages pillow imageio-ffmpeg
-python3 scripts/make-hero-video.py    # renders + encodes the MP4 (~40s)
+pip install --break-system-packages pillow imageio-ffmpeg fonttools brotli
+python3 scripts/make-font-ttf.py      # once: variable woff2 -> ttf for Pillow
+python3 scripts/make-video-pack.py    # hero 900p + 1080p master + 9:16 reel + brand intro (~2.5 min)
 python3 scripts/make-hero-frame.py    # rebuilds the Figma SVG frame
 ```
+
+`make-video-pack.py` reads the site's own WebP plates and the brand emblem, so re-rendering after a photo
+swap keeps every clip on-brand. Type is set in the real Fraunces / Manrope variable fonts at their
+website optical sizes (opsz 144, weight 330, SOFT 40–60).
 
 The `<video>` layer is skipped automatically for `prefers-reduced-motion`, `save-data` and 2G connections,
 pauses when the tab is hidden, and silently falls back to the still crossfade sequence if the file fails.

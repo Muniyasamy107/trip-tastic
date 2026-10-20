@@ -242,6 +242,15 @@
       }
       .pin:hover::after { opacity: 1; }
 
+      .pack { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+      .pack-card { border: 1px solid var(--line-soft); background: rgba(248, 242, 229, 0.02); display: grid; }
+      .pack-card video { width: 100%; display: block; background: #05100c; aspect-ratio: 16 / 9; object-fit: cover; }
+      .pack-card.is-vertical video { aspect-ratio: 9 / 16; }
+      .pack-meta { padding: 0.85rem 0.9rem 1rem; display: grid; gap: 0.35rem; }
+      .pack-meta h4 { margin: 0; font-family: var(--display); font-weight: 380; font-size: 1rem; letter-spacing: -0.02em; }
+      .pack-meta p { margin: 0; font-size: 0.68rem; color: var(--muted); }
+      .pack-meta .spec { font-size: 0.5rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+      .pack-meta a { justify-self: start; margin-top: 0.35rem; }
       .notes { display: grid; gap: 0.5rem; margin-top: 1rem; }
       .note { display: grid; grid-template-columns: 1.5rem 1fr; gap: 0.6rem; font-size: 0.78rem; color: var(--muted); }
       .note b { display: grid; place-items: center; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: var(--saffron); color: #fff; font-size: 0.56rem; }
@@ -306,7 +315,7 @@
       </a>
       <span class="spacer"></span>
       <a class="chip" href="/">View live site ↗</a>
-      <a class="chip chip--solid" href="/video/hero-loop.mp4" download>Download hero film ↓</a>
+      <a class="chip chip--solid" href="/video/hero-loop-1080.mp4" download>Download hero master ↓</a>
     </div>
 
     <div class="wrap">
@@ -320,7 +329,7 @@
         </p>
         <div class="dl">
           <a class="chip" href="/design/hero-frame.svg" download>Figma-ready SVG ↓</a>
-          <a class="chip" href="/video/hero-loop.mp4" download>Hero film · MP4 16s · 1600×900 ↓</a>
+          <a class="chip" href="/video/hero-loop-1080.mp4" download>Hero master · MP4 16s · 1920×1080 ↓</a>
           <a class="chip" href="/video/hero-poster.jpg" download>Poster frame · JPG ↓</a>
         </div>
       </header>
@@ -495,6 +504,50 @@
         </table>
       </section>
 
+      <!-- ---------------- VIDEO PACK ---------------- -->
+      <section>
+        <div class="sec-head">
+          <h2>The video pack</h2>
+          <span>Rendered from the same plates as the site</span>
+        </div>
+        <div class="pack">
+          <div class="pack-card">
+            <video src="/video/hero-loop-1080.mp4" poster="/video/hero-poster-1080.jpg" muted loop playsinline controls preload="metadata"></video>
+            <div class="pack-meta">
+              <span class="spec">Hero master · 1920 × 1080 · 16s</span>
+              <h4>Hero loop — master</h4>
+              <p>Four plates, Ken Burns, 1s crossfades, warm grade and grain. Seamless: the last shot is the first frame again.</p>
+              <a class="chip" href="/video/hero-loop-1080.mp4" download>Download MP4 · 3.2 MB ↓</a>
+            </div>
+          </div>
+
+          <div class="pack-card is-vertical">
+            <video src="/video/hero-reel.mp4" poster="/video/hero-reel-poster.jpg" muted loop playsinline controls preload="metadata"></video>
+            <div class="pack-meta">
+              <span class="spec">Reels · Shorts · Story · 1080 × 1920 · 13s</span>
+              <h4>Vertical reel</h4>
+              <p>Safe-area aware: wordmark in the top third, captions clear of the platform UI, gold hairline frame.</p>
+              <a class="chip" href="/video/hero-reel.mp4" download>Download MP4 · 4.1 MB ↓</a>
+            </div>
+          </div>
+
+          <div class="pack-card">
+            <video src="/video/brand-intro.mp4" poster="/video/brand-intro-poster.jpg" muted loop playsinline controls preload="metadata"></video>
+            <div class="pack-meta">
+              <span class="spec">Brand opener · 1920 × 1080 · 10s</span>
+              <h4>Title-baked intro</h4>
+              <p>Emblem rises, wordmark fades up in champagne, gold rule draws, tagline settles. Fades to ink at the end.</p>
+              <a class="chip" href="/video/brand-intro.mp4" download>Download MP4 · 1.9 MB ↓</a>
+            </div>
+          </div>
+        </div>
+        <p class="hint">
+          Every clip is H.264 / yuv420p, so it plays anywhere: Instagram, YouTube, a Keynote deck, a WhatsApp
+          forward or a paid ad. Need 4K, a 1:1 feed cut or a Tamil title card? The renderer takes one parameter —
+          <code>scripts/make-video-pack.py</code>.
+        </p>
+      </section>
+
       <!-- ---------------- ASSETS ---------------- -->
       <section>
         <div class="sec-head">
@@ -502,7 +555,10 @@
           <span>Drop into Figma, a deck or the site</span>
         </div>
         <div class="dl">
-          <a class="chip chip--solid" href="/video/hero-loop.mp4" download>Hero film · 16s MP4 · 2.5 MB ↓</a>
+          <a class="chip chip--solid" href="/video/hero-loop-1080.mp4" download>Hero master · 1080p · 3.2 MB ↓</a>
+          <a class="chip" href="/video/hero-loop.mp4" download>Hero film · 900p · 2.5 MB ↓</a>
+          <a class="chip" href="/video/hero-reel.mp4" download>Vertical reel · 9:16 ↓</a>
+          <a class="chip" href="/video/brand-intro.mp4" download>Brand intro · title-baked ↓</a>
           <a class="chip" href="/video/hero-poster.jpg" download>Poster · 1280×720 ↓</a>
           <a class="chip" href="/design/hero-frame.svg" download>Hero frame · SVG for Figma ↓</a>
           <a class="chip" href="/brand/logo.webp" download>Logo (transparent) ↓</a>
