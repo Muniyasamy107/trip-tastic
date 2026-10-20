@@ -1,1 +1,132 @@
-# trip-tastic
+# TripTastic Holidays — premium travel site
+
+A full-screen, motion-led React build for **TripTastic Holidays** — small-group
+expeditions across the Himalayas, backwaters, deserts and beyond.
+
+The whole experience is driven by four libraries working together:
+**GSAP + ScrollTrigger** (scroll storytelling), **Three.js / React Three Fiber**
+(the interactive halftone globe), **Lenis** (smooth scrolling) and
+**Framer Motion** (text reveals, fades, slides, accordions, page transitions).
+
+---
+
+## Stack
+
+| Layer | Choice | Used for |
+| --- | --- | --- |
+| Framework | React 18 + Vite 5 | App shell, fast dev server, code-split 3D chunk |
+| Scroll animation | `gsap` + `ScrollTrigger` | Hero zoom, pinned manifesto word-reveal, parallax expedition image, marquee velocity, count-up stats, craft rail |
+| 3D | `three`, `@react-three/fiber`, `@react-three/drei` | Interactive globe: procedural halftone continents, city pins, animated flight arcs, atmosphere shader, orbit ring |
+| Smooth scroll | `lenis` | Inertial wheel/touch scrolling, wired into the GSAP ticker so pins and scrubs never desync |
+| UI motion | `framer-motion` | Masked line reveals, fade/slide reveals, testimonial crossfades, FAQ accordion, modal, mobile menu, form success state |
+| Type | Fraunces Variable + Manrope Variable (self-hosted via Fontsource) | Editorial serif headlines + clean UI sans |
+
+No external image CDNs, no analytics, no backend required.
+
+---
+
+## Run it
+
+```bash
+# 1. get the code
+git clone https://github.com/Muniyasamy107/trip-tastic.git
+cd trip-tastic
+
+# 2. use the feature branch (until it is merged into main)
+git checkout arena/c4f3baae-trip-tastic
+
+# 3. install + start
+npm install
+npm run dev
+```
+
+Vite prints a local URL — open **http://localhost:5173** in your browser.
+
+Other scripts:
+
+```bash
+npm run build     # production build into dist/
+npm run preview   # serve the production build locally
+```
+
+> The site is desktop-first with full tablet/mobile layouts down to 360 px.
+> If you only see a tiny preview, open the URL in a normal browser window —
+> the globe and pinning need the real viewport.
+
+---
+
+## What is on the page
+
+1. **Preloader** — counter + logo wipe into the hero.
+2. **Hero** — masked serif headline, GSAP scroll-zoom on the 3D globe,
+   pointer-parallax destination polaroids, orbiting labels.
+3. **Marquee** — infinite destination strip whose speed reacts to scroll velocity.
+4. **Manifesto** — a pinned section; the paragraph lights up word by word as you scroll.
+5. **Journeys** — asymmetric mosaic of five departures; every card opens a modal
+   with duration, season, price, tags and a “ask about this journey” CTA.
+6. **Expedition** — full-bleed jeep/valley photo with a scroll-scrubbed zoom,
+   counting stats, and coordinate telemetry.
+7. **The Craft** — sticky editorial column + scroll-tracked rail across four principles.
+8. **Stories** — auto-advancing traveller quotes with crossfading imagery and a progress bar.
+9. **FAQ** — animated accordion with contact cards.
+10. **Plan** — validated enquiry form with a success state (front-end only, nothing is sent).
+11. **Footer** — newsletter, studio details, oversized wordmark, back-to-top.
+
+---
+
+## Project structure
+
+```
+trip-tastic/
+├─ index.html
+├─ vite.config.js            # host 0.0.0.0 + allowedHosts for tunnel/preview URLs
+├─ public/images/            # AI-generated destination photography + brand logo
+└─ src/
+   ├─ main.jsx               # fonts, Lenis CSS, React root
+   ├─ App.jsx                # section composition, preloader gating, ScrollTrigger refresh
+   ├─ index.css              # full design system + all section styles + breakpoints
+   ├─ data/content.js        # ← all copy, destinations, stats, FAQs live here
+   ├─ lib/
+   │  ├─ smoothScroll.js     # Lenis ↔ GSAP ticker bridge, scrollToId / scrollToTop
+   │  └─ motion.js           # shared Framer Motion easings + variants
+   └─ components/
+      ├─ Preloader.jsx  Cursor.jsx  ScrollProgress.jsx  Nav.jsx
+      ├─ Hero.jsx  Marquee.jsx  Manifesto.jsx
+      ├─ Journeys.jsx  JourneyModal.jsx  Expedition.jsx  Craft.jsx
+      ├─ Stories.jsx  Faq.jsx  Plan.jsx  Footer.jsx  BackToTop.jsx
+      ├─ globe/
+      │  ├─ globeTexture.js  # deterministic value-noise → halftone continents
+      │  └─ GlobeScene.jsx   # canvas, pins, arcs, atmosphere shader, orbit ring
+      └─ ui/
+         ├─ Reveal.jsx       # SplitLines / Reveal / Eyebrow / Arrow
+         └─ Magnetic.jsx     # magnetic hover for buttons
+```
+
+---
+
+## Customising
+
+- **Copy, prices, destinations, FAQs** → `src/data/content.js`.
+- **Brand colours, type scale, spacing, breakpoints** → CSS variables at the top of
+  `src/index.css` (`--ink`, `--cream`, `--gold`, `--jade`, `--pad`, `--shell`).
+- **Photos** → drop replacements into `public/images/` using the same filenames.
+- **Hero polaroids** → the `FLOATS` array inside `Hero.jsx`.
+- **Globe pins** → the `SEEDS` lat/lon list in `components/globe/GlobeScene.jsx`.
+  Pins snap to the nearest “land” patch generated by `globeTexture.js`, so any
+  coordinate you add is guaranteed to sit on a continent.
+- **Enquiry form** → `components/Plan.jsx` currently simulates a send. Replace the
+  `window.setTimeout` in `submit()` with a `fetch()` to your endpoint / Formspree /
+  Resend function and keep the existing success UI.
+
+---
+
+## Notes
+
+- Motion respects `prefers-reduced-motion`: Lenis, pins and scrubs switch off and
+  content appears immediately.
+- The 3D scene is lazily imported (its own ~220 kB gzip chunk) and pre-warmed while
+  the preloader runs, so the hero never blocks first paint.
+- Custom cursor and magnetic buttons only activate on fine pointers.
+- Fonts are self-hosted, so the site works offline after the first load.
+
+Design & build: TripTastic studio. Images generated for this project.
