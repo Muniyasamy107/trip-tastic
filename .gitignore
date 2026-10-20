@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.cache/
+.venv/
+
+.data/
+
+# Optional self-hosted stock footage; deploy via media/artifact storage.
+public/media/hero-road-trip.mp4
+public/media/hero-road-trip.mp4.*.part

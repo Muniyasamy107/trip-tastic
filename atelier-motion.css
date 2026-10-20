@@ -1,0 +1,75 @@
+/* Tactile Atelier: effects are layered inside GSAP cards, never on the real film
+   or React-owned globe/story transforms. Native pointers and hit areas survive. */
+.atelier-cursor{position:fixed;left:0;top:0;width:48px;height:48px;border:1px solid #c7aa73b8;border-radius:50%;z-index:80;pointer-events:none;opacity:0;scale:.65;background:#ddc39a0a;transition:opacity .2s,scale .3s,background .3s;contain:layout style;will-change:transform}
+.atelier-cursor.is-visible{opacity:1}.atelier-cursor.is-image{scale:1.15;background:#0b282c20;border-color:#e7d4ab}
+.atelier-cursor span{position:absolute;top:calc(100% + 7px);left:50%;translate:-50% 0;white-space:nowrap;font-size:9px;letter-spacing:1.2px;padding:5px 7px;color:#f3eee5;background:#0b282ce8;opacity:0;transition:opacity .2s}
+.atelier-cursor.is-image span{opacity:1}
+html[data-atelier-pointer=off] .atelier-cursor{display:none}
+
+/* Perspective stays on the image frame; GSAP keeps the parent reveal. */
+html[data-atelier-pointer=on] :is(.card-image,.journal-image){transform:perspective(1200px) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg));transition:transform .55s cubic-bezier(.2,.7,.2,1),box-shadow .5s;transform-origin:center;backface-visibility:hidden}
+html[data-atelier-pointer=on] .atelier-tilting{box-shadow:0 20px 40px -20px #08272d70}
+:is(.card-image,.journal-image)::after{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;background:radial-gradient(ellipse at var(--shine-x,50%) var(--shine-y,35%),#fff5d533,transparent 65%);opacity:0;transition:opacity .4s}
+html[data-atelier-pointer=on] .atelier-tilting::after{opacity:1}
+.journey-card:focus-within .card-image,.journal-card:focus-within .journal-image{box-shadow:0 0 0 2px #a5824f,0 12px 32px -20px #08272d70}
+
+/* Quiet magnetic icons: the actual button never runs away from the pointer. */
+:is(.button,.nav-plan,.finder-submit){position:relative;isolation:isolate;overflow:hidden}
+html[data-atelier-pointer=on] :is(.button-arrow,.nav-plan>svg){translate:var(--magnet-x,0px) var(--magnet-y,0px);transition:translate .25s cubic-bezier(.2,.7,.2,1)}
+html[data-atelier-motion=running] :is(.button,.nav-plan,.finder-submit):active{scale:.98}
+:is(.button,.nav-plan,.finder-submit){transition:background .35s,color .35s,border-color .35s,box-shadow .35s,scale .2s}
+:is(.button,.nav-plan,.finder-submit):hover{box-shadow:0 10px 28px -15px #08272d70}
+.atelier-ripple{position:absolute;pointer-events:none;border-radius:50%;background:radial-gradient(circle,#edd7ac70,#edd7ac18 70%);z-index:-1}
+.site-header .main-nav>a{background:linear-gradient(#dcc18e,#dcc18e) left bottom/0 1px no-repeat;transition:background-size .4s,color .3s;padding-block:10px}
+.site-header .main-nav>a:hover,.site-header .main-nav>a:focus-visible{background-size:100% 1px}
+:is(a,button,input,select,textarea,summary):focus-visible{outline:2px solid #9c7845;outline-offset:5px}
+.save-button{transition:background .3s,border-color .3s,box-shadow .3s}
+.save-button.is-saved{box-shadow:0 0 0 3px #dcc18e30}
+.compare-toggle.selected{box-shadow:inset 0 0 0 1px #dcc18e70}
+.social-channel .social-icon{transition:background .35s,rotate .4s}
+html[data-atelier-motion=running] .social-channel:hover .social-icon{rotate:-8deg;background:#ddc39a16}
+.faq-list details[open]{border-color:#a38658}
+html[data-atelier-motion=running] .faq-list details[open]>p{animation:atelier-faq-in .35s ease-out both}
+@keyframes atelier-faq-in{from{opacity:.3;translate:0 -5px}to{opacity:1;translate:0 0}}
+
+/* Real image pending states. Never a fake percent, never waits for YouTube. */
+.atelier-image-pending{background-color:#d5cebd!important}
+.atelier-image-pending img{opacity:0}
+.atelier-image-pending::before{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 25%,#f6efdf66 45%,transparent 65%);background-size:220% 100%;z-index:1;pointer-events:none;animation:atelier-shimmer 1.8s ease-in-out infinite;animation-play-state:paused}
+html[data-atelier-motion=running] .atelier-image-pending.atelier-in-view::before{animation-play-state:running}
+html[data-atelier-motion=running] .atelier-image-ready img{animation:atelier-image-in .75s cubic-bezier(.2,.7,.2,1)}
+@keyframes atelier-shimmer{from{background-position:160% 0}to{background-position:-80% 0}}
+@keyframes atelier-image-in{from{opacity:.35;clip-path:inset(2% 0)}to{opacity:1;clip-path:inset(0)}}
+#planner-form[aria-busy=true] #wizard-submit .button-arrow>svg{visibility:hidden}
+#planner-form[aria-busy=true] #wizard-submit .button-arrow::after{content:'';position:absolute;width:16px;height:16px;border:1px solid currentColor;border-right-color:transparent;border-radius:50%;animation:atelier-spin 1s linear infinite;animation-play-state:paused}
+html[data-atelier-feedback=on] #planner-form[aria-busy=true] #wizard-submit .button-arrow::after{animation-play-state:running}
+@keyframes atelier-spin{to{rotate:360deg}}
+
+/* Original linework + soft light, contained behind content. Only three visible
+   section backgrounds can animate; offscreen/paused/hidden/modal states freeze. */
+.atelier-ambient-section{position:relative;isolation:isolate}
+.atelier-ambience{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:-1;contain:strict}
+.atelier-contours{position:absolute;inset:-12%;background:url('/media/atelier-contours.svg') center/cover no-repeat;opacity:.14;animation:atelier-contour-drift 32s ease-in-out infinite alternate;animation-play-state:paused}
+.atelier-light{position:absolute;right:-15%;top:-25%;width:min(700px,95vw);aspect-ratio:1;background:radial-gradient(circle,#d8bc8466,transparent 68%);opacity:.65;animation:atelier-light-drift 15s ease-in-out infinite alternate;animation-play-state:paused}
+.journal-section .atelier-light{top:25%;right:60%;background:radial-gradient(circle,#88a99b40,transparent 68%)}
+html[data-atelier-motion=running] .atelier-in-view :is(.atelier-contours,.atelier-light){animation-play-state:running}
+@keyframes atelier-contour-drift{from{transform:translate3d(-1%,-1%,0) rotate(-2deg)}to{transform:translate3d(2%,2%,0) rotate(2deg)}}
+@keyframes atelier-light-drift{from{transform:translate3d(-6%,-3%,0) scale(.9)}to{transform:translate3d(12%,10%,0) scale(1.1)}}
+
+/* A small arrival signature, not a blocking preloader. Website stays usable. */
+.atelier-arrival{position:fixed;left:26px;bottom:26px;display:flex;align-items:center;gap:14px;max-width:calc(100vw - 36px);padding:16px 20px;background:#f3eee5f5;border:1px solid #c2aa7c70;box-shadow:0 12px 42px #08272d30;z-index:90;pointer-events:none;color:#183936;animation:atelier-arrival 1.4s cubic-bezier(.2,.7,.2,1) both}
+.atelier-arrival img{width:48px;height:48px;object-fit:contain;border:1px solid #c2aa7c55}
+.atelier-arrival span{font-size:9px;letter-spacing:1.2px;display:block}
+.atelier-arrival b{font-family:var(--serif);font-size:24px;font-weight:400;display:block;margin-top:5px;line-height:1.1}
+.atelier-arrival i{display:block;height:1px;margin-top:12px;background:#a5824f;transform-origin:left;animation:atelier-arrival-line 1s ease-out both}
+@keyframes atelier-arrival{0%{opacity:0;translate:0 15px}20%,70%{opacity:1;translate:0 0}100%{opacity:0;translate:0 -8px}}
+@keyframes atelier-arrival-line{from{scale:0 1}to{scale:1 1}}
+@media(max-width:700px){.atelier-arrival{left:18px;bottom:18px;padding:13px 15px;gap:12px}.atelier-arrival b{font-size:21px}.atelier-arrival span{font-size:9px;letter-spacing:.6px}.atelier-contours{opacity:.1}.atelier-light{opacity:.4}}
+@media(prefers-reduced-motion:reduce){.atelier-cursor,.atelier-arrival,.atelier-ripple{display:none!important}.atelier-contours,.atelier-light,.atelier-image-pending::before{animation:none!important}.atelier-image-ready img,.faq-list details[open]>p{animation:none!important}}
+html[data-atelier-motion=still] :is(.atelier-image-ready img,.faq-list details[open]>p){animation:none}
+html[data-atelier-pointer=off] :is(.card-image,.journal-image){transform:none;transition:none}
+html[data-atelier-pointer=off] :is(.button-arrow,.nav-plan>svg){translate:none;transition:none}
+@media print{.atelier-cursor,.atelier-arrival,.atelier-ambience,.atelier-ripple{display:none!important}.atelier-image-pending img{opacity:1}}
+/* Static hover/focus states remain available when movement is disabled. */
+html[data-atelier-motion=still] :is(.button,.nav-plan,.finder-submit,.save-button,.social-icon,.main-nav>a){transition:none}
+@media(prefers-reduced-motion:reduce){:is(.button,.nav-plan,.finder-submit,.save-button,.social-icon,.main-nav>a){transition:none}}
