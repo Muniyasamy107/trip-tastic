@@ -21,6 +21,21 @@ npm run preview  # preview the production build
 
 Requires Node 20+.
 
+### Windows quick start (no terminal needed)
+
+Double-click **`start-site.bat`** — it installs packages the first time, starts the dev server on
+`http://localhost:3000` and opens the browser for you.
+
+### Windows / VS Code terminal (copy-paste)
+
+```powershell
+cd $HOME\Desktop
+git clone -b arena/23d9011d-trip-tastic https://github.com/Muniyasamy107/trip-tastic.git triptastic-site
+cd triptastic-site
+npm install
+npm run dev
+```
+
 ## Tech
 
 | Layer      | Choice                                        |
