@@ -788,7 +788,7 @@
 }
 .footer__wordmark {
   font-family: var(--font-display);
-  font-size: clamp(4rem, 18.5vw, 18rem);
+  font-size: clamp(3.2rem, 17.4vw, 18rem);
   line-height: 0.78;
   letter-spacing: -0.045em;
   text-align: center;
@@ -922,7 +922,7 @@
   }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .nav__links {
     display: flex;
   }
@@ -932,6 +932,9 @@
   .nav__burger {
     display: none;
   }
+}
+
+@media (min-width: 900px) {
   .hero__postcard {
     display: none;
   }
