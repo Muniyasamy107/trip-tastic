@@ -578,10 +578,36 @@
     opacity: 0;
   }
 }
-.hero__veil {
+.hero__film {
   position: absolute;
   inset: 0;
   z-index: -3;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 1.6s var(--ease);
+}
+.hero__film.is-failed {
+  display: none;
+}
+.hero__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+  opacity: 0;
+  transition: opacity 1.4s var(--ease);
+}
+.hero__video.is-ready {
+  opacity: 1;
+}
+.hero__film:has(.hero__video.is-ready) {
+  opacity: 1;
+}
+
+.hero__veil {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
   background:
     linear-gradient(180deg, rgba(4, 10, 9, 0.72) 0%, rgba(4, 10, 9, 0.18) 26%, rgba(4, 10, 9, 0.34) 58%, rgba(4, 10, 9, 0.96) 100%),
     radial-gradient(70% 50% at 16% 74%, rgba(4, 10, 9, 0.78), transparent 68%),
@@ -590,7 +616,7 @@
 .hero__glow {
   position: absolute;
   inset: 0;
-  z-index: -2;
+  z-index: -1;
   pointer-events: none;
   background:
     radial-gradient(46% 34% at 86% 12%, rgba(224, 106, 61, 0.22), transparent 66%),

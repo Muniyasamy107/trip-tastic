@@ -104,6 +104,28 @@ Plus a custom cursor, scroll-progress bar, floating WhatsApp button, grain overl
 | Routes + prices on the map           | `src/components/RouteMap.jsx` → `routes`    |
 | Meta / OG / structured data          | `index.html`                  |
 
+### Hero film + design file
+
+The hero now ships with a real 16-second cinematic loop:
+
+| File | What it is |
+| ---- | ---------- |
+| `public/video/hero-loop.mp4` | 1600×900 · 24fps · 16s seamless loop (4 plates, Ken Burns, crossfades, warm grade, grain, light sweep) · 2.5 MB |
+| `public/video/hero-poster.jpg` | First-frame poster, shown before the video can play |
+| `public/design/index.html` | **Design spec sheet** — live frame, annotations, mobile frame, tokens, motion table (`/design/`) |
+| `public/design/hero-frame.svg` | 1440×900 hero frame with the plate baked in — drag into Figma, layers stay editable |
+
+Regenerate either asset locally:
+
+```bash
+pip install --break-system-packages pillow imageio-ffmpeg
+python3 scripts/make-hero-video.py    # renders + encodes the MP4 (~40s)
+python3 scripts/make-hero-frame.py    # rebuilds the Figma SVG frame
+```
+
+The `<video>` layer is skipped automatically for `prefers-reduced-motion`, `save-data` and 2G connections,
+pauses when the tab is hidden, and silently falls back to the still crossfade sequence if the file fails.
+
 ### Brand assets
 
 The uploaded `trip-tastic-logo.jpeg` is the source of truth. Derived files:

@@ -162,6 +162,9 @@ export default function Footer() {
             <a href={contact.whatsapp} target="_blank" rel="noreferrer">
               WhatsApp ↗
             </a>
+            <a href="/design/" target="_blank" rel="noreferrer">
+              Hero design file ↗
+            </a>
             <a
               href="#top"
               onClick={(e) => {

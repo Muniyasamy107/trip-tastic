@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { gsap, scrollToId } from '../lib/scroll'
 import { useIsoLayoutEffect } from '../lib/hooks'
 import { Magnetic, RotatingSeal } from './ui'
+import HeroVideo from './HeroVideo'
 import { heroImg, destinations } from '../data'
 
 const featured = destinations[0]
@@ -17,6 +18,7 @@ export default function Hero({ ready }) {
   const root = useRef(null)
   const media = useRef(null)
   const [shot, setShot] = useState(0)
+  const [filmOn, setFilmOn] = useState(false)
 
   // scroll parallax + pointer drift
   useIsoLayoutEffect(() => {
@@ -80,6 +82,7 @@ export default function Hero({ ready }) {
   useIsoLayoutEffect(() => {
     const host = media.current
     if (!host) return
+    if (filmOn) return
     const els = Array.from(host.querySelectorAll('.hero__slide'))
     if (!els.length) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -106,7 +109,7 @@ export default function Hero({ ready }) {
       window.clearInterval(id)
       gsap.killTweensOf(els)
     }
-  }, [])
+  }, [filmOn])
 
   return (
     <section className="hero" id="top" ref={root}>
@@ -124,6 +127,7 @@ export default function Hero({ ready }) {
           ))}
         </div>
       </div>
+      <HeroVideo onReady={() => setFilmOn(true)} />
       <div className="hero__veil" />
       <div className="hero__glow" />
       <span className="hero__sweep" aria-hidden="true" />
@@ -172,7 +176,7 @@ export default function Hero({ ready }) {
 
         <p className="hero__caption" aria-hidden="true" key={shot}>
           <span className="hero__caption-line" />
-          {shots[shot].label}
+          {filmOn ? shots[0].label : shots[shot].label}
         </p>
 
         <div className="hero__lower">
