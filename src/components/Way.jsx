@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { ScrollTrigger, scrollToId } from '../lib/scroll'
 import { useIsoLayoutEffect } from '../lib/hooks'
-import { SplitHeading, Reveal, RotatingSeal } from './ui'
+import { SectionHead, RotatingSeal } from './ui'
 import { steps } from '../data'
 import himachal from '../assets/himachal.webp'
 
@@ -47,16 +47,12 @@ export default function Way() {
         </div>
 
         <div className="way__body">
-          <div className="way__head">
-            <span className="eyebrow eyebrow--ink">The Trip Tastic way</span>
-            <SplitHeading as="h2" text="Less planning. *More* being there." />
-            <Reveal>
-              <p className="lede">
-                Four steps, one team, zero spreadsheets. This is how a Trip Tastic holiday gets made —
-                and why it feels nothing like booking a package.
-              </p>
-            </Reveal>
-          </div>
+          <SectionHead
+            index="03"
+            label="The Trip Tastic way"
+            title="Less planning. *More* being there."
+            aside="Four steps, one team, zero spreadsheets. This is how a Trip Tastic holiday gets made — and why it feels nothing like booking a package."
+          />
 
           <div className="way__list" ref={list}>
             {steps.map((s, i) => (

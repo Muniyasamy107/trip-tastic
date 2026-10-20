@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { gsap } from '../lib/scroll'
-import { SplitHeading, Reveal } from './ui'
+import { SectionHead, Reveal } from './ui'
 import { gallery } from '../data'
 import { lockScroll, unlockScroll } from '../lib/scroll'
 
@@ -45,18 +45,12 @@ export default function Gallery() {
   return (
     <section className="section section--cream gallery" id="postcards">
       <div className="shell">
-        <div className="gallery__head">
-          <div>
-            <span className="eyebrow eyebrow--ink">Postcards from the road</span>
-            <SplitHeading as="h2" text="Shot on *real* trips." />
-          </div>
-          <Reveal>
-            <p>
-              No stock libraries, no rented smiles. These are frames from our travellers and guides —
-              tap one to see it full size.
-            </p>
-          </Reveal>
-        </div>
+        <SectionHead
+          index="05"
+          label="Postcards from the road"
+          title="Shot on *real* trips."
+          aside="No stock libraries, no rented smiles. These frames come from our travellers and guides — open one to see it full size."
+        />
 
         <div className="gallery__grid">
           {gallery.map((g, i) => (

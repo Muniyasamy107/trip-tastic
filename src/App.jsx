@@ -6,6 +6,7 @@ import ScrollProgress from './components/ScrollProgress'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Marquee from './components/Marquee'
+import Press from './components/Press'
 import Story from './components/Story'
 import Destinations from './components/Destinations'
 import Way from './components/Way'
@@ -69,6 +70,7 @@ export default function App() {
       <main id="main">
         <Hero ready={ready} />
         <Marquee />
+        <Press />
         <Story />
         <Destinations />
         <Way />

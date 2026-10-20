@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { gsap, ScrollTrigger, scrollToId } from '../lib/scroll'
 import { useIsoLayoutEffect } from '../lib/hooks'
-import { SplitHeading, Reveal } from './ui'
+import { SectionHead } from './ui'
 import { destinations } from '../data'
 
 function pick(name) {
@@ -54,24 +54,23 @@ export default function Destinations() {
   return (
     <section className="dest" id="destinations" ref={section}>
       <div className="dest__head shell">
-        <div>
-          <span className="eyebrow">Where we wander</span>
-          <SplitHeading as="h2" text="Places we *love*" />
-        </div>
-        <div className="dest__aside">
-          <Reveal>
-            <p>
-              Eight starting points, endless versions. Every itinerary below gets rebuilt around your dates,
-              your budget and your people.
-            </p>
-          </Reveal>
-          <span className="dest__hint">
-            Scroll to travel
-            <svg viewBox="0 0 34 10" aria-hidden="true">
-              <path d="M0 5h30M26 1l4 4-4 4" />
-            </svg>
-          </span>
-        </div>
+        <SectionHead
+          index="01"
+          label="Where we wander"
+          title="Places we *love*"
+          aside={
+            <>
+              Eight starting points, endless versions. Every itinerary gets rebuilt around your dates, your
+              budget and your people.
+              <span className="dest__hint">
+                Scroll to travel
+                <svg viewBox="0 0 34 10" aria-hidden="true">
+                  <path d="M0 5h30M26 1l4 4-4 4" />
+                </svg>
+              </span>
+            </>
+          }
+        />
       </div>
 
       <div className="dest__viewport" ref={viewport}>

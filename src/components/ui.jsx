@@ -208,3 +208,21 @@ export function Stars({ count = 5 }) {
 }
 
 export { ScrollTrigger, gsap }
+
+/* ------------------------------------------------------------------ *
+ * SectionHead — index + label + giant title + aside
+ * ------------------------------------------------------------------ */
+export function SectionHead({ index, label, title, aside, align = 'left' }) {
+  return (
+    <header className="sec-head">
+      <div className="sec-head__meta">
+        <span className="sec-head__index">{index}</span>
+        <span className="sec-head__label">{label}</span>
+      </div>
+      <div className="sec-head__body">
+        <SplitHeading as="h2" text={title} className="sec-head__title" />
+        {aside ? <p className="sec-head__aside">{aside}</p> : null}
+      </div>
+    </header>
+  )
+}

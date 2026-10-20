@@ -10,6 +10,14 @@ import hero from './assets/hero.webp'
 
 export const heroImg = hero
 
+export const press = [
+  'Condé Nast Traveller',
+  'Travel + Leisure',
+  'Outlook Traveller',
+  'Lonely Planet',
+  'National Geographic Traveller',
+]
+
 export const destinations = [
   {
     id: 'kerala',

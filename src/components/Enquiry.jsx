@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from '../lib/scroll'
-import { SplitHeading, Reveal } from './ui'
+import { SectionHead, Reveal } from './ui'
 import { contact, destinationOptions } from '../data'
 
 const months = [
@@ -70,10 +70,16 @@ export default function Enquiry() {
 
   return (
     <section className="section section--cream enquiry" id="enquiry">
+      <div className="shell">
+        <SectionHead
+          index="07"
+          label="Start here"
+          title="Let’s write your *next chapter*."
+        />
+      </div>
+
       <div className="shell enquiry__grid">
         <div className="enquiry__copy">
-          <span className="eyebrow eyebrow--ink">Start here</span>
-          <SplitHeading as="h2" text="Let’s write your *next chapter*." />
           <Reveal>
             <p>
               Tell us roughly what you’re dreaming of. A real Trip Tastic planner — not a bot — replies within

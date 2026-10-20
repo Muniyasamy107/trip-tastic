@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from '../lib/scroll'
-import { SplitHeading, Stars } from './ui'
+import { SectionHead, Stars } from './ui'
 import { testimonials } from '../data'
 
 export default function Testimonials() {
@@ -30,10 +30,16 @@ export default function Testimonials() {
 
   return (
     <section className="section testi" id="stories">
+      <div className="shell">
+        <SectionHead
+          index="06"
+          label="Stories, not stats"
+          title="Loved by travellers, *not* algorithms."
+        />
+      </div>
+
       <div className="shell testi__grid">
         <div className="testi__intro">
-          <span className="eyebrow">Stories, not stats</span>
-          <SplitHeading as="h2" text="Loved by travellers, *not* algorithms." />
           <p>
             Four thousand eight hundred people have trusted us with their leave days. Here’s what a few of
             them said when they got home.
