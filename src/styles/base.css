@@ -289,6 +289,22 @@ h4 {
   animation: gold-shimmer 12s linear infinite;
 }
 
+.h-em {
+  font-style: italic;
+  color: var(--gold);
+  font-variation-settings: 'SOFT' 90, 'WONK' 1, 'opsz' 144;
+}
+.section--cream .h-em {
+  color: var(--saffron);
+}
+
+@supports not ((background-clip: text) or (-webkit-background-clip: text)) {
+  .gold-text {
+    background: none;
+    color: var(--gold-2);
+  }
+}
+
 @keyframes gold-shimmer {
   from {
     background-position: 0% 50%;

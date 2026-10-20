@@ -49,12 +49,29 @@ npm run dev
 Everything is self-hosted: fonts come from Fontsource, images are local WebP files, and there are no
 external trackers or CDN calls.
 
+## Design language
+
+Ultra-premium, editorial and cinematic:
+
+- **Palette** — obsidian ink `#040A09`, jade `#103529`, champagne gold `#C9A45C`, saffron `#E06A3D`
+  and warm ivory `#F8F2E5`. Hairline rules and gold brackets are used instead of heavy borders.
+- **Type** — Fraunces Variable (light weights, optical size 144, italic accents) against Manrope in
+  wide-tracked uppercase micro type.
+- **Hero** — a full-viewport stage: gold hairline frame with corner brackets, vertical rails, an
+  oversized two-line headline (shimmering gold italic + outlined word), a bottom stat deck and a
+  featured-journey chip.
+- **Navigation** — scrolling announcement strip, centred emblem crest, link groups split left/right,
+  a bar that condenses on scroll, and a full-screen menu with a live destination preview.
+- **Sections** — every block opens with a numbered index, label, giant serif title and a right-aligned
+  aside, so the page reads like a printed travel annual.
+
 ## What’s on the page
 
 1. **Intro / preloader** — logo stamp, progress counter, split curtains that hand off to the hero animation.
-2. **Hero** — full-bleed parallax image, masked headline reveal, rotating brand seal, floating “this week’s
-   favourite” postcard and trust strip.
-3. **Marquee** — outlined destination ticker that skews with scroll velocity.
+2. **Hero** — grand editorial stage with gold frame, oversized gold/outlined headline, parallax image,
+   rotating seal, stat deck and a featured-journey chip.
+3. **Marquee + press strip** — outlined destination ticker that skews with scroll velocity, followed by
+   an “as featured in” band.
 4. **Why Trip Tastic** — arched image collage with parallax, rotating seal, feature list and count-up stats.
 5. **Destinations** — a horizontally pinned rail of eight destinations on desktop (native snap-scroll on
    mobile). Clicking a card carries the destination into the enquiry form.
