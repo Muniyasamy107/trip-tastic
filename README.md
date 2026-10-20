@@ -28,6 +28,21 @@ See **[Art direction](docs/ART-DIRECTION.md)** and
 `npm run test:art-direction` is included in `npm test` and covers image payloads,
 responsive-source selection, seven layouts, desktop card spans and disclosure.
 
+## Premium hover, depth and micro-interactions
+
+The Tactile Atelier layer adds photo-frame perspective tilt and light reflection,
+a mouse-follow view cue, anchored magnetic button icons, CTA ripple, save/compare
+feedback, FAQ/page/image entrances, real loading states and a short non-blocking
+original-logo welcome. Original procedural contour artwork and soft light drift
+behind selected editorial sections. Existing cinematic destination images remain.
+
+Mouse-only effects are desktop/fine-pointer only; touch, keyboard, reduced motion
+and global pause retain usable static controls. Backgrounds suspend offscreen and
+behind modals, while the real enquiry-saving spinner follows the actual busy
+state. The film and React-owned transforms are never reused as hover surfaces.
+No new runtime dependency is needed. See **[Tactile Atelier](docs/ATELIER-MOTION.md)**.
+`npm run test:atelier` is part of the full test suite.
+
 ## Run locally
 
 Requires **Node 22.13+** (tested on 22.22). Node 22 may print an informational

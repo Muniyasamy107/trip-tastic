@@ -110,3 +110,12 @@ These are emulated browser layouts, not a guarantee of every physical device/OS.
 
 `npm test` also runs the existing journey, logo, enquiry, video-once, secure-admin
 and contact suites. `npm run build` verifies production bundling.
+
+
+## Tactile Atelier interaction layer
+
+See [ATELIER-MOTION.md](ATELIER-MOTION.md) for photo-frame perspective,
+mouse follower, magnetic icons, ripple/save feedback, image and enquiry loading
+states, procedural ambient backgrounds, entrance effects and shared lifecycle
+guards. This layer never transforms the real video or the GSAP-owned card parent.
+Its automated coverage is `npm run test:atelier`, included in `npm test`.

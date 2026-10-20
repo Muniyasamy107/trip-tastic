@@ -1,10 +1,12 @@
 import gsap from 'gsap';
 import {responsiveEditorial} from './editorial-media.js';
 import {setupSmoothScroll} from './smooth-scroll.js';
+import {setupAtelierMotion} from './atelier-motion.js';
 import './luxury/luxury.css';
 import './world-flight.css';
 import './cinematic-motion.css';
 import './art-direction.css';
+import './atelier-motion.css';
 import {setupCinematicMotion} from './cinematic-motion.js';
 import {setupWorldFlight} from './world-flight.js';
 import {setupSiteSettings} from './site-settings.js';
@@ -28,6 +30,7 @@ let contentKind='',toastTimer,activePage='home';
 const smoothScroll=setupSmoothScroll({gsap,ScrollTrigger,initialPaused:motionPaused});
 const globeMotion=setupWorldFlight({stage:$('#world-globe'),canvas:$('#world-flight-canvas'),initialPaused:motionPaused,initialActive:!location.hash.startsWith('#/'),onLayout:()=>ScrollTrigger.refresh(),scrollTo:(top,options)=>smoothScroll.to(top,options)});
 const cinematicMotion=setupCinematicMotion({gsap,ScrollTrigger,initialPaused:motionPaused,initialActive:!location.hash.startsWith('#/')});
+const atelierMotion=setupAtelierMotion({initialPaused:motionPaused});
 const heroVideo=$('#hero-video'),filmDialog=$('#film-dialog');
 let heroInView=true;
 const heroFilm=setupHeroFilm({video:heroVideo,container:$('.hero-visual'),dialog:filmDialog,stage:$('.film-stage',filmDialog),watchButton:$('#watch-film'),durationLabel:$('#film-duration'),caption:$('#film-caption'),canAutoplay:()=>activePage==='home'&&heroInView&&!motionPaused,onDialogOpen:()=>lockScroll()});
@@ -88,7 +91,7 @@ form.addEventListener('submit',async e=>{
  for(const panel of $$('[data-step]',form)){const invalid=$$('input,select,textarea',panel).find(el=>!el.checkValidity());if(invalid){setStep(Number(panel.dataset.step));invalid.reportValidity();return;}}
  if(form.elements.name.value.trim().length<2){form.elements.name.setCustomValidity('Please enter your name.');form.elements.name.reportValidity();return;}
  const raw=Object.fromEntries(new FormData(form));const payload={...raw,travellers:Number(raw.travellers),consent:form.elements.consent.checked,whatsappConsent:form.elements.whatsappConsent.checked};
- pending=true;$('#wizard-submit').disabled=true;$('#wizard-back').disabled=true;$('#wizard-submit').firstChild.textContent='Saving your enquiry… ';$('#planner-error').textContent='';
+ pending=true;form.setAttribute('aria-busy','true');$('#wizard-submit').disabled=true;$('#wizard-back').disabled=true;$('#wizard-submit').firstChild.textContent='Saving your enquiry… ';$('#planner-error').textContent='';
  try{
  const response=await fetch('/api/enquiries',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(15000)});
  const result=await response.json();
@@ -99,7 +102,7 @@ form.addEventListener('submit',async e=>{
  $('#success-copy').textContent=`${payload.name.trim()}, your ${j?j.name.toLowerCase():'personal South India journey'} enquiry for ${payload.travellers} traveller${payload.travellers===1?'':'s'} has been recorded. Keep your reference and download the details below.`;
  writeStored('tt-last-reference',{reference:receipt,destination:payload.destination});if(!planner.open)toast(`Your enquiry was saved. Reference: ${receipt}`);planner.scrollTo({top:0});
  }catch(error){$('#planner-error').textContent=error.name==='TimeoutError'||error.name==='TypeError'?'The connection could not be completed. Your details are still here. Please check your connection and try again.':error.message;}
- finally{pending=false;$('#wizard-submit').disabled=false;$('#wizard-back').disabled=false;$('#wizard-submit').firstChild.textContent='Send my journey enquiry ';}
+ finally{pending=false;form.setAttribute('aria-busy','false');$('#wizard-submit').disabled=false;$('#wizard-back').disabled=false;$('#wizard-submit').firstChild.textContent='Send my journey enquiry ';}
 });
 function downloadText(filename,text){const url=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);}
 function itineraryText(j){return `${j.name}\n${j.place} · ${j.days} days / ${j.nights} nights\nSuggested route: ${j.route.join(' → ')}\nSuggested season: ${j.season}\n\n${j.itinerary.map(([title,text],i)=>`DAY ${i+1} — ${title}\n${text}`).join('\n\n')}\n\nIndicative planning range: ${money(j.budget[0])}–${money(j.budget[1])} per person, based on two adults sharing. Not a live price or offer.\n\nSuggested arrangements (subject to quote):\n${included.map(x=>'• '+x).join('\n')}\n\nNot automatically included:\n${excluded.map(x=>'• '+x).join('\n')}`;}
@@ -137,18 +140,18 @@ function route(){
  if(hash&&/^#[a-z-]+$/.test(hash)){requestAnimationFrame(()=>{const el=$(hash);if(el)smoothScroll.to(el,{immediate:motionPaused||!routeInitialized,offset:-90});});}else if(!wasHome||routeInitialized)smoothScroll.to(0,{immediate:motionPaused});
  animateReveals($('#home-page'));
  }
- globeMotion.setActive(activePage==='home');cinematicMotion.setActive(activePage==='home');routeInitialized=true;ScrollTrigger.refresh();updateScroll();
+ globeMotion.setActive(activePage==='home');cinematicMotion.setActive(activePage==='home');atelierMotion.routeChanged();routeInitialized=true;ScrollTrigger.refresh();updateScroll();
 }
 window.addEventListener('hashchange',route);
 function updateScroll(){const total=document.documentElement.scrollHeight-innerHeight;$('.scroll-progress').style.transform=`scaleX(${total>0?Math.min(1,scrollY/total):0})`;$('#header').classList.toggle('is-scrolled',scrollY>75);}
 let scrollScheduled=false;window.addEventListener('scroll',()=>{if(!scrollScheduled){scrollScheduled=true;requestAnimationFrame(()=>{updateScroll();scrollScheduled=false;});}},{passive:true});
-function setMotion(paused){motionPaused=paused;smoothScroll.setPaused(paused);globeMotion.setPaused(paused);cinematicMotion.setPaused(paused);const globeButton=$('#globe-motion');globeButton.setAttribute('aria-pressed',String(paused));globeButton.setAttribute('aria-label',paused?'Resume globe animation':'Pause globe animation');globeButton.querySelector('span').textContent=paused?'▷':'Ⅱ';globeButton.querySelector('small').textContent=paused?'RESUME ANIMATION':'PAUSE ANIMATION';document.documentElement.classList.toggle('motion-paused',paused);$('#motion-toggle').setAttribute('aria-pressed',String(paused));$('#motion-toggle').setAttribute('aria-label',paused?'Play decorative motion':'Pause decorative motion');$('#motion-symbol').textContent=paused?'▷':'Ⅱ';$('#motion-label').textContent=paused?'PLAY MOTION':'PAUSE MOTION';
+function setMotion(paused){motionPaused=paused;smoothScroll.setPaused(paused);globeMotion.setPaused(paused);cinematicMotion.setPaused(paused);atelierMotion.setPaused(paused);const globeButton=$('#globe-motion');globeButton.setAttribute('aria-pressed',String(paused));globeButton.setAttribute('aria-label',paused?'Resume globe animation':'Pause globe animation');globeButton.querySelector('span').textContent=paused?'▷':'Ⅱ';globeButton.querySelector('small').textContent=paused?'RESUME ANIMATION':'PAUSE ANIMATION';document.documentElement.classList.toggle('motion-paused',paused);$('#motion-toggle').setAttribute('aria-pressed',String(paused));$('#motion-toggle').setAttribute('aria-label',paused?'Play decorative motion':'Pause decorative motion');$('#motion-symbol').textContent=paused?'▷':'Ⅱ';$('#motion-label').textContent=paused?'PLAY MOTION':'PAUSE MOTION';
  if(paused){heroFilm.pause();gsap.getTweensOf('.word-line>*,.hero-copy>p,.hero-actions,.hero-topline,.hero-kicker,.hero-caption,.reveal').forEach(t=>{t.progress(1);t.kill();});}else heroFilm.sync();
 }
 $('#motion-toggle').addEventListener('click',()=>setMotion(!motionPaused));$('#globe-motion').addEventListener('click',()=>setMotion(!motionPaused));reduced.addEventListener('change',e=>setMotion(e.matches));
 new IntersectionObserver(([entry])=>{heroInView=entry.isIntersecting;heroFilm.sync();},{threshold:.05}).observe($('.hero'));
-function lockScroll(){smoothScroll.setOverlay(true);globeMotion.setOverlay(true);document.body.style.overflow='hidden';}
-function unlockScroll(){if(!$('dialog[open]:not(.youtube-embedded)')){document.body.style.overflow='';smoothScroll.setOverlay(false);globeMotion.setOverlay(false);}}
+function lockScroll(){atelierMotion.setOverlay(true);smoothScroll.setOverlay(true);globeMotion.setOverlay(true);document.body.style.overflow='hidden';}
+function unlockScroll(){if(!$('dialog[open]:not(.youtube-embedded)')){document.body.style.overflow='';atelierMotion.setOverlay(false);smoothScroll.setOverlay(false);globeMotion.setOverlay(false);}}
 $$('dialog').forEach(dialog=>{
  $('.dialog-close',dialog).addEventListener('click',()=>dialog.close());
  dialog.addEventListener('close',unlockScroll);
@@ -175,3 +178,5 @@ if(!motionPaused&&activePage==='home'){
  const intro=gsap.timeline({defaults:{ease:'power3.out'}});
  intro.fromTo('.hero-topline,.hero-kicker',{opacity:0,y:12},{opacity:1,y:0,duration:.65,stagger:.08},.05).fromTo('.word-line>*',{yPercent:115,rotate:3,opacity:0},{yPercent:0,rotate:0,opacity:1,duration:1.4,stagger:.15},.1).fromTo('.hero-copy>p,.hero-actions',{opacity:0,y:18},{opacity:1,y:0,duration:.7,stagger:.1},.35).fromTo('.hero-caption',{opacity:0,y:25},{opacity:1,y:0,duration:.8},.5);
 }
+
+if(import.meta.hot)import.meta.hot.dispose(()=>atelierMotion.destroy());
