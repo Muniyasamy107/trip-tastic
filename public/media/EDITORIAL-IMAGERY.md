@@ -43,9 +43,9 @@ in the customer's written quote.
 
 ## The hero film is separate
 
-No generated illustration replaces or overlays the actual video surface as fake
-footage. The existing user-selected YouTube film remains the same single
-persistent full-cover player, with non-looping/session-completion behaviour and
-its existing brightness filter. See `FOOTAGE-LICENSE.md` for filmmaker, source,
-embedding/rights caveats and playback details. This refresh neither generates a
-new video nor verifies or guarantees genuine 8K playback.
+No generated illustration replaces the actual video surface as fake footage.
+The current default is the owner-approved real Pexels road-trip film, with a
+single native player, full-cover and non-looping/session-completion behaviour.
+The previous YouTube film remains operator opt-in only. See `FOOTAGE-LICENSE.md`
+and `YOUTUBE-SOURCE.md` for the respective source, rights and playback caveats.
+The editorial imagery does not generate a new film or guarantee genuine 8K.

@@ -1,5 +1,9 @@
 # Tactile Atelier — premium interaction layer
 
+**Current source/UI update:** the later [road-film and concierge edition](ROAD-FILM-CONCIERGE.md)
+supersedes earlier references below to the YouTube hero default or older enquiry
+presentation. The animation/ownership architecture documented here is retained.
+
 This is a progressive-enhancement layer in `atelier-motion.js` and
 `atelier-motion.css`. There are no new runtime dependencies. The existing React /
 GSAP ScrollTrigger / Three Fiber / Lenis / Framer experience is retained.

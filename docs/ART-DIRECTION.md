@@ -1,5 +1,9 @@
 # South India Atelier — cinematic visual refresh
 
+**Current source/UI update:** the later [road-film and concierge edition](ROAD-FILM-CONCIERGE.md)
+supersedes earlier references below to the YouTube hero default or older enquiry
+presentation. The animation/ownership architecture documented here is retained.
+
 The refresh changes the site's visual system, not just its dependency list.
 `art-direction.css`, imported last in the public entry, art-directs the existing
 shell without taking ownership of React islands, API, routing or player state.

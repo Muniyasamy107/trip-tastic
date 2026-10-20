@@ -1,0 +1,87 @@
+/* The road-film edition. The genuine video keeps a single full-cover surface. */
+.hero-visual #hero-video{object-fit:cover;object-position:51% center;filter:brightness(1.08) saturate(.94) contrast(1.02)}
+.hero-visual .hero-poster{object-position:51% center}
+#hero-video.is-expanded{object-fit:contain;object-position:center;filter:none}
+.hero .hero-overlay{background:linear-gradient(90deg,#06242bb0, #08272b55 48%,#08272b15 78%),linear-gradient(0deg,#08272bd4,transparent 48%,transparent 72%,#08272b44)}
+.hero .hero-film-note{width:200px;text-shadow:0 2px 18px #062429}
+.hero .hero-film-note>span{letter-spacing:1.25px}.hero .hero-film-credit{padding-block:12px;min-height:44px;display:flex;align-items:center}
+
+/* A private planning desk, not a checkout. All fields retain their original
+   names, required constraints, consent and server-backed three-step flow. */
+#planner-dialog{width:min(1120px,calc(100vw - 64px));max-width:none;max-height:min(900px,calc(100svh - 48px));padding:0;border:1px solid #d1ba8a88;border-radius:3px;background:#f5f0e7;overflow:auto;color:#183936;box-shadow:0 32px 120px #041e2670;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#b39a70 #eee6d9}
+#planner-dialog[open]{display:grid;grid-template-columns:360px minmax(0,1fr)}
+#planner-dialog::backdrop{background:#041e28b0;backdrop-filter:blur(7px)}
+#planner-dialog [hidden]{display:none!important}
+#planner-dialog>.dialog-close{position:sticky;top:18px;right:auto;grid-column:2;grid-row:1;align-self:start;justify-self:end;margin:18px 18px -62px 0;z-index:12;width:44px;height:44px;background:#f5f0e7ed;border-color:#9d815440}
+#planner-dialog .planner-aside{display:block;grid-column:1;grid-row:1;position:sticky;top:0;min-height:0;height:min(900px,calc(100svh - 48px));align-self:start;background:#092b2e}
+#planner-dialog .planner-aside>img{filter:brightness(.72) saturate(.9);object-position:center;transition:opacity .35s}
+#planner-dialog .planner-aside:after{background:linear-gradient(0deg,#07292ef2,#09292d88 58%,#08272d44)}
+#planner-dialog .planner-aside>div{height:100%;min-height:0;padding:38px 32px 25px}
+#planner-dialog .planner-aside .eyebrow{font-size:9px;letter-spacing:1.8px;color:#ebd7ac}
+#planner-dialog .planner-aside h2{font-size:48px;line-height:1.03;letter-spacing:-1.3px;margin-top:28px}
+#planner-dialog .planner-aside p{font-size:12px;line-height:1.9;color:#f0eaded6;margin-top:23px}
+.concierge-summary{margin-top:auto;padding-top:35px}.concierge-summary-title{display:block;font-size:9px;letter-spacing:1.5px;color:#e6d1a6;border-bottom:1px solid #dcc18e44;padding-bottom:16px}
+.concierge-summary dl{margin:0}.concierge-summary dl>div{padding:17px 0;border-bottom:1px solid #dcc18e26}
+.concierge-summary dt{font-size:9px;letter-spacing:.5px;color:#d9d8c6}.concierge-summary dd{font-family:var(--serif);font-size:24px;line-height:1.15;color:#f5efdf;margin:7px 0 0}
+.concierge-private{display:block;font-size:9px;letter-spacing:1px;color:#decaa0;margin-top:22px}
+.concierge-imagery-note{font-size:10px;line-height:1.7;color:#e1ddcfaa;margin-top:20px;display:block}
+#planner-dialog .planner-main{grid-column:2;grid-row:1;padding:38px 48px 35px;min-width:0;min-height:680px}
+#planner-dialog .planner-brand{gap:12px;margin:0 50px 30px 0;padding-bottom:23px;border-bottom:1px solid #1839361c}
+#planner-dialog .planner-brand img{width:52px;height:52px;border-radius:2px}
+#planner-dialog .planner-brand>span{font-size:29px}#planner-dialog .planner-brand small{font-size:8px;letter-spacing:1.9px;margin-top:7px}
+#planner-dialog #planner-heading>.eyebrow{font-size:9px;letter-spacing:1.5px}
+#planner-dialog .planner-main h2{font-size:60px;line-height:.98;letter-spacing:-1.8px;margin-top:15px}
+#planner-dialog .planner-main h2 em{color:#967044}.concierge-intro{font-size:12px;line-height:1.85;color:#67766a;margin-top:17px}
+#planner-dialog .wizard-progress{margin:28px 0 14px;gap:10px}
+#planner-dialog .wizard-progress>span{font-size:11px;color:#8a8e7d;line-height:1.5}
+#planner-dialog .wizard-progress small{font-size:10px;margin-left:7px}
+#planner-dialog .wizard-progress>span.active{color:#87673e}#planner-dialog .wizard-progress>span[aria-current=step]{font-weight:650;color:#153c39}
+#planner-dialog .wizard-progress>span.is-complete{color:#8c744b}
+.enquiry-progress{height:2px;background:#d7d2c2;overflow:hidden}.enquiry-progress>i{display:block;height:100%;width:var(--enquiry-progress,33.333%);background:#a78953;transition:width .45s cubic-bezier(.2,.7,.2,1)}
+.enquiry-step-status{font-size:9px;letter-spacing:1.3px;margin:13px 0 25px;color:#8a754e;min-height:14px}
+#planner-dialog #planner-form .wizard-panel{gap:21px;animation:none}
+html[data-atelier-feedback=on] #planner-dialog #planner-form .wizard-panel:not([hidden]){animation:concierge-panel-in .35s ease-out}
+#planner-dialog #planner-form label:not(.consent-label){font-size:12px;line-height:1.7;color:#304f44}
+#planner-dialog #planner-form :is(select,input:not([type=radio],[type=checkbox]),textarea){width:100%;min-width:0;max-width:100%;min-height:52px;background:#fcfaf4;border:1px solid #a7ab973f;border-radius:2px;font-family:var(--sans);font-size:14px;line-height:1.5;color:#183936;padding:13px 14px;margin-top:8px;transition:border-color .25s,box-shadow .25s}
+#planner-dialog #planner-form textarea{min-height:108px;resize:vertical}
+#planner-dialog #planner-form :is(select,input,textarea):focus-visible{outline:2px solid #997744;outline-offset:2px;border-color:#997744}
+#planner-dialog #planner-form :is(select,input,textarea):user-invalid{border-color:#ad6756}
+#planner-dialog .form-row{gap:16px;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}
+#planner-dialog .field-note{font-size:11px;line-height:1.8;color:#7a8170}
+#planner-dialog .pace-options{gap:9px}#planner-dialog .pace-options legend{font-size:12px;margin-bottom:12px}
+#planner-dialog .pace-options span{font-size:11px;padding:12px 15px;min-height:44px;background:#fcfaf4;border-radius:2px}
+#planner-dialog .pace-options input:checked+span{background:#113936;color:#f1dfb8;border-color:#113936}
+#planner-dialog .consent-label{font-size:11px;line-height:1.8;gap:12px;color:#5e7062}
+#planner-dialog .consent-label input{width:19px;height:19px;margin-top:2px;accent-color:#153c39;flex-shrink:0}
+#planner-dialog .consent-label button{font-size:11px;min-height:32px;text-underline-offset:3px}
+#planner-dialog .wizard-actions{gap:20px;border-top:1px solid #18393620;padding-top:22px;margin-top:24px}
+#planner-dialog .wizard-actions .button{font-size:11px;min-height:56px;padding:12px 18px;justify-content:space-between;gap:15px;background:#103733}
+#planner-dialog .wizard-actions>.text-button{font-size:11px;min-height:44px;flex-shrink:0}
+#planner-dialog .wizard-actions .button-arrow{width:32px;height:32px;flex-shrink:0}
+#planner-dialog .form-error{font-size:12px;line-height:1.8;color:#a14e3c}
+.concierge-review{border:1px solid #b39b6d55;background:#ebe4d533;border-radius:2px;padding:0 16px}
+.concierge-review summary{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:16px 0;min-height:52px;font-size:12px;cursor:pointer}
+.concierge-review summary>span{font-size:9px;letter-spacing:.2px;color:#7b6a4d}.concierge-review dl{margin:0;padding-top:5px;border-top:1px solid #18393618;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.concierge-review dt{font-size:10px;color:#7d806f}.concierge-review dd{font-size:12px;line-height:1.7;margin:5px 0 0;color:#254c40}
+.concierge-edit{font-size:11px;color:#806239;min-height:44px;text-decoration:underline;text-underline-offset:4px;background:transparent;padding:10px 0}
+#planner-dialog #planner-success{padding-top:14px}.concierge-next{margin:25px 0;border-top:1px solid #b39b6d44;padding-top:20px}
+.concierge-next h3{font-family:var(--serif);font-weight:400;font-size:30px;margin-bottom:12px}
+.concierge-next ol{padding-left:18px;margin:0;font-size:12px;line-height:2.1;color:#5e7366}
+#planner-dialog .reference-box{border:1px solid #b39b6d70;background:#eae3d54d;padding:20px 22px;margin-top:24px;display:flex;flex-direction:column;gap:10px}
+#planner-dialog .reference-box>span{font-size:10px;letter-spacing:.8px}#planner-dialog .reference-box>strong{font-size:22px;letter-spacing:1px;user-select:all}
+#planner-dialog .reference-box>button{font-size:11px;text-align:left;color:#7d6035;background:transparent;min-height:44px;padding:7px 0}
+#planner-dialog #concierge-copy-feedback{font-size:11px;line-height:1.7;letter-spacing:0;color:#32614b}
+#planner-dialog #planner-success>.eyebrow{font-size:10px}#planner-dialog #planner-success>p{font-size:13px;line-height:1.9}
+#planner-dialog #planner-success>.button{font-size:11px;min-height:54px}
+@keyframes concierge-panel-in{from{opacity:.3;translate:0 9px}to{opacity:1;translate:0 0}}
+@media(max-width:1050px) and (min-width:761px){#planner-dialog{width:calc(100vw - 40px)}#planner-dialog[open]{grid-template-columns:290px minmax(0,1fr)}#planner-dialog .planner-main{padding:32px 30px}#planner-dialog .planner-aside>div{padding:35px 25px 22px}#planner-dialog .planner-aside h2{font-size:43px}#planner-dialog .planner-main h2{font-size:52px}}
+@media(max-width:760px){#planner-dialog{width:calc(100vw - 20px);max-height:calc(100svh - 20px)}#planner-dialog[open]{display:block}#planner-dialog>.dialog-close{position:sticky;float:right;top:12px;margin:12px 12px -56px 0;width:44px;height:44px}#planner-dialog .planner-aside{position:relative;top:auto;height:150px;min-height:0;width:100%}#planner-dialog .planner-aside>div{padding:22px 24px 15px;min-height:0}#planner-dialog .planner-aside h2{font-size:31px;margin-top:11px;letter-spacing:-.5px;line-height:1.02}#planner-dialog .planner-aside .eyebrow{font-size:9px;letter-spacing:1.4px}#planner-dialog .planner-aside p,#planner-dialog .concierge-summary{display:none}#planner-dialog .concierge-imagery-note{font-size:9px;line-height:1.5;margin-top:auto;max-width:250px}#planner-dialog .planner-aside>img{object-position:center 62%;filter:brightness(.6) saturate(.85)}#planner-dialog .planner-main{padding:25px 25px 28px;min-height:0}#planner-dialog .planner-brand{padding-bottom:18px;margin-bottom:23px}#planner-dialog .planner-brand img{width:45px;height:45px}#planner-dialog .planner-brand>span{font-size:27px}#planner-dialog .planner-brand small{font-size:7px}#planner-dialog #planner-heading>.eyebrow{font-size:9px;letter-spacing:1.1px}#planner-dialog .planner-main h2{font-size:48px;letter-spacing:-1px}.concierge-intro{font-size:12px}#planner-dialog .wizard-progress{gap:6px;margin-top:23px}#planner-dialog .wizard-progress>span{font-size:10px}#planner-dialog .wizard-progress small{font-size:9px;margin-left:4px}#planner-dialog #planner-form :is(select,input:not([type=radio],[type=checkbox]),textarea){font-size:16px;min-height:52px;padding:12px}#planner-dialog .form-row{grid-template-columns:1fr;gap:18px}#planner-dialog .wizard-actions{gap:15px}#planner-dialog .wizard-actions .button{font-size:10px;padding-inline:13px;gap:9px}.concierge-review summary{font-size:11px}.concierge-review summary>span{font-size:9px}.concierge-review dl{grid-template-columns:1fr;gap:14px}#planner-dialog .pace-options span{font-size:11px;padding-inline:12px}#planner-dialog .reference-box{padding:18px}#planner-dialog #planner-success h2{font-size:51px}}
+@media(max-width:360px){#planner-dialog .planner-main{padding-inline:20px}#planner-dialog .planner-main h2{font-size:43px}#planner-dialog .wizard-progress small{font-size:8px}#planner-dialog .wizard-actions .button{font-size:10px}#planner-dialog .wizard-actions{gap:10px}#planner-dialog .wizard-actions>.text-button{font-size:10px}}
+@media(prefers-reduced-motion:reduce){#planner-dialog .wizard-panel{animation:none!important}.enquiry-progress>i,#planner-dialog .planner-aside>img{transition:none}}
+html[data-atelier-feedback=off] .enquiry-progress>i{transition:none}
+@media print{#planner-dialog{box-shadow:none}#planner-dialog .planner-aside{display:none}}
+/* Keep right-side editorial type legible over bright road/stone highlights. */
+.hero .hero-overlay{background:linear-gradient(90deg,#06242bb0,#08272b55 48%,#08272b38 78%,#08272b77),linear-gradient(0deg,#08272bd4,transparent 48%,transparent 72%,#08272b44)}
+@media(max-width:760px){#planner-dialog .planner-aside{height:120px}#planner-dialog .planner-aside>div{padding:17px 24px 12px}#planner-dialog .planner-aside .eyebrow{display:none}#planner-dialog .planner-aside h2{font-size:28px;margin-top:0}#planner-dialog .planner-main{padding-top:22px}#planner-dialog .planner-brand{padding-bottom:15px;margin-bottom:20px}#planner-dialog .planner-main h2{font-size:44px}.concierge-intro{margin-top:13px}#planner-dialog .wizard-progress{margin-top:20px}.enquiry-step-status{margin-bottom:20px}}
+@media(min-width:380px) and (max-width:760px){#planner-dialog .form-row{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px}}
+@media(max-width:360px){#planner-dialog .planner-main h2{font-size:41px}}

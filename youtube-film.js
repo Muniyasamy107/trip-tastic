@@ -19,7 +19,9 @@ export function setupYouTubeFilm({video,container,dialog,stage,watchButton,durat
  const key=`tt-hero-film-finished:${youtubeFilm.revision}`;
  let completed=false,failed=false,expanded=false,player,frame,playerReady=false,initializing=false,progressTimer,readyTimer;
  try{completed=JSON.parse(sessionStorage.getItem(key)||'null')?.finished===true;}catch{/* In-memory completion still applies. */}
- video.hidden=true;video.removeAttribute('src');
+ video.hidden=true;video.removeAttribute('src');container.dataset.filmProvider='youtube';
+ const credit=document.querySelector('.hero-film-credit');credit.href=youtubeFilm.source;credit.textContent='WATCH ON YOUTUBE / THE INDIAN AMBIENCE ↗';
+ const byline=document.querySelector('.hero-coordinate>span');if(byline)byline.textContent='A FILM BY THE INDIAN AMBIENCE';
  const poster=container.querySelector('.hero-poster');poster.src=youtubeFilm.poster;poster.alt='Official YouTube thumbnail for South India by The Indian Ambience';
  caption.textContent=`${youtubeFilm.title} · ${youtubeFilm.credit} · Creator-labelled 4K · YouTube auto quality · Plays once`;
  const status=document.createElement('p');status.className='hero-film-status';status.setAttribute('role','status');status.hidden=true;watchButton.parentElement.after(status);

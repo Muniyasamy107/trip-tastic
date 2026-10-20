@@ -1,5 +1,9 @@
 # React luxury experience
 
+**Current source/UI update:** the later [road-film and concierge edition](ROAD-FILM-CONCIERGE.md)
+supersedes earlier references below to the YouTube hero default or older enquiry
+presentation. The animation/ownership architecture documented here is retained.
+
 ## Scope and ownership
 
 This is an incremental, real React integration, **not** a claim that every legacy

@@ -18,7 +18,7 @@ const adminApi=createAdminApi(db);
 const limits=new Map();
 function json(res,status,data){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(data));}
 function clean(value,max=200){return typeof value==='string'?value.trim().replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g,'').slice(0,max):'';}
-export function api(req,res,next,{mediaRoot=path.resolve('public/media'),filmProvider=process.env.HERO_FILM_PROVIDER||'youtube'}={}){
+export function api(req,res,next,{mediaRoot=path.resolve('public/media'),filmProvider=process.env.HERO_FILM_PROVIDER||'local'}={}){
  const pathname=new URL(req.url,'http://localhost').pathname;
  if(!pathname.startsWith('/api/'))return next?.();
  if(pathname.startsWith('/api/admin/')||pathname==='/api/site-settings')return adminApi(req,res);
@@ -30,7 +30,7 @@ export function api(req,res,next,{mediaRoot=path.resolve('public/media'),filmPro
    const stat=fs.statSync(file);
    if(!stat.isFile()||stat.size===0)throw new Error('No installed film');
    const poster=fs.existsSync(path.join(mediaRoot,'hero-road-trip-poster.jpg'))?'/media/hero-road-trip-poster.jpg':null;
-   return json(res,200,{available:true,src:'/media/hero-road-trip.mp4',revision:`${stat.size}-${stat.mtimeMs}`,poster});
+   return json(res,200,{available:true,provider:'local',src:'/media/hero-road-trip.mp4',revision:`${stat.size}-${stat.mtimeMs}`,poster});
   }catch{return json(res,200,{available:true,...stockFilm,delivery:'external-cdn'});}
  }
 

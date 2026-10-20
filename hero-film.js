@@ -1,5 +1,5 @@
 // Dispatch to one selected provider. No generated vehicle animation is used.
-// YouTube is the default; native/local playback remains an explicit legacy mode.
+// Curated native road footage is the default; YouTube remains an explicit opt-in.
 import { stockFilm, youtubeFilm } from './film-source.js';
 import { setupYouTubeFilm } from './youtube-film.js';
 
@@ -16,7 +16,11 @@ export function setupHeroFilm(options){
 }
 
 function setupLocalFilm({video,container,dialog,stage,watchButton,durationLabel,caption,canAutoplay,onDialogOpen,metadata}) {
- let available=false,completed=false,revision='',opening=false;
+ let available=false,completed=false,revision='',opening=false,source='';
+ const poster=container.querySelector('.hero-poster');poster.src=stockFilm.poster;poster.alt='Source preview of a real tea-country road, Syam Krishnan / Pexels';
+ const status=document.createElement('p');status.className='hero-film-status';status.setAttribute('role','status');status.hidden=true;watchButton.parentElement.after(status);
+ const message=text=>{status.textContent=text;status.hidden=!text;};
+ const credit=document.querySelector('.hero-film-credit');credit.href=stockFilm.source;credit.textContent='FILM / SYAM KRISHNAN · PEXELS ↗';
  const completionKey=()=>`tt-hero-film-finished:${revision}`;
  const finishedRecord=()=>{try{const value=sessionStorage.getItem(completionKey());return value==='yes'?{finished:true}:JSON.parse(value||'null');}catch{return null;}};
  const rememberFinished=()=>{
@@ -26,13 +30,17 @@ function setupLocalFilm({video,container,dialog,stage,watchButton,durationLabel,
  };
  const sync=()=>{
   if(!available||completed||document.hidden||(!dialog.open&&!canAutoplay())){video.pause();return;}
-  video.play().catch(()=>{/* Muted autoplay may be blocked; the user can open the film. */});
+  if(!video.getAttribute('src')&&source){video.src=source;video.load();}
+  video.play().then(()=>message('')).catch(error=>{
+   if(!available||error.name==='AbortError'||completed||document.hidden||(!dialog.open&&!canAutoplay()))return;
+   watchButton.querySelector('[data-film-title]').textContent='PLAY THE FILM';message('Select Play the film to start. The preview is a still from the same real footage.');
+  });
  };
  const updateFinishedLabel=()=>{
   watchButton.querySelector('[data-film-title]').textContent='THE FINAL FRAME';
   durationLabel.textContent='Viewed once · no automatic replay';
  };
- const showFallback=()=>{available=false;video.pause();video.hidden=true;watchButton.hidden=true;};
+ const showFallback=()=>{available=false;video.pause();video.hidden=true;watchButton.hidden=true;message('The film could not load. Its source still is shown; use the film credit link to view the original.');};
  video.loop=false;
  video.addEventListener('ended',()=>{completed=true;rememberFinished();video.pause();updateFinishedLabel();});
  // Native controls must not silently rewind/replay a completed film either.
@@ -54,12 +62,12 @@ function setupLocalFilm({video,container,dialog,stage,watchButton,durationLabel,
  document.addEventListener('visibilitychange',sync);
  const ready=Promise.resolve(metadata).then(data=>{
   if(data.available!==true||!['/media/hero-road-trip.mp4',stockFilm.src].includes(data.src)){showFallback();return;}
-  revision=String(data.revision||data.src);const previous=finishedRecord();completed=previous?.finished===true;available=true;
+  container.dataset.filmProvider=data.src===stockFilm.src?'stock':'local';source=data.src;revision=String(data.revision||data.src);const previous=finishedRecord();completed=previous?.finished===true;available=true;
   if(data.poster==='/media/hero-road-trip-poster.jpg')video.poster=data.poster;
   caption.textContent=data.src===stockFilm.src?`Real road-trip footage · ${stockFilm.credit} · Plays once`:'Road-trip film · Self-hosted · Plays once';
   watchButton.hidden=false;
   if(completed){container.style.setProperty('--film-progress','100%');updateFinishedLabel();video.poster=previous.poster||video.poster||stockFilm.poster;video.hidden=false;return;}
-  video.src=data.src;video.load();sync();
+  durationLabel.textContent='Real road-trip film · Plays once';sync();
  }).catch(showFallback);
  return {sync,ready,pause:()=>video.pause(),isAvailable:()=>available,isCompleted:()=>completed};
 }

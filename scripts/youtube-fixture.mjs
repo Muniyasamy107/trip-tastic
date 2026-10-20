@@ -1,7 +1,9 @@
+import {youtubeFilm} from '../film-source.js';
 import { thumbnailFixture } from './thumbnail-fixture.mjs';
 // Offline provider double. Never shipped or used by the public application.
 export async function youtubeFixture(page,{error,autoplayBlocked=false}={}){
  await thumbnailFixture(page);
+ await page.route('**/api/hero-film',route=>route.fulfill({json:{available:true,...youtubeFilm}}));
  const settings=JSON.stringify({error,autoplayBlocked});
  await page.route('https://www.youtube.com/iframe_api',route=>route.fulfill({contentType:'application/javascript',body:`
   const settings=${settings};window.__ytPlayers=[];

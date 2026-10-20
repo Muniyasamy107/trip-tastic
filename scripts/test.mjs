@@ -11,7 +11,7 @@ const base=process.env.TEST_URL||'http://localhost:5173';
 fs.mkdirSync('.cache',{recursive:true});
 const testMedia=fs.mkdtempSync('.cache/hero-metadata-');
 try{
- let defaultMetadata;api({method:'GET',url:'/api/hero-film'},{writeHead(){},end(body){defaultMetadata=JSON.parse(body);}},()=>assert.fail('Missing film API'));assert.equal(defaultMetadata.videoId,youtubeFilm.videoId);assert.equal(defaultMetadata.provider,'youtube');
+ let defaultMetadata;api({method:'GET',url:'/api/hero-film'},{writeHead(){},end(body){defaultMetadata=JSON.parse(body);}},()=>assert.fail('Missing film API'));assert.equal(defaultMetadata.src,stockFilm.src);assert.equal(defaultMetadata.provider,'stock');
  const readMetadata=()=>{let output;api({method:'GET',url:'/api/hero-film'},{writeHead(status){assert.equal(status,200);},end(body){output=JSON.parse(body);}},()=>assert.fail('Media metadata route was not handled'),{mediaRoot:testMedia,filmProvider:'local'});return output;};
  assert.equal(readMetadata().src,stockFilm.src);assert.equal(readMetadata().delivery,'external-cdn');
  fs.writeFileSync(`${testMedia}/hero-road-trip.mp4`,'');assert.equal(readMetadata().src,stockFilm.src);

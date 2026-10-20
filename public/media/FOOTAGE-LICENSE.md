@@ -1,8 +1,10 @@
-# Legacy Pexels footage — not the selected YouTube header
+# Selected real road-trip footage — Syam Krishnan / Pexels
 
-The default header now uses the user-selected YouTube film. This file documents
-only the older stock source, retained for explicit HERO_FILM_PROVIDER=local mode.
-See YOUTUBE-SOURCE.md for the active selection.
+On 20 October 2026 the owner chose the curated real hill-road stock-film option.
+The default native mode uses an installed copy of this exact source, otherwise
+the fixed CDN URL below. The previous YouTube selection is opt-in only through
+`HERO_FILM_PROVIDER=youtube`; see `YOUTUBE-SOURCE.md`. Source/licence review dates
+below refer to the earlier research, not a claim of newly verified live playback.
 
 - Title: A Jeep Moving on the Road
 - Filmmaker: Syam Krishnan (@adifferentmallu)
@@ -24,7 +26,7 @@ and not an endorsement by Pexels, the filmmaker or a visible vehicle manufacture
 Do not resell/redistribute the unaltered clip as a stock product or imply endorsement.
 Review the full linked licence before any new use.
 
-Legacy local mode falls back to browser-side streaming of this exact CDN URL. No MP4 binary is
+Default native mode falls back to browser-side streaming of this exact CDN URL. No MP4 binary is
 committed. For self-hosting, run `npm run media:download` locally before building.
 It downloads this source once, validates the MP4 container and preserves any existing
 `public/media/hero-road-trip.mp4` without re-downloading or overwriting it.

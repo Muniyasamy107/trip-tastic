@@ -7,7 +7,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "node scripts/test.mjs && node scripts/test-youtube.mjs && node scripts/test-admin.mjs && node scripts/test-contacts.mjs && node scripts/test-world-flight.mjs && node scripts/test-cinematic.mjs && node scripts/test-luxury.mjs && node scripts/test-art-direction.mjs && node scripts/test-atelier-motion.mjs",
+    "test": "node scripts/test.mjs && node scripts/test-youtube.mjs && node scripts/test-admin.mjs && node scripts/test-contacts.mjs && node scripts/test-world-flight.mjs && node scripts/test-cinematic.mjs && node scripts/test-luxury.mjs && node scripts/test-art-direction.mjs && node scripts/test-atelier-motion.mjs && node scripts/test-concierge.mjs",
     "start": "node server.mjs",
     "enquiries": "node scripts/enquiries.mjs",
     "visual:check": "node scripts/visual-check.mjs",
@@ -21,7 +21,8 @@
     "test:luxury": "node scripts/test-luxury.mjs",
     "test:delivery": "node scripts/test-delivery.mjs",
     "test:art-direction": "node scripts/test-art-direction.mjs",
-    "test:atelier": "node scripts/test-atelier-motion.mjs"
+    "test:atelier": "node scripts/test-atelier-motion.mjs",
+    "test:concierge": "node scripts/test-concierge.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.0",

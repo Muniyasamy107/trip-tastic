@@ -1,4 +1,7 @@
-# Selected header film — South India, official YouTube embed
+# Optional previous film — South India, official YouTube embed
+
+This document applies only to `HERO_FILM_PROVIDER=youtube`. Since 20 October
+2026 the default is the real Pexels road film in `FOOTAGE-LICENSE.md`.
 
 - User-supplied link: https://youtu.be/9AJGRwIo66I?si=8q4S3a1rCZ271CGJ
 - Canonical source: https://www.youtube.com/watch?v=9AJGRwIo66I
@@ -59,6 +62,5 @@ these verify state, geometry, filter application and failure handling, not actua
 stream quality, new-film image brightness or live 4K/8K playback. Watch-page and
 oEmbed metadata were retrieved successfully. Check real playback on deployment.
 
-The older Pexels source in FOOTAGE-LICENSE.md is inactive unless
-HERO_FILM_PROVIDER=local is explicitly set. It is never a silent fallback when
-YouTube fails.
+The Pexels source in FOOTAGE-LICENSE.md is now the default. Explicit YouTube
+mode never silently substitutes it if the embed fails.
