@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { gsap, scrollToId } from '../lib/scroll'
 import { useIsoLayoutEffect } from '../lib/hooks'
-import { RotatingSeal } from './ui'
+import { Magnetic, RotatingSeal } from './ui'
 import { heroImg, destinations } from '../data'
 
 const featured = destinations[0]
@@ -126,12 +126,14 @@ export default function Hero({ ready }) {
             cinematic itineraries built around the way you actually like to travel.
           </p>
           <div className="hero__actions">
-            <button type="button" className="btn" onClick={() => scrollToId('#enquiry')}>
-              Plan my journey
-              <span className="btn__icon" aria-hidden="true">
-                ↗
-              </span>
-            </button>
+            <Magnetic strength={0.22}>
+              <button type="button" className="btn" onClick={() => scrollToId('#enquiry')}>
+                Plan my journey
+                <span className="btn__icon" aria-hidden="true">
+                  ↗
+                </span>
+              </button>
+            </Magnetic>
             <button type="button" className="btn btn--ghost" onClick={() => scrollToId('#destinations')}>
               Explore destinations
             </button>
