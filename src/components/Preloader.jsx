@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { gsap, lockScroll, unlockScroll } from '../lib/scroll'
 import { useIsoLayoutEffect } from '../lib/hooks'
+import { Scramble } from './ui'
 
 export default function Preloader({ onDone }) {
   const root = useRef(null)
@@ -61,7 +62,8 @@ export default function Preloader({ onDone }) {
       <div className="preloader__content">
         <img className="preloader__logo" src="/brand/logo.webp" alt="" width="190" height="190" />
         <div className="preloader__word">
-          Trip Tastic<span>Holidays</span>
+          <Scramble text="Trip Tastic" startOnView={false} delay={0.5} />
+          <span>Holidays</span>
         </div>
         <div className="preloader__bar">
           <span />

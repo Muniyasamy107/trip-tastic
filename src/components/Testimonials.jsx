@@ -32,7 +32,7 @@ export default function Testimonials() {
     <section className="section testi" id="stories">
       <div className="shell">
         <SectionHead
-          index="06"
+          index="07"
           label="Stories, not stats"
           title="Loved by travellers, *not* algorithms."
         />

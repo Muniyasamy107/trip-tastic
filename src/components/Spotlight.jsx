@@ -78,7 +78,7 @@ export default function Spotlight() {
         </div>
 
         <span className="spotlight__index" aria-hidden="true">
-          01 — Himalaya series
+          05 — The feature · Himalaya series
         </span>
       </div>
     </section>

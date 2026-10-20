@@ -72,7 +72,7 @@ export default function Enquiry() {
     <section className="section section--cream enquiry" id="enquiry">
       <div className="shell">
         <SectionHead
-          index="07"
+          index="08"
           label="Start here"
           title="Let’s write your *next chapter*."
         />

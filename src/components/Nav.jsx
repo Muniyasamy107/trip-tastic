@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 import { lockScroll, scrollToId, unlockScroll } from '../lib/scroll'
-import { contact, gallery } from '../data'
+import { contact, destinations } from '../data'
 
 const links = [
   ['Destinations', '#destinations', '01'],
   ['The House', '#story', '02'],
   ['The Way', '#way', '03'],
-  ['Spotlight', '#spotlight', '04'],
-  ['Postcards', '#postcards', '05'],
-  ['Stories', '#stories', '06'],
+  ['Routes', '#routes', '04'],
+  ['Spotlight', '#spotlight', '05'],
+  ['Postcards', '#postcards', '06'],
+  ['Stories', '#stories', '07'],
 ]
 
 const notices = [
@@ -48,7 +49,7 @@ export default function Nav() {
     setTimeout(() => scrollToId(id), 90)
   }
 
-  const previews = [gallery[0], gallery[1], gallery[3], gallery[2], gallery[4], gallery[5]]
+  const previews = destinations.slice(0, 7).map((d) => ({ id: d.id, src: d.image, label: `${d.name} — ${d.region}` }))
 
   return (
     <>
@@ -70,7 +71,7 @@ export default function Nav() {
 
         <div className="nav__bar shell">
           <nav className="nav__group nav__group--left" aria-label="Primary">
-            {links.slice(0, 3).map(([label, href]) => (
+            {links.slice(0, 4).map(([label, href]) => (
               <a key={href} className="nav__link" href={href} onClick={go(href)}>
                 {label}
               </a>
@@ -89,7 +90,7 @@ export default function Nav() {
 
           <div className="nav__actions">
             <nav className="nav__group nav__group--right" aria-label="Secondary">
-              {links.slice(3).map(([label, href]) => (
+              {links.slice(4).map(([label, href]) => (
                 <a key={href} className="nav__link" href={href} onClick={go(href)}>
                   {label}
                 </a>
@@ -147,7 +148,7 @@ export default function Nav() {
                 style={{ transitionDelay: open ? `${0.16 + links.length * 0.055}s` : '0s' }}
                 tabIndex={open ? 0 : -1}
               >
-                <i>07</i>
+                <i>08</i>
                 <span>
                   Plan <em>my journey</em>
                 </span>
@@ -178,7 +179,7 @@ export default function Nav() {
 
         <div className="menu__preview" aria-hidden="true">
           {previews.map((p, i) => (
-            <img key={p.src} src={p.src} alt="" className={i === preview ? 'is-active' : ''} />
+            <img key={p.id} src={p.src} alt="" className={i === preview ? 'is-active' : ''} />
           ))}
           <span className="menu__preview-label">{previews[preview]?.label}</span>
         </div>

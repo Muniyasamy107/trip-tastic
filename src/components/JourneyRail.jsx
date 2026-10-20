@@ -6,10 +6,11 @@ const stops = [
   ['01', 'Destinations', '#destinations'],
   ['02', 'The House', '#story'],
   ['03', 'The Way', '#way'],
-  ['04', 'Spotlight', '#spotlight'],
-  ['05', 'Postcards', '#postcards'],
-  ['06', 'Stories', '#stories'],
-  ['07', 'Enquire', '#enquiry'],
+  ['04', 'Routes', '#routes'],
+  ['05', 'Spotlight', '#spotlight'],
+  ['06', 'Postcards', '#postcards'],
+  ['07', 'Stories', '#stories'],
+  ['08', 'Enquire', '#enquiry'],
 ]
 
 export default function JourneyRail() {
@@ -62,11 +63,12 @@ export default function JourneyRail() {
             <path d="M21 16v-2l-8-5V4a1.5 1.5 0 0 0-3 0v5l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" />
           </svg>
         </span>
-        {stops.map(([num, label, href]) => (
+        {stops.map(([num, label, href], i) => (
           <button
             type="button"
             key={href}
             className="jrail__stop"
+            style={{ top: `${(i / (stops.length - 1)) * 100}%` }}
             data-stop={href}
             onClick={() => scrollToId(href)}
             tabIndex={-1}
@@ -79,7 +81,7 @@ export default function JourneyRail() {
           </button>
         ))}
       </div>
-      <span className="jrail__count">07 stops</span>
+      <span className="jrail__count">08 stops</span>
     </aside>
   )
 }

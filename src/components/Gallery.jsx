@@ -46,7 +46,7 @@ export default function Gallery() {
     <section className="section section--cream gallery" id="postcards">
       <div className="shell">
         <SectionHead
-          index="05"
+          index="06"
           label="Postcards from the road"
           title="Shot on *real* trips."
           aside="No stock libraries, no rented smiles. These frames come from our travellers and guides — open one to see it full size."

@@ -76,12 +76,18 @@ Ultra-premium, editorial and cinematic:
 5. **Destinations** — a horizontally pinned rail of eight destinations on desktop (native snap-scroll on
    mobile). Clicking a card carries the destination into the enquiry form.
 6. **The Trip Tastic way** — sticky image column with steps that highlight as you scroll.
-7. **Journey of the month** — a sticky, scroll-scrubbed spotlight where the frame expands and the copy
+7. **The route network** — an animated SVG constellation: six routes draw themselves out of the Chennai hub,
+   live flight dots travel each arc, and the departure board below links straight to the enquiry form.
+8. **Journey of the month** — a sticky, scroll-scrubbed spotlight where the frame expands and the copy
    rises over Ladakh.
-8. **Postcards** — editorial masonry gallery with hover captions and a keyboard-friendly lightbox.
-9. **Traveller stories** — auto-rotating testimonial carousel with dots and arrows.
-10. **Enquiry** — validated trip-brief form with a success state and WhatsApp hand-off.
-11. **Footer** — oversized outlined wordmark, newsletter, sitemap and contact details.
+9. **Postcards** — editorial masonry gallery with hover captions and a keyboard-friendly lightbox.
+10. **Traveller stories** — auto-rotating testimonial carousel with dots and arrows.
+11. **Enquiry** — validated trip-brief form with a success state and WhatsApp hand-off.
+12. **Footer** — oversized outlined wordmark, newsletter, sitemap and contact details.
+
+Utility layers: ambient **sound toggle** (Web Audio, synthesised on the fly — no audio files, remembered
+between visits), a decoding **scramble** effect on micro labels, the fixed **journey rail**, scroll progress
+hairline, custom cursor, grain and a floating WhatsApp concierge.
 
 Plus a custom cursor, scroll-progress bar, floating WhatsApp button, grain overlay and a
 `prefers-reduced-motion` mode that switches every heavy animation off.
@@ -95,6 +101,7 @@ Plus a custom cursor, scroll-progress bar, floating WhatsApp button, grain overl
 | Colours, type scale, radii           | `src/styles/base.css` → `:root` |
 | Section styles                       | `src/styles/sections.css` and `blocks.css` |
 | Section copy                         | the matching component in `src/components/` |
+| Routes + prices on the map           | `src/components/RouteMap.jsx` → `routes`    |
 | Meta / OG / structured data          | `index.html`                  |
 
 ### Brand assets
@@ -124,6 +131,11 @@ fields, shows a success state and offers a WhatsApp hand-off. To capture leads, 
   (pointer devices only).
 - **Curtain reveals** — story and way images wipe open with a clip-path curtain while the photo settles from
   a slow zoom.
+- **Route network** — SVG arcs measure themselves with `getTotalLength()` and draw in on scroll; `<animateMotion>`
+  dots then fly each route continuously.
+- **Ambient sound** — `src/lib/ambience.js` builds two detuned sine pads through a slow filter sweep plus
+  filtered noise "wind" with the Web Audio API. Off by default, toggled by the visitor, remembered in
+  `localStorage`, and always resumed after a real gesture.
 - Lenis drives scrolling and is advanced from the GSAP ticker; every scroll animation uses `ScrollTrigger`.
 - `gsap.matchMedia()` owns the pinned destinations rail, so it only builds on desktop and fully reverts on
   resize or when the user prefers reduced motion.

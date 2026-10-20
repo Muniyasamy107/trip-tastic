@@ -11,12 +11,14 @@ import Press from './components/Press'
 import Story from './components/Story'
 import Destinations from './components/Destinations'
 import Way from './components/Way'
+import RouteMap from './components/RouteMap'
 import Spotlight from './components/Spotlight'
 import Gallery from './components/Gallery'
 import Testimonials from './components/Testimonials'
 import Enquiry from './components/Enquiry'
 import Footer from './components/Footer'
 import FloatCTA from './components/FloatCTA'
+import SoundToggle from './components/SoundToggle'
 
 export default function App() {
   const [ready, setReady] = useState(false)
@@ -76,6 +78,7 @@ export default function App() {
         <Story />
         <Destinations />
         <Way />
+        <RouteMap />
         <Spotlight />
         <Gallery />
         <Testimonials />
@@ -84,6 +87,7 @@ export default function App() {
 
       <Footer />
       <FloatCTA />
+      <SoundToggle />
       <div className="grain" aria-hidden="true" />
     </>
   )

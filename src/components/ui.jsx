@@ -217,7 +217,7 @@ export function SectionHead({ index, label, title, aside, align = 'left' }) {
     <header className="sec-head">
       <div className="sec-head__meta">
         <span className="sec-head__index">{index}</span>
-        <span className="sec-head__label">{label}</span>
+        <Scramble className="sec-head__label" text={label} />
       </div>
       <div className="sec-head__body">
         <SplitHeading as="h2" text={title} className="sec-head__title" />
@@ -311,5 +311,68 @@ export function FrameReveal({ children, className = '', delay = 0 }) {
     <div ref={ref} className={`frame-reveal ${className}`}>
       {children}
     </div>
+  )
+}
+
+/* ------------------------------------------------------------------ *
+ * Scramble — decode-in text for micro labels
+ * ------------------------------------------------------------------ */
+const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/·—'
+
+export function Scramble({ text, className = '', as: Tag = 'span', delay = 0, startOnView = true }) {
+  const ref = useRef(null)
+
+  useIsoLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.textContent = text
+      return
+    }
+
+    let raf = 0
+    let revealed = 0
+    let frame = 0
+    let timer = 0
+
+    const tick = () => {
+      frame += 1
+      if (frame % 2 === 0) revealed = Math.min(text.length, revealed + 1)
+      el.textContent = text
+        .split('')
+        .map((ch, i) => {
+          if (ch === ' ') return ' '
+          if (i < revealed) return ch
+          return GLYPHS[Math.floor(Math.random() * GLYPHS.length)]
+        })
+        .join('')
+      if (revealed < text.length) raf = requestAnimationFrame(tick)
+      else el.textContent = text
+    }
+
+    const run = () => {
+      timer = window.setTimeout(() => {
+        raf = requestAnimationFrame(tick)
+      }, delay * 1000)
+    }
+
+    let st = null
+    if (startOnView) {
+      st = ScrollTrigger.create({ trigger: el, start: 'top 94%', once: true, onEnter: run })
+    } else {
+      run()
+    }
+
+    return () => {
+      cancelAnimationFrame(raf)
+      window.clearTimeout(timer)
+      st?.kill()
+    }
+  }, [text, delay, startOnView])
+
+  return (
+    <Tag ref={ref} className={className} aria-label={text}>
+      {text}
+    </Tag>
   )
 }

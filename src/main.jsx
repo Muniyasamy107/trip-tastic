@@ -9,6 +9,7 @@ import './styles/base.css'
 import './styles/nav-hero.css'
 import './styles/sections.css'
 import './styles/blocks.css'
+import './styles/routes.css'
 
 import App from './App'
 import { initSmoothScroll } from './lib/scroll'
