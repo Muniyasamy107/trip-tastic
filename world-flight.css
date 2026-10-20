@@ -8,3 +8,6 @@
 @media(max-width:700px){.world-escape{grid-template-columns:1fr;padding:55px 7% 40px;gap:36px}.world-copy{padding:0}.world-copy>.eyebrow{font-size:6px;letter-spacing:1px}.world-copy h2{font-size:clamp(50px,15.4vw,84px);letter-spacing:-2px;margin:23px 0}.world-copy>p{font-size:12px}.world-origin{margin:24px 0}.world-copy .button{font-size:10px;max-width:100%;gap:18px}.world-footnote{margin-top:25px;font-size:5px;letter-spacing:.6px;gap:10px}.world-figure{width:100%}.world-scene-meta{font-size:4.5px;letter-spacing:.65px;gap:10px}.world-scene-bottom{gap:10px;align-items:center}.world-scene-description{font-size:5px;letter-spacing:.7px}.world-scene-description>span{font-size:8px;max-width:170px;display:inline-block}.globe-motion{gap:5px;padding-inline:8px}.globe-motion small{font-size:5px;letter-spacing:.5px}}
 @media(prefers-reduced-motion:reduce){.world-escape *, .world-escape *::before,.world-escape *::after{animation:none!important;transition:none!important}}
 @media print{.world-escape{display:none}}
+
+/* Isolate continuous canvas repaint from editorial scroll/reveal layers. */
+.world-globe{contain:paint;transform:translateZ(0)}

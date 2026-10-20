@@ -151,6 +151,22 @@ used. The original provided logo remains in the repository and About section.
 
 ## Visuals and transparency
 
+### Cinematic scrolling and rotation
+
+The homepage now layers masked, line-by-line titles; perspective-staggered journey
+cards; a reversible scroll-linked **Take the long way** type band; traced travel
+line; and a rotating travel compass whose needle follows the scroll position.
+Editorial manifesto/closing images have restrained depth/parallax; the original
+hero video/iframe is **not** transformed, recropped, replaced or restarted by these
+effects. Native wheel, touch, keyboard and anchor scrolling are preserved—no
+scroll hijacking or pinned sections.
+
+Header/globe motion controls pause the same choreography. Reduced motion keeps
+text readable and images neutral; hidden tabs and non-home routes release the
+scroll scenes, and decorative rotors run only in view. Motion resources are
+cleaned up when filters rerender or routes change. See **[docs/MOTION.md](docs/MOTION.md)**.
+Run `npm run test:cinematic` against the running app (`TEST_URL` supported).
+
 ### Smooth world-flight animation
 
 The **One world. Endless wonder.** section, immediately below the journey finder,

@@ -1,5 +1,7 @@
 import gsap from 'gsap';
 import './world-flight.css';
+import './cinematic-motion.css';
+import {setupCinematicMotion} from './cinematic-motion.js';
 import {setupWorldFlight} from './world-flight.js';
 import {setupSiteSettings} from './site-settings.js';
 import { setupHeroFilm } from './hero-film.js';
@@ -19,19 +21,14 @@ const comparison=new Set();
 let activeFilter='all',durationFilter='all',search='',sort='featured',motionPaused=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let contentKind='',toastTimer,activePage='home';
 const globeMotion=setupWorldFlight({stage:$('#world-globe'),canvas:$('#world-flight-canvas')});
+const cinematicMotion=setupCinematicMotion({gsap,ScrollTrigger,initialPaused:motionPaused,initialActive:!location.hash.startsWith('#/')});
 const heroVideo=$('#hero-video'),filmDialog=$('#film-dialog');
 let heroInView=true;
 const heroFilm=setupHeroFilm({video:heroVideo,container:$('.hero-visual'),dialog:filmDialog,stage:$('.film-stage',filmDialog),watchButton:$('#watch-film'),durationLabel:$('#film-duration'),caption:$('#film-caption'),canAutoplay:()=>activePage==='home'&&heroInView&&!motionPaused,onDialogOpen:()=>lockScroll()});
 const contentDialog=$('#content-dialog'),planner=$('#planner-dialog');
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 function toast(message){$('#toast').textContent=message;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),3200);}
-function animateReveals(root=document){
- if(motionPaused)return;
- $$('.reveal',root).forEach(el=>{
- if(el.dataset.revealed)return;el.dataset.revealed='true';
- gsap.fromTo(el,{opacity:0,y:36},{opacity:1,y:0,duration:1.2,ease:'power3.out',force3D:true,scrollTrigger:{trigger:el,start:'top 94%',once:true}});
- });ScrollTrigger.refresh();
-}
+function animateReveals(root=document){cinematicMotion.reveal(root);}
 function card(j,index=0){const isSaved=saved.has(j.id),compared=comparison.has(j.id);return `<article class="journey-card reveal" data-journey="${j.id}"><div class="card-image"><a href="#/journey/${j.id}" aria-label="Explore ${j.name}"><img src="${j.image}" style="object-position:${j.position}" alt="Creative visual inspired by ${j.place}" loading="lazy"></a><span class="card-category">${j.tag.toUpperCase()}</span><button class="save-button ${isSaved?'is-saved':''}" data-save="${j.id}" aria-label="${isSaved?'Unsave':'Save'} ${j.name}" aria-pressed="${isSaved}">${icon('heart')}</button><div class="card-image-footer"><span>${String(j.days).padStart(2,'0')} DAYS / ${String(j.nights).padStart(2,'0')} NIGHTS<small>${j.state.toUpperCase()}</small></span><span class="image-arrow">${icon('ne')}</span></div></div><div class="card-copy"><span class="card-place">${j.place}</span><h3><a href="#/journey/${j.id}">${j.name}</a></h3><div class="card-bottom"><span class="card-budget">${money(j.budget[0])}–${money(j.budget[1])}<small>INDICATIVE / PERSON</small></span><button data-compare="${j.id}" class="compare-toggle ${compared?'selected':''}" aria-pressed="${compared}" aria-label="${compared?'Remove':'Add'} ${j.name} ${compared?'from':'to'} comparison"><span>${compared?'✓':'+'}</span> COMPARE</button></div></div></article>`;}
 function renderCollection(){
  let list=journeys.filter(j=>(activeFilter==='all'||j.theme===activeFilter)&&(durationFilter==='all'||String(j.days)===durationFilter)&&(`${j.name} ${j.place} ${j.state} ${j.theme}`.toLowerCase().includes(search.toLowerCase())));
@@ -134,12 +131,12 @@ function route(){
  if(hash&&/^#[a-z-]+$/.test(hash)){requestAnimationFrame(()=>{const el=$(hash);el?.scrollIntoView({behavior:motionPaused||!routeInitialized?'instant':'smooth'});});}else if(!wasHome||routeInitialized)window.scrollTo({top:0,behavior:motionPaused?'instant':'smooth'});
  animateReveals($('#home-page'));
  }
- globeMotion.setActive(activePage==='home');routeInitialized=true;ScrollTrigger.refresh();updateScroll();
+ globeMotion.setActive(activePage==='home');cinematicMotion.setActive(activePage==='home');routeInitialized=true;ScrollTrigger.refresh();updateScroll();
 }
 window.addEventListener('hashchange',route);
 function updateScroll(){const total=document.documentElement.scrollHeight-innerHeight;$('.scroll-progress').style.transform=`scaleX(${total>0?Math.min(1,scrollY/total):0})`;$('#header').classList.toggle('is-scrolled',scrollY>75);}
 let scrollScheduled=false;window.addEventListener('scroll',()=>{if(!scrollScheduled){scrollScheduled=true;requestAnimationFrame(()=>{updateScroll();scrollScheduled=false;});}},{passive:true});
-function setMotion(paused){motionPaused=paused;globeMotion.setPaused(paused);const globeButton=$('#globe-motion');globeButton.setAttribute('aria-pressed',String(paused));globeButton.setAttribute('aria-label',paused?'Resume globe animation':'Pause globe animation');globeButton.querySelector('span').textContent=paused?'▷':'Ⅱ';globeButton.querySelector('small').textContent=paused?'RESUME ANIMATION':'PAUSE ANIMATION';document.documentElement.classList.toggle('motion-paused',paused);$('#motion-toggle').setAttribute('aria-pressed',String(paused));$('#motion-toggle').setAttribute('aria-label',paused?'Play decorative motion':'Pause decorative motion');$('#motion-symbol').textContent=paused?'▷':'Ⅱ';$('#motion-label').textContent=paused?'PLAY MOTION':'PAUSE MOTION';
+function setMotion(paused){motionPaused=paused;globeMotion.setPaused(paused);cinematicMotion.setPaused(paused);const globeButton=$('#globe-motion');globeButton.setAttribute('aria-pressed',String(paused));globeButton.setAttribute('aria-label',paused?'Resume globe animation':'Pause globe animation');globeButton.querySelector('span').textContent=paused?'▷':'Ⅱ';globeButton.querySelector('small').textContent=paused?'RESUME ANIMATION':'PAUSE ANIMATION';document.documentElement.classList.toggle('motion-paused',paused);$('#motion-toggle').setAttribute('aria-pressed',String(paused));$('#motion-toggle').setAttribute('aria-label',paused?'Play decorative motion':'Pause decorative motion');$('#motion-symbol').textContent=paused?'▷':'Ⅱ';$('#motion-label').textContent=paused?'PLAY MOTION':'PAUSE MOTION';
  if(paused){heroFilm.pause();gsap.getTweensOf('.word-line>*,.hero-copy>p,.hero-actions,.hero-topline,.hero-kicker,.hero-caption,.reveal').forEach(t=>{t.progress(1);t.kill();});}else heroFilm.sync();
 }
 $('#motion-toggle').addEventListener('click',()=>setMotion(!motionPaused));$('#globe-motion').addEventListener('click',()=>setMotion(!motionPaused));reduced.addEventListener('change',e=>setMotion(e.matches));
@@ -170,5 +167,5 @@ renderCollection();updateSavedUI();setMotion(motionPaused);route();
 setupSiteSettings({journeys,onPricesChanged:()=>{renderCollection();if(activePage==='journey'&&!planner.open){const id=/^#\/journey\/([a-z0-9-]+)$/.exec(location.hash)?.[1],j=journeys.find(j=>j.id===id);if(j)renderJourney(j);}}});$('#year').textContent=new Date().getFullYear();
 if(!motionPaused&&activePage==='home'){
  const intro=gsap.timeline({defaults:{ease:'power3.out'}});
- intro.fromTo('.hero-topline,.hero-kicker',{opacity:0,y:12},{opacity:1,y:0,duration:.65,stagger:.08},.05).fromTo('.word-line>*',{yPercent:115,rotate:3,opacity:0},{yPercent:0,rotate:0,opacity:1,duration:1.05,stagger:.12},.1).fromTo('.hero-copy>p,.hero-actions',{opacity:0,y:18},{opacity:1,y:0,duration:.7,stagger:.1},.35).fromTo('.hero-caption',{opacity:0,y:25},{opacity:1,y:0,duration:.8},.5);
+ intro.fromTo('.hero-topline,.hero-kicker',{opacity:0,y:12},{opacity:1,y:0,duration:.65,stagger:.08},.05).fromTo('.word-line>*',{yPercent:115,rotate:3,opacity:0},{yPercent:0,rotate:0,opacity:1,duration:1.4,stagger:.15},.1).fromTo('.hero-copy>p,.hero-actions',{opacity:0,y:18},{opacity:1,y:0,duration:.7,stagger:.1},.35).fromTo('.hero-caption',{opacity:0,y:25},{opacity:1,y:0,duration:.8},.5);
 }

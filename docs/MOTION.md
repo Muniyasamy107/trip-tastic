@@ -1,4 +1,39 @@
-# World-flight motion
+# Cinematic travel motion
+
+## Cinematic scrolling and rotating details
+
+`cinematic-motion.js` adds homepage choreography without replacing native scroll:
+
+- Major headings unfold through line masks with staggered 1.35-second easing.
+- Collection cards enter with restrained perspective, scale and column stagger.
+- The **Take the long way** editorial band moves horizontally with scroll in
+  either direction, clipped to its own decorative container.
+- The introduction’s travel line draws with a moving dot; compass needle rotation
+  is scrubbed to section progress, while circular lettering slowly rotates.
+- Manifesto and closing **editorial photos** use bounded overscan/parallax. The
+  actual hero video/iframe geometry, selected source and once-only logic are not
+  touched. Hero text gently recedes; process icons and rules follow the scroll.
+- Rotating SVG square bounds are contained so their empty corners cannot widen
+  narrow screens. No pinning, wheel/touch interception, forced scroll or new
+  runtime dependency is introduced.
+
+A GSAP context owns the scroll scenes; pause, hidden tab and route changes revert
+it. Resize reconstructs a single context for the current breakpoint. Completed
+reveal tweens release their transforms; pending reveals do not pre-promote
+offscreen text/cards into persistent layers. Only the live globe retains its own
+paint-contained compositor surface, preventing its canvas redraw from invalidating
+the full page after a reveal finishes; pending reveals for removed filter cards
+are pruned. Pausing completes pending reveals and restores readable text and
+neutral photo framing. Reduced-motion preference is honored on load and change.
+CSS rotation only runs for visible rotors while the homepage is active.
+
+`npm run test:cinematic` verifies actual transform/path changes on scroll, visible
+rotation, pause/readability, tab and repeated-route lifecycle, reduced motion,
+filter rerendering and 10 representative viewports. Worst-angle rotation bounds
+are checked explicitly. Screenshots of phone/desktop introduction and editorial
+parallax scenes are saved in ignored `.cache/`. Existing video tests separately
+verify full-cover player geometry and once-only playback.
+
 
 ## Experience
 
