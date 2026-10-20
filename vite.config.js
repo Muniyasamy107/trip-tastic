@@ -6,7 +6,9 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
-    strictPort: true,
+    // If 5173 is taken (e.g. another project is running) Vite just moves to
+    // the next free port instead of failing with "Port already in use".
+    strictPort: false,
     // Allow the Arena preview proxy host (and any sandbox subdomain).
     allowedHosts: true,
   },
