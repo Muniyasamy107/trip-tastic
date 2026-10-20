@@ -8,6 +8,26 @@ database. The new luxury experience uses React islands; existing public routing,
 forms and secure Owner Studio are preserved rather than misleadingly claiming a
 complete React rewrite of every page.
 
+## South India Atelier visual refresh
+
+The cinematic presentation now has a “Beautifully / elsewhere.” full-cover film
+hero, warm ivory/champagne/deep-petrol art direction, alternating asymmetric
+editorial collection and refined finder, process, journal and contact/footer UI.
+Four new AI-created destination moods complement the retained Munnar/Kerala
+images: all six journey cards have distinct visuals. Responsive 640/960/1264px
+WebPs avoid requiring the full master on every small-screen view.
+
+The original logo, selected real YouTube film and once-only player behaviour,
+React/GSAP/Three Fiber/Lenis/Framer experience, enquiry flow and Owner Studio are
+preserved. No new film or genuine 8K playback is claimed. The collection visibly
+discloses that landscape/stay imagery is AI-created inspiration, not verified
+locations or confirmed properties.
+
+See **[Art direction](docs/ART-DIRECTION.md)** and
+**[Editorial imagery provenance](public/media/EDITORIAL-IMAGERY.md)**.
+`npm run test:art-direction` is included in `npm test` and covers image payloads,
+responsive-source selection, seven layouts, desktop card spans and disclosure.
+
 ## Run locally
 
 Requires **Node 22.13+** (tested on 22.22). Node 22 may print an informational

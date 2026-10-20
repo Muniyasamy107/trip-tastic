@@ -1,5 +1,6 @@
 import React,{Suspense,lazy,useEffect,useLayoutEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {createRoot} from 'react-dom/client';
+import {responsiveEditorial} from '../editorial-media.js';
 import {AnimatePresence,motion,useReducedMotion} from 'framer-motion';
 import gsap from 'gsap';
 import {ScrollTrigger} from 'gsap/ScrollTrigger';
@@ -7,7 +8,7 @@ const GlobeScene=lazy(()=>import('./GlobeScene.jsx'));
 const chapters=[
  {number:'01',label:'THE HILLS',title:'Where the world\nslows down.',place:'MUNNAR / THE WESTERN GHATS',copy:'Misty mornings. Tea-scented air. Time that feels like your own.',image:'/media/western-ghats-cinematic.jpg',route:'#/journey/munnar-mist'},
  {number:'02',label:'THE WATERS',title:'A little stillness.\nA lasting feeling.',place:'KERALA / THE BACKWATERS',copy:'Quiet waterways and unhurried days. Take the softer way home.',image:'/media/kerala-editorial.jpg',route:'#/journey/kerala-waterlines'},
- {number:'03',label:'THE QUIET',title:'Less ordinary.\nMore you.',place:'SOUTH INDIA / THE PERSONAL EDIT',copy:'A private escape, thoughtfully shaped around what moves you.',image:'/media/coorg-editorial.jpg',route:'#journeys'},
+ {number:'03',label:'THE QUIET',title:'Less ordinary.\nMore you.',place:'SOUTH INDIA / THE PERSONAL EDIT',copy:'A private escape, thoughtfully shaped around what moves you.',image:'/media/coorg-cinematic.webp',route:'#journeys'},
 ];
 function useMedia(query){const [matches,set]=useState(()=>matchMedia(query).matches);useEffect(()=>{const media=matchMedia(query),change=()=>set(media.matches);media.addEventListener('change',change);return()=>media.removeEventListener('change',change);},[query]);return matches;}
 class SceneBoundary extends React.Component{
@@ -41,8 +42,8 @@ function SignatureChapters({store,onLayout,scrollTo}){
  const selected=chapters[chapter];
  function choose(index){if(pin&&trigger.current){const t=trigger.current;scrollTo(t.start+(t.end-t.start)*(index/2),{immediate:false});}else setChapter(index);}
  return <div ref={root} className="luxury-story" data-react="signature-chapters" aria-labelledby="luxury-heading">
-  <div className="luxury-story-images" aria-hidden="true">{chapters.map((item,index)=><div key={item.number} ref={el=>{layers.current[index]=el;}} className={`luxury-story-image image-${index}`}><img src={item.image} alt="" loading="lazy"/></div>)}<div className="luxury-story-shade"/></div>
-  <div className="luxury-story-top"><span>THE PRIVATE EDIT</span><span>SOUTH INDIA / PERSONALLY PLANNED</span><span className="luxury-story-edition">VOL. 01 — 03</span></div>
+  <div className="luxury-story-images" aria-hidden="true">{chapters.map((item,index)=><div key={item.number} ref={el=>{layers.current[index]=el;}} className={`luxury-story-image image-${index}`}><img src={item.image} {...responsiveEditorial(item.image)} alt="" loading="lazy" decoding="async"/></div>)}<div className="luxury-story-shade"/></div>
+  <div className="luxury-story-top"><span>THE SOUTH INDIA ATELIER</span><span>PRIVATE JOURNEYS / PERSONAL STORIES</span><span className="luxury-story-edition">VOL. 01 — 03</span></div>
   <div className="luxury-story-copy">
    <motion.span className="luxury-story-kicker" initial={false} animate={{opacity:1}}>{selected.place}</motion.span>
    <AnimatePresence mode="wait" initial={false}><motion.div key={chapter} initial={still?false:{opacity:0,y:25}} animate={{opacity:1,y:0}} exit={still?{opacity:1}:{opacity:0,y:-14}} transition={{duration:still?0:.55,ease:[.22,1,.36,1]}}>

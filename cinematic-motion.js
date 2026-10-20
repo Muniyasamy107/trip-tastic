@@ -47,7 +47,7 @@ export function setupCinematicMotion({gsap,ScrollTrigger,initialPaused=false,ini
    el.dataset.cineRevealed='true';
    const title=el.matches('.cine-title'),card=el.matches('.journey-card'),lines=title?[...el.querySelectorAll('.cine-line-inner')]:null;
    const targets=title?lines:el;
-   const column=card&&innerWidth>700?[...el.parentElement.children].indexOf(el)%(innerWidth>1100?3:2):0;
+   const column=card&&innerWidth>700?[...el.parentElement.children].indexOf(el)%(el.parentElement.id==='journey-grid'?2:innerWidth>1100?3:2):0;
    const from=title?{yPercent:110,rotation:1.7}:{opacity:0,y:card?56:36,...(card?{transformPerspective:1000,rotationX:6,scale:.97}:{})};
    const to=title?{yPercent:0,rotation:0,stagger:.12}:{opacity:1,y:0,...(card?{rotationX:0,scale:1}:{})};
    const tween=gsap.fromTo(targets,from,{...to,duration:title?1.35:1.15,delay:column*.09,ease:'power3.out',force3D:'auto',immediateRender:false,scrollTrigger:{trigger:el,start:'top 93%',once:true},onComplete:()=>{reveals.delete(el);gsap.set(targets,{clearProps:title?'transform':'transform,opacity'});}});
