@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from '../lib/scroll'
+import { motionAllowed } from '../lib/hooks'
 import { SectionHead, Stars } from './ui'
-import { testimonials } from '../data'
+import { IconArrowLeft, IconArrowRight } from './icons'
+import { testimonials, sectionIndex, rating } from '../data'
 
 export default function Testimonials() {
   const [index, setIndex] = useState(0)
@@ -18,7 +20,7 @@ export default function Testimonials() {
 
   useEffect(() => {
     if (!stage.current) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!motionAllowed()) return
     const ctx = gsap.context(() => {
       gsap.fromTo('.testi__quote', { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'expo.out' })
       gsap.fromTo('.testi__author', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: 'expo.out', delay: 0.08 })
@@ -32,7 +34,7 @@ export default function Testimonials() {
     <section className="section testi" id="stories">
       <div className="shell">
         <SectionHead
-          index="07"
+          index={sectionIndex('stories')}
           label="Stories, not stats"
           title="Loved by travellers, *not* algorithms."
         />
@@ -45,7 +47,7 @@ export default function Testimonials() {
             them said when they got home.
           </p>
           <div className="testi__rating">
-            <b>4.9</b>
+            <b>{rating}</b>
             <span>
               <Stars />
               <br />
@@ -95,14 +97,10 @@ export default function Testimonials() {
             </div>
             <div className="testi__arrows">
               <button type="button" className="testi__arrow" onClick={() => go(-1)} aria-label="Previous review">
-                <svg viewBox="0 0 24 24">
-                  <path d="M15 5l-7 7 7 7" />
-                </svg>
+                <IconArrowLeft />
               </button>
               <button type="button" className="testi__arrow" onClick={() => go(1)} aria-label="Next review">
-                <svg viewBox="0 0 24 24">
-                  <path d="M9 5l7 7-7 7" />
-                </svg>
+                <IconArrowRight />
               </button>
             </div>
           </div>

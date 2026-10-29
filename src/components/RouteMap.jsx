@@ -1,19 +1,31 @@
 import { useRef, useState } from 'react'
-import { gsap, scrollToId } from '../lib/scroll'
-import { useIsoLayoutEffect, useReducedMotion } from '../lib/hooks'
+import { gsap } from '../lib/scroll'
+import { useIsoLayoutEffect, useReducedMotion, motionAllowed } from '../lib/hooks'
 import { SectionHead } from './ui'
-import { destinations } from '../data'
+import { sectionIndex, trip } from '../data'
+import { chooseDestination, priceFrom } from '../lib/trip'
 
 const ORIGIN = { x: 150, y: 300 }
 
-const routes = [
-  { id: 'ladakh', label: 'Ladakh', price: 'from ₹32,500', to: { x: 690, y: 74 }, ctrl: { x: 400, y: 10 } },
-  { id: 'himachal', label: 'Himachal', price: 'from ₹18,900', to: { x: 784, y: 148 }, ctrl: { x: 470, y: 52 } },
-  { id: 'rajasthan', label: 'Rajasthan', price: 'from ₹21,400', to: { x: 652, y: 222 }, ctrl: { x: 396, y: 146 } },
-  { id: 'goa', label: 'Goa', price: 'from ₹14,600', to: { x: 700, y: 304 }, ctrl: { x: 430, y: 268 } },
-  { id: 'ooty', label: 'Ooty', price: 'from ₹9,900', to: { x: 742, y: 386 }, ctrl: { x: 452, y: 352 } },
-  { id: 'bali', label: 'Bali', price: 'from ₹49,900', to: { x: 878, y: 474 }, ctrl: { x: 560, y: 452 } },
+/** Only the geometry lives here — names, days and prices come from data.js. */
+const geometry = [
+  { id: 'ladakh', to: { x: 690, y: 74 }, ctrl: { x: 400, y: 10 } },
+  { id: 'himachal', to: { x: 784, y: 148 }, ctrl: { x: 470, y: 52 } },
+  { id: 'rajasthan', to: { x: 652, y: 222 }, ctrl: { x: 396, y: 146 } },
+  { id: 'goa', to: { x: 700, y: 304 }, ctrl: { x: 430, y: 268 } },
+  { id: 'ooty', to: { x: 742, y: 386 }, ctrl: { x: 452, y: 352 } },
+  { id: 'bali', to: { x: 878, y: 474 }, ctrl: { x: 560, y: 452 } },
 ]
+
+const routes = geometry.map((route) => {
+  const destination = trip(route.id)
+  return {
+    ...route,
+    label: destination.name,
+    days: destination.days,
+    price: priceFrom(destination),
+  }
+})
 
 const path = (r) => `M${ORIGIN.x},${ORIGIN.y} Q${r.ctrl.x},${r.ctrl.y} ${r.to.x},${r.to.y}`
 
@@ -25,7 +37,7 @@ export default function RouteMap() {
   useIsoLayoutEffect(() => {
     const el = svg.current
     if (!el) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!motionAllowed()) return
 
     const paths = Array.from(el.querySelectorAll('.route__path')).filter(
       (p) => typeof p.getTotalLength === 'function',
@@ -47,16 +59,13 @@ export default function RouteMap() {
     return () => ctx.revert()
   }, [])
 
-  const pick = (label) => {
-    window.dispatchEvent(new CustomEvent('tt:destination', { detail: label }))
-    scrollToId('#enquiry')
-  }
+  const pick = (label) => chooseDestination(label)
 
   return (
     <section className="routes section--dark" id="routes">
       <div className="shell">
         <SectionHead
-          index="04"
+          index={sectionIndex('routes')}
           label="The route network"
           title="One hub. *Every* horizon."
           aside="Every Trip Tastic journey starts at our Chennai studio and fans out across the subcontinent and beyond. Pick a line, we’ll fly it for you."
@@ -151,7 +160,6 @@ export default function RouteMap() {
             <span className="routes__list-title">Departures from Chennai</span>
             <ul>
               {routes.map((r) => {
-                const d = destinations.find((x) => x.id === r.id)
                 return (
                   <li key={r.id}>
                     <button
@@ -164,7 +172,7 @@ export default function RouteMap() {
                       <span className="routes__row-id">TT-{String(routes.indexOf(r) + 1).padStart(3, '0')}</span>
                       <span className="routes__row-name">
                         {r.label}
-                        <i>{d?.days} days · private</i>
+                        <i>{r.days} days · private</i>
                       </span>
                       <span className="routes__row-price">{r.price.replace('from ', '')}</span>
                       <span className="routes__row-arrow" aria-hidden="true">

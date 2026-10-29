@@ -87,14 +87,6 @@
 .story__copy {
   position: relative;
 }
-.story__meta {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: 1.1rem;
-  border-bottom: 1px solid var(--line-light);
-}
 .story__copy h2 {
   font-size: clamp(2.4rem, 4.6vw, 4.6rem);
   margin-block: 1.4rem 1.6rem;
@@ -116,9 +108,7 @@
   padding-block: 1.35rem;
   border-top: 1px solid var(--line-light);
 }
-.feature:last-child {
-  border-bottom: 1px solid var(--line-light);
-}
+.feature:last-child,
 .feature__icon {
   display: grid;
   place-items: center;
@@ -599,10 +589,6 @@
 .way .sec-head__title {
   font-size: clamp(2.2rem, 3.6vw, 3.9rem);
   max-width: 16ch;
-}
-.way__head h2 {
-  margin-block: 1.2rem 1.4rem;
-  font-size: clamp(2.3rem, 4.6vw, 4.4rem);
 }
 .way__list {
   display: grid;

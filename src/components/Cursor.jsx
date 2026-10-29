@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from '../lib/scroll'
+import { matches, QUERY } from '../lib/hooks'
 
 export default function Cursor() {
   const dot = useRef(null)
@@ -7,7 +8,7 @@ export default function Cursor() {
   const label = useRef(null)
 
   useEffect(() => {
-    if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return
+    if (matches(QUERY.touch)) return
 
     document.documentElement.classList.add('has-cursor')
     gsap.set([dot.current, ring.current], { x: -120, y: -120 })

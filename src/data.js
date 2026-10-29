@@ -10,6 +10,25 @@ import hero from './assets/hero.webp'
 
 export const heroImg = hero
 
+/** The eight chapters of the page. Nav, fullscreen menu, journey rail and footer all read this. */
+export const chapters = [
+  { index: '01', label: 'Destinations', nav: 'Destinations', href: '#destinations' },
+  { index: '02', label: 'The House', nav: 'The House', href: '#story' },
+  { index: '03', label: 'The Way', nav: 'The Way', href: '#way' },
+  { index: '04', label: 'Routes', nav: 'Routes', href: '#routes' },
+  { index: '05', label: 'Spotlight', nav: 'Spotlight', href: '#spotlight' },
+  { index: '06', label: 'Postcards', nav: 'Postcards', href: '#postcards' },
+  { index: '07', label: 'Stories', nav: 'Stories', href: '#stories' },
+  { index: '08', label: 'Enquire', nav: 'Plan my journey', href: '#enquiry' },
+]
+
+/** Nav + menu show the first seven; the enquiry chapter is the CTA. */
+export const navLinks = chapters.filter((c) => c.href !== '#enquiry')
+export const enquiryChapter = chapters[chapters.length - 1]
+
+/** Section number for a chapter id, e.g. sectionIndex('story') → '02'. */
+export const sectionIndex = (id) => chapters.find((c) => c.href === `#${id}`)?.index ?? ''
+
 export const press = [
   'Condé Nast Traveller',
   'Travel + Leisure',
@@ -28,9 +47,6 @@ export const destinations = [
     tag: 'Most loved',
     accent: '#7fd6a4',
     image: kerala,
-    blurb:
-      'Sleep on a teal backwater, wake to tea-picker songs in Munnar, end with a candlelit dinner on a quiet beach.',
-    highlights: ['Private houseboat', 'Munnar tea estate', 'Ayurveda spa night'],
   },
   {
     id: 'ladakh',
@@ -41,9 +57,6 @@ export const destinations = [
     tag: 'Adventure',
     accent: '#8fb6ff',
     image: ladakh,
-    blurb:
-      'Turquoise lakes at 4,300 m, monastery bells in the wind, and the kind of silence that changes your playlist forever.',
-    highlights: ['Pangong sunrise', 'Nubra dunes', 'Khardung La drive'],
   },
   {
     id: 'rajasthan',
@@ -54,9 +67,6 @@ export const destinations = [
     tag: 'Heritage',
     accent: '#ffb26b',
     image: rajasthan,
-    blurb:
-      'Jaipur at golden hour, blue lanes in Jodhpur, and a desert camp where dinner arrives with folk singers.',
-    highlights: ['Amber Fort at dawn', 'Thar desert camp', 'Haveli stay'],
   },
   {
     id: 'bali',
@@ -67,9 +77,6 @@ export const destinations = [
     tag: 'International',
     accent: '#ffd36e',
     image: bali,
-    blurb:
-      'Rice terraces at sunrise, a cliff temple at sunset, and a private villa pool that makes your group chat jealous.',
-    highlights: ['Ubud jungle villa', 'Uluwatu kecak dance', 'Nusa Penida boat'],
   },
   {
     id: 'himachal',
@@ -80,9 +87,6 @@ export const destinations = [
     tag: 'Honeymoon',
     accent: '#bfe4ff',
     image: himachal,
-    blurb:
-      'Pine air, a wood cabin with a real fireplace, and slow mornings where the only notification is snow falling.',
-    highlights: ['Kasol riverside cabin', 'Solang snow day', 'Café trail'],
   },
   {
     id: 'andaman',
@@ -93,9 +97,6 @@ export const destinations = [
     tag: 'Beach',
     accent: '#7be3e0',
     image: andaman,
-    blurb:
-      'Glass-clear lagoons, coral gardens a mask away, and a beach picnic that gets its own drone shot.',
-    highlights: ['Havelock lagoon', 'Scuba intro dive', 'Radhanagar sunset'],
   },
   {
     id: 'ooty',
@@ -106,9 +107,6 @@ export const destinations = [
     tag: 'Weekend',
     accent: '#9fe08a',
     image: ooty,
-    blurb:
-      'A toy train through tea hills, a colonial bungalow with a fireplace, and mist that rolls in on cue.',
-    highlights: ['Mountain rail', 'Tea factory walk', 'Boat house evening'],
   },
   {
     id: 'goa',
@@ -119,9 +117,6 @@ export const destinations = [
     tag: 'Weekend',
     accent: '#ffa98c',
     image: goa,
-    blurb:
-      'South Goa’s quiet beaches, a Portuguese villa with a courtyard pool, and sunset shacks you won’t want to leave.',
-    highlights: ['Villa with pool', 'Sunset cruise', 'Spice farm lunch'],
   },
 ]
 
@@ -195,7 +190,39 @@ export const gallery = [
   { src: himachal, alt: 'Snowy pine forest and mountain road in Himachal', label: 'Solang, Himachal', span: 'tall' },
 ]
 
-export const destinationOptions = destinations.map((d) => d.name).concat(['Somewhere else entirely'])
+/** The catch-all option used by the form, the rail and the "ask a human" button. */
+export const otherTrip = 'Somewhere else entirely'
+export const destinationOptions = destinations.map((d) => d.name).concat([otherTrip])
+
+export const footerCols = [
+  {
+    title: 'Explore',
+    links: [
+      ['Destinations', '#destinations'],
+      ['How we travel', '#way'],
+      ['Journey of the month', '#spotlight'],
+      ['Postcards', '#postcards'],
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      ['Our story', '#story'],
+      ['Traveller stories', '#stories'],
+      ['Trip planners', '#enquiry'],
+      ['Careers', '#enquiry'],
+    ],
+  },
+  {
+    title: 'Good to know',
+    links: [
+      ['Booking & payments', '#enquiry'],
+      ['Cancellation policy', '#enquiry'],
+      ['Travel insurance', '#enquiry'],
+      ['FAQs', '#enquiry'],
+    ],
+  },
+]
 
 export const contact = {
   phone: '+91 90000 12345',
@@ -205,3 +232,13 @@ export const contact = {
   instagram: 'https://instagram.com',
   address: 'No. 14, Khader Nawaz Khan Road, Nungambakkam, Chennai 600006',
 }
+
+/** Shorthand lookups so sections never re-declare a price or a trip length. */
+export const trip = (id) => destinations.find((d) => d.id === id)
+export const featuredTrip = destinations[0]
+export const spotlightTrip = trip('ladakh')
+
+/** The stat shown in the hero strip, testimonials and the story counters. */
+export const rating = stats.find((s) => s.label === 'Average trip rating')?.value ?? 4.9
+export const yearsRunning = stats.find((s) => s.label === 'Years crafting journeys')?.value ?? 12
+export const destinationsCount = stats.find((s) => s.label === 'Destinations curated')?.value ?? 68

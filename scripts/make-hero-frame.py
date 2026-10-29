@@ -8,7 +8,7 @@ poster baked in as a base64 layer and the whole overlay as editable vectors.
 from PIL import Image
 import base64, io, os
 
-SRC = 'public/video/hero-poster.jpg'
+SRC = 'public/video/hero-poster-4k.jpg'
 OUT = 'public/design/hero-frame.svg'
 W, H = 1440, 900
 

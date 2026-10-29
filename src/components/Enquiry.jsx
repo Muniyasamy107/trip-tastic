@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from '../lib/scroll'
-import { SectionHead, Reveal } from './ui'
-import { contact, destinationOptions } from '../data'
+import { SectionHead, Reveal, BtnIcon } from './ui'
+import { IconChat, IconPhone, IconMail, IconPin, IconShield } from './icons'
+import { contact, destinationOptions, sectionIndex } from '../data'
+import { onDestination } from '../lib/trip'
 
 const months = [
   'Flexible',
@@ -34,14 +36,14 @@ export default function Enquiry() {
   const [status, setStatus] = useState('idle')
   const success = useRef(null)
 
-  useEffect(() => {
-    const onPick = (e) => {
-      setStatus('idle')
-      setForm((f) => ({ ...f, destination: e.detail }))
-    }
-    window.addEventListener('tt:destination', onPick)
-    return () => window.removeEventListener('tt:destination', onPick)
-  }, [])
+  useEffect(
+    () =>
+      onDestination((e) => {
+        setStatus('idle')
+        setForm((f) => ({ ...f, destination: e.detail }))
+      }),
+    [],
+  )
 
   useEffect(() => {
     if (status !== 'sent' || !success.current) return
@@ -72,7 +74,7 @@ export default function Enquiry() {
     <section className="section section--cream enquiry" id="enquiry">
       <div className="shell">
         <SectionHead
-          index="08"
+          index={sectionIndex('enquiry')}
           label="Start here"
           title="Let’s write your *next chapter*."
         />
@@ -90,10 +92,7 @@ export default function Enquiry() {
           <div className="enquiry__channels">
             <a className="channel" href={contact.whatsapp} target="_blank" rel="noreferrer">
               <span className="channel__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M21 11.5a8.4 8.4 0 01-9 8.4 9.5 9.5 0 01-3.2-.5L3 21l1.6-4.6A8.4 8.4 0 1121 11.5z" />
-                  <path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01" />
-                </svg>
+                <IconChat />
               </span>
               <span>
                 <b>WhatsApp us</b>
@@ -102,9 +101,7 @@ export default function Enquiry() {
             </a>
             <a className="channel" href={contact.phoneHref}>
               <span className="channel__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M4 4h4l2 5-2.5 1.5a12 12 0 006 6L15 14l5 2v4a2 2 0 01-2 2A17 17 0 012 6a2 2 0 012-2z" />
-                </svg>
+                <IconPhone />
               </span>
               <span>
                 <b>{contact.phone}</b>
@@ -113,10 +110,7 @@ export default function Enquiry() {
             </a>
             <a className="channel" href={`mailto:${contact.email}`}>
               <span className="channel__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <rect x="3" y="5" width="18" height="14" rx="2" />
-                  <path d="M3 7l9 6 9-6" />
-                </svg>
+                <IconMail />
               </span>
               <span>
                 <b>{contact.email}</b>
@@ -125,10 +119,7 @@ export default function Enquiry() {
             </a>
             <div className="channel">
               <span className="channel__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 21s7-5.5 7-11a7 7 0 10-14 0c0 5.5 7 11 7 11z" />
-                  <circle cx="12" cy="10" r="2.5" />
-                </svg>
+                <IconPin />
               </span>
               <span>
                 <b>Our studio</b>
@@ -138,10 +129,7 @@ export default function Enquiry() {
           </div>
 
           <p className="enquiry__note">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" />
-              <path d="M9 12l2 2 4-4" />
-            </svg>
+            <IconShield />
             No spam, no late-night sales calls, no sharing your number. Ever. Your details stay with the
             planner building your trip.
           </p>
@@ -215,9 +203,7 @@ export default function Enquiry() {
             <div className="form__foot">
               <button type="submit" className="btn btn--ink form__submit" disabled={status === 'sending'}>
                 {status === 'sending' ? 'Sending…' : 'Send my trip brief'}
-                <span className="btn__icon" aria-hidden="true">
-                  ↗
-                </span>
+                <BtnIcon />
               </button>
               <p className="form__fine">A planner replies within 1 working day. No payment needed to start.</p>
             </div>

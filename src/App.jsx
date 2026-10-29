@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { initSmoothScroll, ScrollTrigger, scrollToId } from './lib/scroll'
+import { ScrollTrigger, scrollToId } from './lib/scroll'
 import Preloader from './components/Preloader'
 import Cursor from './components/Cursor'
 import ScrollProgress from './components/ScrollProgress'
@@ -25,8 +25,6 @@ export default function App() {
   const onIntroDone = useCallback(() => setReady(true), [])
 
   useEffect(() => {
-    initSmoothScroll()
-
     const refresh = () => ScrollTrigger.refresh()
     window.addEventListener('load', refresh)
     document.fonts?.ready.then(refresh)

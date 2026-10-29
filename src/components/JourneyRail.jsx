@@ -1,17 +1,10 @@
 import { useRef } from 'react'
-import { gsap, ScrollTrigger, scrollToId } from '../lib/scroll'
-import { useIsoLayoutEffect } from '../lib/hooks'
+import { gsap, ScrollTrigger, pageScrub, scrollToId } from '../lib/scroll'
+import { useIsoLayoutEffect, motionAllowed } from '../lib/hooks'
+import { chapters } from '../data'
 
-const stops = [
-  ['01', 'Destinations', '#destinations'],
-  ['02', 'The House', '#story'],
-  ['03', 'The Way', '#way'],
-  ['04', 'Routes', '#routes'],
-  ['05', 'Spotlight', '#spotlight'],
-  ['06', 'Postcards', '#postcards'],
-  ['07', 'Stories', '#stories'],
-  ['08', 'Enquire', '#enquiry'],
-]
+// the rail shows every chapter, including the enquiry stop
+const stops = chapters.map(({ index, label, href }) => [index, label, href])
 
 export default function JourneyRail() {
   const root = useRef(null)
@@ -19,15 +12,10 @@ export default function JourneyRail() {
   const fill = useRef(null)
 
   useIsoLayoutEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!motionAllowed()) return
     if (!plane.current || !fill.current) return
 
-    const scrub = {
-      trigger: document.documentElement,
-      start: 'top top',
-      end: 'bottom bottom',
-      scrub: 0.35,
-    }
+    const scrub = { ...pageScrub, scrub: 0.35 }
 
     const travel = gsap.to(plane.current, { top: '100%', ease: 'none', scrollTrigger: scrub })
     const line = gsap.fromTo(fill.current, { scaleY: 0 }, { scaleY: 1, ease: 'none', scrollTrigger: { ...scrub } })

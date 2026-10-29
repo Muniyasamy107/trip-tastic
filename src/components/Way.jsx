@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react'
 import { ScrollTrigger, scrollToId } from '../lib/scroll'
 import { useIsoLayoutEffect } from '../lib/hooks'
-import { SectionHead, RotatingSeal, FrameReveal } from './ui'
-import { steps } from '../data'
+import { SectionHead, RotatingSeal, FrameReveal, BtnIcon, SEAL_TEXT } from './ui'
+import { IconChat } from './icons'
+import { steps, sectionIndex } from '../data'
 import himachal from '../assets/himachal.webp'
 
 export default function Way() {
@@ -31,13 +32,11 @@ export default function Way() {
             <img src={himachal} alt="Snow-dusted pines and a mountain road in Himachal Pradesh" loading="lazy" />
           </FrameReveal>
           <div className="way__seal">
-            <RotatingSeal size={126} text="TRIP TASTIC HOLIDAYS · HANDCRAFTED, NOT PACKAGED · " />
+            <RotatingSeal size={126} text={SEAL_TEXT.way} />
           </div>
           <div className="way__glass">
             <span className="way__glass-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M21 11.5a8.4 8.4 0 01-9 8.4 9.5 9.5 0 01-3.2-.5L3 21l1.6-4.6A8.4 8.4 0 1121 11.5z" />
-              </svg>
+              <IconChat />
             </span>
             <div>
               <b>24/7 on-trip support</b>
@@ -48,7 +47,7 @@ export default function Way() {
 
         <div className="way__body">
           <SectionHead
-            index="03"
+            index={sectionIndex('way')}
             label="The Trip Tastic way"
             title="Less planning. *More* being there."
             aside="Four steps, one team, zero spreadsheets. This is how a Trip Tastic holiday gets made — and why it feels nothing like booking a package."
@@ -69,9 +68,7 @@ export default function Way() {
           <div className="way__cta">
             <button type="button" className="btn btn--ink" onClick={() => scrollToId('#enquiry')}>
               Start with a 15-min call
-              <span className="btn__icon" aria-hidden="true">
-                ↗
-              </span>
+              <BtnIcon />
             </button>
             <span className="way__cta-note">No obligation, no 40-field form. Just a conversation.</span>
           </div>

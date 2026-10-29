@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { gsap } from '../lib/scroll'
+import { gsap, pageScrub } from '../lib/scroll'
 import { useIsoLayoutEffect } from '../lib/hooks'
 
 export default function ScrollProgress() {
@@ -9,12 +9,7 @@ export default function ScrollProgress() {
     const tween = gsap.to(bar.current, {
       scaleX: 1,
       ease: 'none',
-      scrollTrigger: {
-        trigger: document.documentElement,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 0.3,
-      },
+      scrollTrigger: { ...pageScrub, scrub: 0.3 },
     })
     return () => {
       tween.scrollTrigger?.kill()

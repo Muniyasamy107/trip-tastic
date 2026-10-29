@@ -1,5 +1,5 @@
 import { useRef, useMemo } from 'react'
-import { useIsoLayoutEffect } from '../lib/hooks'
+import { useIsoLayoutEffect, motionAllowed, pointerMotionAllowed } from '../lib/hooks'
 import { gsap, ScrollTrigger } from '../lib/scroll'
 
 /* ------------------------------------------------------------------ *
@@ -30,7 +30,7 @@ export function SplitHeading({ text, as: Tag = 'h2', className = '', stagger = 0
   useIsoLayoutEffect(() => {
     const el = ref.current
     if (!el) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!motionAllowed()) return
 
     const targets = el.querySelectorAll('.word__inner')
     const anim = gsap.fromTo(
@@ -74,7 +74,7 @@ export function Reveal({ children, y = 46, delay = 0, className = '', as: Tag = 
   useIsoLayoutEffect(() => {
     const el = ref.current
     if (!el) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!motionAllowed()) return
     const anim = gsap.fromTo(
       el,
       { y, opacity: 0 },
@@ -109,7 +109,7 @@ export function Parallax({ children, speed = 12, className = '', ...rest }) {
   useIsoLayoutEffect(() => {
     const el = ref.current
     if (!el) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!motionAllowed()) return
     const tween = gsap.fromTo(
       el,
       { yPercent: -speed / 2 },
@@ -141,7 +141,7 @@ export function Magnetic({ children, strength = 0.32, className = '' }) {
   const onMove = (e) => {
     const el = ref.current
     if (!el) return
-    if (window.matchMedia('(hover: none)').matches) return
+    if (!pointerMotionAllowed()) return
     const r = el.getBoundingClientRect()
     const x = (e.clientX - r.left - r.width / 2) * strength
     const y = (e.clientY - r.top - r.height / 2) * strength
@@ -164,6 +164,22 @@ export function Magnetic({ children, strength = 0.32, className = '' }) {
   return (
     <span ref={ref} className={`magnetic ${className}`} onMouseMove={onMove} onMouseLeave={onLeave}>
       <span className="magnetic__inner">{children}</span>
+    </span>
+  )
+}
+
+/** The three seal inscriptions used on the page — one copy each. */
+export const SEAL_TEXT = {
+  house: 'TRIP TASTIC HOLIDAYS · CRAFTED JOURNEYS · SINCE 2014 · ',
+  way: 'TRIP TASTIC HOLIDAYS · HANDCRAFTED, NOT PACKAGED · ',
+  spotlight: 'TRIP TASTIC · JOURNEY OF THE MONTH · LADAKH · HIMALAYA · ',
+}
+
+/** The ↗ / ↓ glyph that rides inside every button — was repeated 12 times. */
+export function BtnIcon({ children = '↗' }) {
+  return (
+    <span className="btn__icon" aria-hidden="true">
+      {children}
     </span>
   )
 }
@@ -207,8 +223,6 @@ export function Stars({ count = 5 }) {
   )
 }
 
-export { ScrollTrigger, gsap }
-
 /* ------------------------------------------------------------------ *
  * SectionHead — index + label + giant title + aside
  * ------------------------------------------------------------------ */
@@ -236,8 +250,7 @@ export function Tilt({ children, as: Tag = 'div', max = 7, className = '', ...re
   useIsoLayoutEffect(() => {
     const el = ref.current
     if (!el) return
-    if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!pointerMotionAllowed()) return
 
     gsap.set(el, { transformPerspective: 1000, transformStyle: 'preserve-3d' })
     const rx = gsap.quickTo(el, 'rotationX', { duration: 0.55, ease: 'power3.out' })
@@ -287,7 +300,7 @@ export function FrameReveal({ children, className = '', delay = 0 }) {
   useIsoLayoutEffect(() => {
     const el = ref.current
     if (!el) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!motionAllowed()) return
 
     const img = el.querySelector('img')
     const tl = gsap.timeline({
@@ -325,7 +338,7 @@ export function Scramble({ text, className = '', as: Tag = 'span', delay = 0, st
   useIsoLayoutEffect(() => {
     const el = ref.current
     if (!el) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (!motionAllowed()) {
       el.textContent = text
       return
     }

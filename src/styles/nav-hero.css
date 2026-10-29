@@ -119,11 +119,7 @@
   align-items: center;
   animation: notice-scroll 42s linear infinite;
 }
-.nav__notice-group {
-  display: flex;
-  align-items: center;
-  flex: none;
-}
+.nav__notice-group,
 .nav__notice-item {
   display: inline-flex;
   align-items: center;

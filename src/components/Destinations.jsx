@@ -1,23 +1,18 @@
 import { useRef } from 'react'
-import { gsap, ScrollTrigger, scrollToId } from '../lib/scroll'
-import { useIsoLayoutEffect } from '../lib/hooks'
-import { SectionHead, Tilt } from './ui'
-import { destinations } from '../data'
-
-function pick(name) {
-  window.dispatchEvent(new CustomEvent('tt:destination', { detail: name }))
-  scrollToId('#enquiry')
-}
+import { gsap, ScrollTrigger } from '../lib/scroll'
+import { useIsoLayoutEffect, QUERY } from '../lib/hooks'
+import { SectionHead, Tilt, BtnIcon } from './ui'
+import { destinations, sectionIndex, otherTrip } from '../data'
+import { chooseDestination } from '../lib/trip'
 
 export default function Destinations() {
   const section = useRef(null)
-  const viewport = useRef(null)
   const track = useRef(null)
 
   useIsoLayoutEffect(() => {
     const mm = gsap.matchMedia()
 
-    mm.add('(min-width: 900px) and (prefers-reduced-motion: no-preference)', () => {
+    mm.add(QUERY.finePointer, () => {
       const el = section.current
       const tr = track.current
       el.classList.add('is-pinned')
@@ -55,7 +50,7 @@ export default function Destinations() {
     <section className="dest" id="destinations" ref={section}>
       <div className="dest__head shell">
         <SectionHead
-          index="01"
+          index={sectionIndex('destinations')}
           label="Where we wander"
           title="Places we *love*"
           aside={
@@ -73,7 +68,7 @@ export default function Destinations() {
         />
       </div>
 
-      <div className="dest__viewport" ref={viewport}>
+      <div className="dest__viewport">
         <div className="dest__track" ref={track}>
           {destinations.map((d, i) => (
             <article className="dest-card" key={d.id}>
@@ -85,7 +80,7 @@ export default function Destinations() {
                 href="#enquiry"
                 onClick={(e) => {
                   e.preventDefault()
-                  pick(d.name)
+                  chooseDestination(d.name)
                 }}
                 aria-label={`Plan a ${d.days}-day trip to ${d.name}, from ${d.price}`}
               >
@@ -118,11 +113,9 @@ export default function Destinations() {
               Tell us the feeling. <em className="h-em">We’ll find the place.</em>
             </h3>
             <p>Send three words — “quiet, green, coffee” — and we’ll come back with a route.</p>
-            <button type="button" className="btn btn--sm" onClick={() => pick('Somewhere else entirely')}>
+            <button type="button" className="btn btn--sm" onClick={() => chooseDestination(otherTrip)}>
               Ask a human
-              <span className="btn__icon" aria-hidden="true">
-                ↗
-              </span>
+              <BtnIcon />
             </button>
           </div>
         </div>

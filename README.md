@@ -119,18 +119,37 @@ Plus a custom cursor, scroll-progress bar, floating WhatsApp button, grain overl
 | Colours, type scale, radii           | `src/styles/base.css` → `:root` |
 | Section styles                       | `src/styles/sections.css` and `blocks.css` |
 | Section copy                         | the matching component in `src/components/` |
-| Routes + prices on the map           | `src/components/RouteMap.jsx` → `routes`    |
+| Routes on the map (geometry only)     | `src/components/RouteMap.jsx` → `geometry` — names, days and prices come from `data.js` |
+| Chapter numbers + nav labels         | `src/data.js` → `chapters`    |
+| Footer link columns                  | `src/data.js` → `footerCols`  |
 | Meta / OG / structured data          | `index.html`                  |
+
+### One source of truth (no duplicated data)
+
+Everything that used to be copy-pasted is derived from a single place:
+
+| Value | Lives in | Read by |
+| ----- | -------- | ------- |
+| Chapter numbers, nav labels, anchors | `data.js` → `chapters`, `navLinks`, `sectionIndex()` | Nav, fullscreen menu, journey rail, every `SectionHead` |
+| Destination names / days / prices | `data.js` → `destinations`, `trip()`, `featuredTrip`, `spotlightTrip` | destination rail, hero feature card, spotlight, route map, marquee, form options |
+| Stats (68 / 12 / 4.9) | `data.js` → `stats`, plus `rating`, `yearsRunning`, `destinationsCount` | hero fact strip, story counters, testimonial rating, nav ticker |
+| Footer columns | `data.js` → `footerCols` | Footer |
+| Motion media queries | `lib/hooks.js` → `QUERY`, `motionAllowed()` | every animated component |
+| Enquiry hand-off | `lib/trip.js` → `chooseDestination()` | destination cards, route map, "ask a human" |
+| Line icons (chat, compass, bed, phone, mail, pin, shield, WhatsApp, arrows) | `components/icons.jsx` | Story, Way, Enquiry, FloatCTA, Testimonials |
+| Seal inscriptions | `components/ui.jsx` → `SEAL_TEXT` | Hero, Story, Way, Spotlight |
+| Button glyph | `components/ui.jsx` → `<BtnIcon />` | every `.btn` on the page |
+
+To change a price, a year or a chapter label you should only ever need `src/data.js`.
 
 ### Hero film + design file
 
-The hero now ships with a real 16-second cinematic loop:
+The hero ships a real cinematic loop in three encodes (one film, no duplicate copies):
 
 | File | What it is |
 | ---- | ---------- |
 | `public/video/hero-uhd-4k.mp4` | **3840×2160 UHD master** · 24fps · 19.7s seamless loop · 9.4 MB (6 plates, slower Ken Burns, teal-gold grade, grain) — streams on 4K displays, ships to film/YouTube |
 | `public/video/hero-loop-1440.mp4` | 2560×1440 QHD cut · 5.4 MB — what retina laptops stream |
-| `public/video/hero-loop.mp4` | 1600×900 · 16s loop · 2.5 MB — legacy lightweight cut |
 | `public/video/hero-loop-1080.mp4` | 1920×1080 master of the same loop · 3.2 MB — presentations, ads, YouTube |
 | `public/video/hero-reel.mp4` | 1080×1920 vertical cut with safe-area branding · 13s · 4.1 MB — Reels, Shorts, Stories |
 | `public/video/brand-intro.mp4` | 1920×1080 title-baked opener · 10s · 1.9 MB — emblem, champagne wordmark, gold rule, tagline |
@@ -144,7 +163,7 @@ Regenerate either asset locally:
 pip install --break-system-packages pillow imageio-ffmpeg fonttools brotli
 python3 scripts/make-font-ttf.py      # once: variable woff2 -> ttf for Pillow
 python3 scripts/make-hero-4k.py       # hero 3840×2160 UHD + 2560×1440 QHD (~8 min)
-python3 scripts/make-video-pack.py    # hero 900p + 1080p master + 9:16 reel + brand intro (~2.5 min)
+python3 scripts/make-video-pack.py    # 1080p master + 9:16 reel + brand intro (~2.5 min)
 python3 scripts/make-hero-frame.py    # rebuilds the Figma SVG frame
 ```
 

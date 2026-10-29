@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { motionAllowed } from '../lib/hooks'
 
 /**
  * Cinematic hero film.
@@ -36,7 +37,7 @@ export default function HeroVideo({ onReady }) {
   const [quality, setQuality] = useState(null)
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!motionAllowed()) return
     const conn = navigator.connection
     if (conn?.saveData) return
     if (conn?.effectiveType && /(^|-)2g$/.test(conn.effectiveType)) return

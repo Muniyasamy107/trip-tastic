@@ -1,35 +1,20 @@
 import { useEffect, useState } from 'react'
 import { lockScroll, scrollToId, unlockScroll } from '../lib/scroll'
-import { contact, destinations } from '../data'
-
-const links = [
-  ['Destinations', '#destinations', '01'],
-  ['The House', '#story', '02'],
-  ['The Way', '#way', '03'],
-  ['Routes', '#routes', '04'],
-  ['Spotlight', '#spotlight', '05'],
-  ['Postcards', '#postcards', '06'],
-  ['Stories', '#stories', '07'],
-]
+import { useScrollFlag } from '../lib/hooks'
+import { contact, destinations, navLinks, enquiryChapter, rating } from '../data'
+import { BtnIcon } from './ui'
 
 const notices = [
   ['Now booking', 'Winter & Spring 2026'],
   ['Private journeys', 'India & beyond'],
-  ['4.9 / 5', 'from 4,800+ travellers'],
-  ['Concierge', '+91 90000 12345'],
+  [`${rating} / 5`, 'from 4,800+ travellers'],
+  ['Concierge', contact.phone],
 ]
 
 export default function Nav() {
-  const [stuck, setStuck] = useState(false)
   const [open, setOpen] = useState(false)
   const [preview, setPreview] = useState(0)
-
-  useEffect(() => {
-    const onScroll = () => setStuck(window.scrollY > 60)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  const stuck = useScrollFlag(60)
 
   useEffect(() => {
     if (!open) return
@@ -43,10 +28,14 @@ export default function Nav() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  const go = (id) => (e) => {
+  const go = (href) => (e) => {
     e.preventDefault()
-    setOpen(false)
-    setTimeout(() => scrollToId(id), 90)
+    if (open) {
+      setOpen(false)
+      window.setTimeout(() => scrollToId(href), 90)
+    } else {
+      scrollToId(href)
+    }
   }
 
   const previews = destinations.slice(0, 7).map((d) => ({ id: d.id, src: d.image, label: `${d.name} — ${d.region}` }))
@@ -71,7 +60,7 @@ export default function Nav() {
 
         <div className="nav__bar shell">
           <nav className="nav__group nav__group--left" aria-label="Primary">
-            {links.slice(0, 4).map(([label, href]) => (
+            {navLinks.slice(0, 4).map(({ label, href }) => (
               <a key={href} className="nav__link" href={href} onClick={go(href)}>
                 {label}
               </a>
@@ -90,7 +79,7 @@ export default function Nav() {
 
           <div className="nav__actions">
             <nav className="nav__group nav__group--right" aria-label="Secondary">
-              {links.slice(4).map(([label, href]) => (
+              {navLinks.slice(4).map(({ label, href }) => (
                 <a key={href} className="nav__link" href={href} onClick={go(href)}>
                   {label}
                 </a>
@@ -101,9 +90,7 @@ export default function Nav() {
             </a>
             <a className="btn btn--sm nav__cta" href="#enquiry" onClick={go('#enquiry')}>
               Plan my journey
-              <span className="btn__icon" aria-hidden="true">
-                ↗
-              </span>
+              <BtnIcon />
             </a>
             <button
               type="button"
@@ -125,7 +112,7 @@ export default function Nav() {
           <div>
             <div className="menu__rule" />
             <nav className="menu__links" aria-label="Menu">
-              {links.map(([label, href, num], i) => (
+              {navLinks.map(({ label, href, index }, i) => (
                 <a
                   key={href}
                   href={href}
@@ -136,7 +123,7 @@ export default function Nav() {
                   style={{ transitionDelay: open ? `${0.16 + i * 0.055}s` : '0s' }}
                   tabIndex={open ? 0 : -1}
                 >
-                  <i>{num}</i>
+                  <i>{index}</i>
                   <span>{label}</span>
                 </a>
               ))}
@@ -145,10 +132,10 @@ export default function Nav() {
                 className="menu__link"
                 onClick={go('#enquiry')}
                 onMouseEnter={() => setPreview(0)}
-                style={{ transitionDelay: open ? `${0.16 + links.length * 0.055}s` : '0s' }}
+                style={{ transitionDelay: open ? `${0.16 + navLinks.length * 0.055}s` : '0s' }}
                 tabIndex={open ? 0 : -1}
               >
-                <i>08</i>
+                <i>{enquiryChapter.index}</i>
                 <span>
                   Plan <em>my journey</em>
                 </span>

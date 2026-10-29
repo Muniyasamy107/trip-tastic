@@ -1,17 +1,28 @@
 import { useRef, useState } from 'react'
 import { gsap, scrollToId } from '../lib/scroll'
-import { useIsoLayoutEffect } from '../lib/hooks'
-import { Magnetic, RotatingSeal } from './ui'
+import { useIsoLayoutEffect, motionAllowed, pointerMotionAllowed } from '../lib/hooks'
+import { Magnetic, RotatingSeal, BtnIcon, SEAL_TEXT } from './ui'
 import HeroVideo from './HeroVideo'
-import { heroImg, destinations } from '../data'
+import {
+  heroImg,
+  trip,
+  featuredTrip as featured,
+  destinationsCount,
+  yearsRunning,
+  rating,
+} from '../data'
 
-const featured = destinations[0]
+const facts = [
+  ['01', destinationsCount, 'Destinations, handpicked'],
+  ['02', yearsRunning, 'Years crafting journeys'],
+  ['03', rating, 'Average trip rating'],
+]
 
 const shots = [
   { src: heroImg, label: 'The western ghats, at dusk' },
-  { src: destinations[1].image, label: 'Pangong Tso, Ladakh' },
-  { src: destinations[3].image, label: 'Rice terraces, Ubud' },
-  { src: destinations[0].image, label: 'Backwaters, Alleppey' },
+  { src: trip('ladakh').image, label: 'Pangong Tso, Ladakh' },
+  { src: trip('bali').image, label: 'Rice terraces, Ubud' },
+  { src: trip('kerala').image, label: 'Backwaters, Alleppey' },
 ]
 
 export default function Hero({ ready }) {
@@ -22,7 +33,7 @@ export default function Hero({ ready }) {
 
   // scroll parallax + pointer drift
   useIsoLayoutEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!motionAllowed()) return
     const ctx = gsap.context(() => {
       gsap.to(media.current, {
         yPercent: 8,
@@ -41,7 +52,7 @@ export default function Hero({ ready }) {
         scrollTrigger: { trigger: root.current, start: 'top top', end: '75% top', scrub: true },
       })
 
-      if (!window.matchMedia('(hover: none)').matches) {
+      if (pointerMotionAllowed()) {
         const xTo = gsap.quickTo(media.current, 'x', { duration: 1.4, ease: 'power3.out' })
         const yTo = gsap.quickTo('.hero__slides', 'y', { duration: 1.6, ease: 'power3.out' })
         const onMove = (e) => {
@@ -59,8 +70,7 @@ export default function Hero({ ready }) {
 
   // entrance, fired when the curtain lifts
   useIsoLayoutEffect(() => {
-    if (!ready) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!ready || !motionAllowed()) return
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'expo.out' } })
@@ -85,7 +95,7 @@ export default function Hero({ ready }) {
     if (filmOn) return
     const els = Array.from(host.querySelectorAll('.hero__slide'))
     if (!els.length) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!motionAllowed()) return
 
     gsap.set(els, { opacity: 0, scale: 1.12 })
     gsap.set(els[0], { opacity: 1, scale: 1.04 })
@@ -188,9 +198,7 @@ export default function Hero({ ready }) {
             <Magnetic strength={0.22}>
               <button type="button" className="btn" onClick={() => scrollToId('#enquiry')}>
                 Plan my journey
-                <span className="btn__icon" aria-hidden="true">
-                  ↗
-                </span>
+                <BtnIcon />
               </button>
             </Magnetic>
             <button type="button" className="btn btn--ghost" onClick={() => scrollToId('#destinations')}>
@@ -198,28 +206,20 @@ export default function Hero({ ready }) {
             </button>
           </div>
           <div className="hero__seal">
-            <RotatingSeal size={132} text="TRIP TASTIC HOLIDAYS · CRAFTED JOURNEYS · SINCE 2014 · " />
+            <RotatingSeal size={132} text={SEAL_TEXT.house} />
           </div>
         </div>
       </div>
 
       <div className="hero__deck shell">
         <div className="hero__facts">
-          <span className="hero__fact">
-            <span>01</span>
-            <b>68</b>
-            <i>Destinations, handpicked</i>
-          </span>
-          <span className="hero__fact">
-            <span>02</span>
-            <b>12</b>
-            <i>Years crafting journeys</i>
-          </span>
-          <span className="hero__fact">
-            <span>03</span>
-            <b>4.9</b>
-            <i>Average trip rating</i>
-          </span>
+          {facts.map(([num, value, label]) => (
+            <span className="hero__fact" key={num}>
+              <span>{num}</span>
+              <b>{value}</b>
+              <i>{label}</i>
+            </span>
+          ))}
         </div>
 
         <button type="button" className="hero__feature" onClick={() => scrollToId('#enquiry')}>

@@ -1,8 +1,9 @@
 import { useRef } from 'react'
 import { gsap, ScrollTrigger } from '../lib/scroll'
-import { useIsoLayoutEffect } from '../lib/hooks'
+import { useIsoLayoutEffect, motionAllowed } from '../lib/hooks'
+import { destinations } from '../data'
 
-const places = ['Kerala', 'Ladakh', 'Rajasthan', 'Bali', 'Himachal', 'Andaman', 'Goa', 'Ooty']
+const places = destinations.map((d) => d.name)
 
 function Group() {
   return (
@@ -21,7 +22,7 @@ export default function Marquee() {
   const band = useRef(null)
 
   useIsoLayoutEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!motionAllowed()) return
 
     const st = ScrollTrigger.create({
       trigger: track.current,

@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { gsap } from '../lib/scroll'
+import { gsap, lockScroll, unlockScroll } from '../lib/scroll'
 import { SectionHead, Reveal, Tilt } from './ui'
-import { gallery } from '../data'
-import { lockScroll, unlockScroll } from '../lib/scroll'
+import { gallery, sectionIndex } from '../data'
 
 function Lightbox({ item, onClose }) {
   const root = useRef(null)
@@ -46,7 +45,7 @@ export default function Gallery() {
     <section className="section section--cream gallery" id="postcards">
       <div className="shell">
         <SectionHead
-          index="06"
+          index={sectionIndex('postcards')}
           label="Postcards from the road"
           title="Shot on *real* trips."
           aside="No stock libraries, no rented smiles. These frames come from our travellers and guides — open one to see it full size."

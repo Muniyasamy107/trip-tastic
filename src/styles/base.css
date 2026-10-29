@@ -289,7 +289,8 @@ h4 {
   animation: gold-shimmer 12s linear infinite;
 }
 
-.h-em {
+.h-em,
+.split-heading .is-italic {
   font-style: italic;
   color: var(--gold);
   font-variation-settings: 'SOFT' 90, 'WONK' 1, 'opsz' 144;
@@ -333,11 +334,6 @@ h4 {
 .split-heading .word__inner {
   display: inline-block;
   will-change: transform, opacity;
-}
-.split-heading .is-italic {
-  font-style: italic;
-  font-variation-settings: 'SOFT' 90, 'WONK' 1, 'opsz' 144;
-  color: var(--gold);
 }
 .section--cream .split-heading .is-italic {
   color: var(--saffron);
@@ -495,39 +491,10 @@ h4 {
   gap: 0.5rem;
 }
 
-.magnetic {
-  display: inline-block;
-  will-change: transform;
-}
+.magnetic,
 .magnetic__inner {
   display: inline-block;
   will-change: transform;
-}
-
-.link-underline {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding-bottom: 0.25rem;
-  font-size: 0.62rem;
-  font-weight: 800;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-}
-.link-underline::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.35;
-  transition: opacity 0.4s var(--ease);
-}
-.link-underline:hover::after {
-  opacity: 1;
 }
 
 /* ------------------------------------------------------------------ */

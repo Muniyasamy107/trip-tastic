@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { gsap, lockScroll, unlockScroll } from '../lib/scroll'
-import { useIsoLayoutEffect } from '../lib/hooks'
+import { useIsoLayoutEffect, motionAllowed } from '../lib/hooks'
 import { Scramble } from './ui'
 
 export default function Preloader({ onDone }) {
@@ -8,7 +8,7 @@ export default function Preloader({ onDone }) {
   const [count, setCount] = useState(0)
 
   useIsoLayoutEffect(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const reduce = !motionAllowed()
     lockScroll()
 
     if (reduce) {

@@ -1,7 +1,8 @@
 import { useRef } from 'react'
 import { gsap, scrollToId } from '../lib/scroll'
-import { useIsoLayoutEffect } from '../lib/hooks'
-import { RotatingSeal } from './ui'
+import { useIsoLayoutEffect, motionAllowed } from '../lib/hooks'
+import { RotatingSeal, BtnIcon, SEAL_TEXT } from './ui'
+import { spotlightTrip, sectionIndex } from '../data'
 import ladakh from '../assets/ladakh.webp'
 
 export default function Spotlight() {
@@ -11,7 +12,7 @@ export default function Spotlight() {
   const content = useRef(null)
 
   useIsoLayoutEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!motionAllowed()) return
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -38,13 +39,13 @@ export default function Spotlight() {
         </div>
 
         <div className="spotlight__stamp">
-          <RotatingSeal size={150} text="TRIP TASTIC · JOURNEY OF THE MONTH · LADAKH · HIMALAYA · " />
+          <RotatingSeal size={150} text={SEAL_TEXT.spotlight} />
         </div>
 
         <div className="spotlight__content" ref={content}>
           <span className="eyebrow">Journey of the month</span>
           <h2>
-            The high passes of <em>Ladakh</em>
+            The high passes of <em>{spotlightTrip.name}</em>
           </h2>
           <p>
             Seven days above the clouds: Pangong at sunrise, Nubra’s cold desert, monastery mornings and
@@ -52,11 +53,11 @@ export default function Spotlight() {
           </p>
           <div className="spotlight__facts">
             <span className="spotlight__fact">
-              <b>7 days</b>
+              <b>{spotlightTrip.days} days</b>
               <span>Leh → Nubra → Pangong</span>
             </span>
             <span className="spotlight__fact">
-              <b>₹32,500</b>
+              <b>{spotlightTrip.price}</b>
               <span>Per traveller</span>
             </span>
             <span className="spotlight__fact">
@@ -67,9 +68,7 @@ export default function Spotlight() {
           <div className="spotlight__actions">
             <button type="button" className="btn" onClick={() => scrollToId('#enquiry')}>
               Plan this journey
-              <span className="btn__icon" aria-hidden="true">
-                ↗
-              </span>
+              <BtnIcon />
             </button>
             <a className="btn btn--ghost" href="#postcards">
               See the postcards
@@ -78,7 +77,7 @@ export default function Spotlight() {
         </div>
 
         <span className="spotlight__index" aria-hidden="true">
-          05 — The feature · Himalaya series
+          {sectionIndex('spotlight')} — The feature · Himalaya series
         </span>
       </div>
     </section>

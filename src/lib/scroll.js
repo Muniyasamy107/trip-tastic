@@ -1,10 +1,18 @@
 import Lenis from 'lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { motionAllowed } from './hooks'
 
 gsap.registerPlugin(ScrollTrigger)
 ScrollTrigger.config({ ignoreMobileResize: true })
 gsap.defaults({ ease: 'power3.out', duration: 1 })
+
+/** One ScrollTrigger config for "whole page" scrubs (progress bar, journey rail). */
+export const pageScrub = {
+  trigger: () => document.documentElement,
+  start: 'top top',
+  end: 'bottom bottom',
+}
 
 let lenis = null
 
@@ -12,7 +20,7 @@ export function initSmoothScroll() {
   if (lenis) return lenis
   if (typeof window === 'undefined') return null
 
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const reduce = !motionAllowed()
 
   lenis = new Lenis({
     duration: reduce ? 0.1 : 1.15,

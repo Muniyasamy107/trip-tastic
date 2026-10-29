@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { scrollToId } from '../lib/scroll'
-import { contact } from '../data'
+import { contact, footerCols } from '../data'
 
 export default function Footer() {
   const [email, setEmail] = useState('')
@@ -62,81 +62,21 @@ export default function Footer() {
         </div>
 
         <div className="footer__cols">
-          <div className="footer__col">
-            <h5>Explore</h5>
-            <ul>
-              <li>
-                <a href="#destinations" onClick={go('#destinations')}>
-                  Destinations
-                </a>
-              </li>
-              <li>
-                <a href="#way" onClick={go('#way')}>
-                  How we travel
-                </a>
-              </li>
-              <li>
-                <a href="#spotlight" onClick={go('#spotlight')}>
-                  Journey of the month
-                </a>
-              </li>
-              <li>
-                <a href="#postcards" onClick={go('#postcards')}>
-                  Postcards
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="footer__col">
-            <h5>Company</h5>
-            <ul>
-              <li>
-                <a href="#story" onClick={go('#story')}>
-                  Our story
-                </a>
-              </li>
-              <li>
-                <a href="#stories" onClick={go('#stories')}>
-                  Traveller stories
-                </a>
-              </li>
-              <li>
-                <a href="#enquiry" onClick={go('#enquiry')}>
-                  Trip planners
-                </a>
-              </li>
-              <li>
-                <a href="#enquiry" onClick={go('#enquiry')}>
-                  Careers
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="footer__col">
-            <h5>Good to know</h5>
-            <ul>
-              <li>
-                <a href="#enquiry" onClick={go('#enquiry')}>
-                  Booking & payments
-                </a>
-              </li>
-              <li>
-                <a href="#enquiry" onClick={go('#enquiry')}>
-                  Cancellation policy
-                </a>
-              </li>
-              <li>
-                <a href="#enquiry" onClick={go('#enquiry')}>
-                  Travel insurance
-                </a>
-              </li>
-              <li>
-                <a href="#enquiry" onClick={go('#enquiry')}>
-                  FAQs
-                </a>
-              </li>
-            </ul>
-          </div>
+          {footerCols.map((col) => (
+            <div className="footer__col" key={col.title}>
+              <h5>{col.title}</h5>
+              <ul>
+                {col.links.map(([label, href]) => (
+                  <li key={label}>
+                    <a href={href} onClick={go(href)}>
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+
           <div className="footer__col">
             <h5>Say hello</h5>
             <ul>
@@ -165,13 +105,7 @@ export default function Footer() {
             <a href="/design/" target="_blank" rel="noreferrer">
               Hero design file ↗
             </a>
-            <a
-              href="#top"
-              onClick={(e) => {
-                e.preventDefault()
-                scrollToId('#top')
-              }}
-            >
+            <a href="#top" onClick={go('#top')}>
               Back to top ↑
             </a>
           </div>
