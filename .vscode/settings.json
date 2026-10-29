@@ -1,0 +1,7 @@
+{
+  "editor.formatOnSave": false,
+  "files.eol": "\n",
+  "search.exclude": { "dist": true, "node_modules": true, "public/video": true },
+  "files.associations": { "*.css": "css" },
+  "terminal.integrated.defaultProfile.windows": "PowerShell"
+}

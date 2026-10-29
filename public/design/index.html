@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trip Tastic — Hero design spec &amp; film</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@400..800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #040a09;
+        --ink-2: #071310;
+        --jade: #103529;
+        --ivory: #f8f2e5;
+        --gold: #c9a45c;
+        --gold-2: #ebd3a0;
+        --saffron: #e06a3d;
+        --line: rgba(201, 164, 92, 0.22);
+        --line-soft: rgba(248, 242, 229, 0.1);
+        --muted: rgba(248, 242, 229, 0.56);
+        --display: 'Fraunces', 'Times New Roman', serif;
+        --body: 'Manrope', system-ui, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      html { background: var(--ink); }
+      body {
+        margin: 0;
+        background:
+          radial-gradient(900px 600px at 85% -5%, rgba(23, 73, 58, 0.5), transparent 60%),
+          var(--ink);
+        color: var(--ivory);
+        font-family: var(--body);
+        font-size: 15px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: inherit; }
+      .wrap { max-width: 1320px; margin: 0 auto; padding: 0 clamp(1rem, 3vw, 2.5rem); }
+
+      /* ---------- top bar ---------- */
+      .bar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem 1.2rem;
+        padding: 0.85rem clamp(1rem, 3vw, 2.5rem);
+        background: rgba(4, 10, 9, 0.86);
+        border-bottom: 1px solid var(--line-soft);
+        backdrop-filter: blur(18px);
+      }
+      .bar img { width: 34px; height: 34px; border-radius: 3px; background: linear-gradient(155deg, #fbf6e8, #e6d8b6); }
+      .bar b { font-family: var(--display); font-weight: 400; font-size: 1.05rem; letter-spacing: -0.02em; }
+      .bar small {
+        display: block;
+        font-size: 0.44rem;
+        font-weight: 800;
+        letter-spacing: 0.44em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-top: 0.15rem;
+      }
+      .bar .spacer { flex: 1; }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.42rem 0.8rem;
+        border: 1px solid var(--line);
+        font-size: 0.5rem;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--gold-2);
+        text-decoration: none;
+        transition: background 0.3s, color 0.3s, border-color 0.3s;
+      }
+      .chip:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+      .chip--solid { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+      .chip--solid:hover { background: var(--gold-2); }
+
+      /* ---------- headings ---------- */
+      .intro { padding: clamp(2.2rem, 5vw, 4rem) 0 1rem; }
+      .eyebrow {
+        display: inline-flex; align-items: center; gap: 0.7rem;
+        font-size: 0.5rem; font-weight: 800; letter-spacing: 0.34em; text-transform: uppercase; color: var(--gold);
+      }
+      .eyebrow::before { content: ''; width: 2rem; height: 1px; background: currentColor; }
+      h1 {
+        margin: 1rem 0 0.8rem;
+        font-family: var(--display);
+        font-weight: 300;
+        font-size: clamp(2.1rem, 4.6vw, 3.6rem);
+        line-height: 0.98;
+        letter-spacing: -0.035em;
+      }
+      h1 em { font-style: italic; color: var(--gold); }
+      .intro p { max-width: 62ch; color: var(--muted); font-size: 0.92rem; }
+
+      section { padding-block: clamp(2rem, 4vw, 3.2rem); border-top: 1px solid var(--line-soft); }
+      .sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem 1.5rem; margin-bottom: 1.4rem; }
+      h2 {
+        margin: 0;
+        font-family: var(--display);
+        font-weight: 340;
+        font-size: clamp(1.3rem, 2.4vw, 1.85rem);
+        letter-spacing: -0.02em;
+      }
+      .sec-head span { font-size: 0.5rem; font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); }
+
+      /* ---------- figma-ish frame ---------- */
+      .frame-label {
+        display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+        font-size: 0.52rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;
+        color: var(--gold-2); margin-bottom: 0.55rem;
+      }
+      .frame-label i { font-style: normal; color: var(--muted); letter-spacing: 0.14em; }
+      .fig {
+        position: relative;
+        border: 1px solid var(--line);
+        background: #06110d;
+        overflow: hidden;
+      }
+      .fig::after {
+        content: '';
+        position: absolute; inset: 0; pointer-events: none;
+        box-shadow: inset 0 0 0 1px rgba(248, 242, 229, 0.05);
+      }
+      .fig video, .fig .still {
+        display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover;
+      }
+      .fig .guides {
+        position: absolute; inset: 0; pointer-events: none;
+        background-image:
+          linear-gradient(90deg, rgba(201, 164, 92, 0.1) 1px, transparent 1px),
+          linear-gradient(rgba(201, 164, 92, 0.1) 1px, transparent 1px);
+        background-size: 10% 100%, 100% 12.5%;
+        opacity: 0.35;
+        mix-blend-mode: screen;
+      }
+
+      /* real hero overlay, rebuilt 1:1 */
+      .hero-shot { position: relative; }
+      .hero-shot .veil {
+        position: absolute; inset: 0;
+        background:
+          linear-gradient(180deg, rgba(4, 10, 9, 0.7) 0%, rgba(4, 10, 9, 0.16) 26%, rgba(4, 10, 9, 0.34) 58%, rgba(4, 10, 9, 0.96) 100%),
+          radial-gradient(70% 50% at 16% 74%, rgba(4, 10, 9, 0.76), transparent 68%);
+      }
+      .hero-shot .frame-line { position: absolute; inset: 6.4% 1.6% 1.6%; border: 1px solid rgba(201, 164, 92, 0.2); }
+      .hero-shot .frame-line span {
+        position: absolute; width: 22px; height: 22px; border: 1px solid rgba(201, 164, 92, 0.75);
+      }
+      .hero-shot .frame-line span:nth-child(1) { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+      .hero-shot .frame-line span:nth-child(2) { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
+      .hero-shot .frame-line span:nth-child(3) { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
+      .hero-shot .frame-line span:nth-child(4) { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+      .hero-shot .content {
+        position: absolute; left: 0; right: 0; bottom: 0;
+        padding: clamp(1rem, 3.4vw, 3rem) clamp(1rem, 4.4vw, 4.4rem) clamp(0.9rem, 2.6vw, 2.2rem);
+        display: grid; gap: clamp(0.5rem, 1.4vw, 1rem);
+      }
+      .kicker {
+        display: flex; align-items: center; gap: 0.6rem;
+        font-size: clamp(0.34rem, 0.62vw, 0.5rem); font-weight: 800;
+        letter-spacing: 0.3em; text-transform: uppercase; color: rgba(248, 242, 229, 0.78);
+      }
+      .kicker .rule { width: clamp(18px, 4vw, 56px); height: 1px; background: linear-gradient(90deg, var(--gold), transparent); }
+      .kicker b { color: var(--gold); }
+      .hero-title {
+        margin: 0;
+        font-family: var(--display);
+        font-weight: 330;
+        font-size: clamp(1.9rem, 8.6vw, 7.6rem);
+        line-height: 0.84;
+        letter-spacing: -0.042em;
+      }
+      .hero-title .gold {
+        font-style: italic;
+        background: linear-gradient(100deg, #c9a45c, #f3e2b8 30%, #ebd3a0 50%, #c9a45c 78%);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .hero-title .outline {
+        font-style: italic;
+        color: transparent;
+        -webkit-text-stroke: 1px rgba(248, 242, 229, 0.6);
+      }
+      .hero-lower {
+        display: flex; flex-wrap: wrap; align-items: flex-end; gap: clamp(0.6rem, 2vw, 2rem);
+        padding-top: clamp(0.5rem, 1.4vw, 1rem);
+        border-top: 1px solid rgba(248, 242, 229, 0.18);
+      }
+      .hero-lower p {
+        margin: 0; max-width: 40ch;
+        font-size: clamp(0.5rem, 0.86vw, 0.86rem); line-height: 1.6;
+        color: rgba(248, 242, 229, 0.76);
+      }
+      .hero-lower p b { color: var(--ivory); }
+      .hero-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+      .hbtn {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: clamp(0.4rem, 0.9vw, 0.8rem) clamp(0.6rem, 1.5vw, 1.4rem);
+        font-size: clamp(0.34rem, 0.56vw, 0.52rem); font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;
+        background: var(--gold); color: var(--ink); border: 1px solid var(--gold);
+      }
+      .hbtn--ghost { background: transparent; color: var(--ivory); border-color: rgba(248, 242, 229, 0.34); }
+      .hero-deck {
+        display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem;
+        margin-top: clamp(0.4rem, 1.2vw, 0.9rem); padding-top: clamp(0.4rem, 1.2vw, 0.9rem);
+        border-top: 1px solid rgba(248, 242, 229, 0.16);
+      }
+      .deck-facts { display: flex; gap: clamp(0.6rem, 2vw, 2rem); flex-wrap: wrap; }
+      .deck-facts span { display: flex; align-items: baseline; gap: 0.35rem; }
+      .deck-facts i { font-style: normal; font-size: clamp(0.3rem, 0.5vw, 0.44rem); font-weight: 800; letter-spacing: 0.2em; color: var(--gold); }
+      .deck-facts b { font-family: var(--display); font-weight: 360; font-size: clamp(0.6rem, 1.1vw, 1.05rem); }
+      .deck-facts s { text-decoration: none; font-size: clamp(0.3rem, 0.5vw, 0.44rem); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+
+      /* annotation pins */
+      .pin {
+        position: absolute; z-index: 5;
+        display: grid; place-items: center;
+        width: 22px; height: 22px; border-radius: 50%;
+        background: var(--saffron); color: #fff;
+        font-size: 0.56rem; font-weight: 800;
+        box-shadow: 0 0 0 4px rgba(224, 106, 61, 0.2);
+        translate: -50% -50%;
+      }
+      .pin::after {
+        content: attr(data-note);
+        position: absolute; left: 26px; top: 50%; translate: 0 -50%;
+        white-space: nowrap; padding: 0.28rem 0.5rem;
+        background: rgba(4, 10, 9, 0.92); border: 1px solid var(--line);
+        color: var(--ivory); font-size: 0.46rem; font-weight: 700; letter-spacing: 0.1em;
+        opacity: 0; transition: opacity 0.25s; pointer-events: none;
+      }
+      .pin:hover::after { opacity: 1; }
+
+      .pack { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+      .pack-card { border: 1px solid var(--line-soft); background: rgba(248, 242, 229, 0.02); display: grid; }
+      .pack-card video { width: 100%; display: block; background: #05100c; aspect-ratio: 16 / 9; object-fit: cover; }
+      .pack-card.is-vertical video { aspect-ratio: 9 / 16; }
+      .pack-meta { padding: 0.85rem 0.9rem 1rem; display: grid; gap: 0.35rem; }
+      .pack-meta h4 { margin: 0; font-family: var(--display); font-weight: 380; font-size: 1rem; letter-spacing: -0.02em; }
+      .pack-meta p { margin: 0; font-size: 0.68rem; color: var(--muted); }
+      .pack-meta .spec { font-size: 0.5rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+      .pack-meta a { justify-self: start; margin-top: 0.35rem; }
+      .notes { display: grid; gap: 0.5rem; margin-top: 1rem; }
+      .note { display: grid; grid-template-columns: 1.5rem 1fr; gap: 0.6rem; font-size: 0.78rem; color: var(--muted); }
+      .note b { display: grid; place-items: center; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: var(--saffron); color: #fff; font-size: 0.56rem; }
+      .note strong { color: var(--ivory); font-weight: 700; }
+
+      /* mobile frame */
+      .mobile-row { display: flex; flex-wrap: wrap; gap: 1.6rem; align-items: flex-start; }
+      .phone {
+        width: min(320px, 82vw);
+        aspect-ratio: 390 / 844;
+        border-radius: 34px;
+        border: 1px solid var(--line);
+        position: relative;
+        overflow: hidden;
+        background: #050d0a;
+        box-shadow: 0 40px 80px -40px #000;
+      }
+      .phone .still { width: 100%; height: 100%; object-fit: cover; opacity: 0.72; }
+      .phone .veil {
+        position: absolute; inset: 0;
+        background: linear-gradient(180deg, rgba(4, 10, 9, 0.72), rgba(4, 10, 9, 0.2) 40%, rgba(4, 10, 9, 0.96));
+      }
+      .phone .ui { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 1rem 0.9rem; }
+      .phone .navbar { display: flex; align-items: center; justify-content: space-between; }
+      .phone .navbar .mark { width: 26px; height: 26px; border-radius: 3px; background: linear-gradient(155deg, #fbf6e8, #e6d8b6); }
+      .phone .burger { width: 30px; height: 30px; border: 1px solid rgba(248, 242, 229, 0.3); border-radius: 50%; display: grid; place-content: center; gap: 4px; }
+      .phone .burger i { display: block; width: 11px; height: 1px; background: var(--ivory); }
+      .phone .hero-title { font-size: 1.9rem; }
+      .phone .hero-lower { border-top: 1px solid rgba(248, 242, 229, 0.2); }
+
+      /* tokens */
+      .grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+      .card { border: 1px solid var(--line-soft); padding: 1rem; background: rgba(248, 242, 229, 0.02); }
+      .card h3 { margin: 0 0 0.7rem; font-size: 0.5rem; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase; color: var(--gold); font-family: var(--body); }
+      .swatches { display: grid; gap: 0.45rem; }
+      .swatch { display: flex; align-items: center; gap: 0.6rem; font-size: 0.66rem; }
+      .swatch i { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(248, 242, 229, 0.14); flex: none; }
+      .swatch code { color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.62rem; }
+      .type-row { display: grid; gap: 0.5rem; }
+      .type-row div { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--line-soft); }
+      .type-row span { font-size: 0.56rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+      .type-row em { font-style: normal; font-family: var(--display); font-size: 1.05rem; }
+
+      table { width: 100%; border-collapse: collapse; font-size: 0.76rem; }
+      th, td { text-align: left; padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+      th { font-size: 0.46rem; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); }
+      td b { color: var(--ivory); font-weight: 700; }
+
+      .dl { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.8rem; }
+      .hint { font-size: 0.72rem; color: var(--muted); margin-top: 0.8rem; max-width: 60ch; }
+      footer { padding: 2rem 0 3rem; border-top: 1px solid var(--line-soft); font-size: 0.66rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.6rem 1.2rem; justify-content: space-between; }
+      @media (max-width: 700px) {
+        .pin::after { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bar">
+      <a href="/" style="display: flex; align-items: center; gap: 0.7rem; text-decoration: none">
+        <img src="/brand/emblem.webp" alt="" />
+        <span><b>Trip Tastic</b><small>Design file</small></span>
+      </a>
+      <span class="spacer"></span>
+      <a class="chip" href="/">View live site ↗</a>
+      <a class="chip chip--solid" href="/video/hero-uhd-4k.mp4" download>Download 4K hero ↓</a>
+    </div>
+
+    <div class="wrap">
+      <header class="intro">
+        <span class="eyebrow">Hero section · design spec + film</span>
+        <h1>The art of wandering <em>well</em> — hero frame, redrawn to spec.</h1>
+        <p>
+          Everything below is production-accurate: the same colours, type scale, spacing and motion that the live
+          site runs on. Frame 01 plays the actual hero film (4K UHD on large displays); the callouts mark the layer order. Export the frame
+          to Figma with the SVG on the right, or drop the MP4 straight into a deck.
+        </p>
+        <div class="dl">
+          <a class="chip" href="/design/hero-frame.svg" download>Figma-ready SVG ↓</a>
+          <a class="chip" href="/video/hero-uhd-4k.mp4" download>Hero film · MP4 · 3840×2160 ↓</a>
+          <a class="chip" href="/video/hero-poster-4k.jpg" download>Poster frame · JPG ↓</a>
+        </div>
+      </header>
+
+      <!-- ---------------- DESKTOP FRAME ---------------- -->
+      <section>
+        <div class="sec-head">
+          <h2>Frame 01 — Desktop hero</h2>
+          <span>1440 × 900 · video layer + editorial overlay</span>
+        </div>
+
+        <div class="frame-label">Hero / Desktop <i>· 1440 × 900 · 1×</i></div>
+
+        <div class="fig hero-shot">
+          <video src="/video/hero-loop-1080.mp4" poster="/video/hero-poster-1080.jpg" autoplay muted loop playsinline></video>
+          <div class="veil"></div>
+          <div class="guides"></div>
+          <div class="frame-line"><span></span><span></span><span></span><span></span></div>
+
+          <span class="pin" style="left: 50%; top: 8%" data-note="Nav — announcement strip + centred crest">1</span>
+          <span class="pin" style="left: 6%; top: 34%" data-note="Gold hairline frame + corner brackets">2</span>
+          <span class="pin" style="left: 46%; top: 52%" data-note="Headline — Fraunces 300, gold italic + outlined word">3</span>
+          <span class="pin" style="left: 8%; top: 76%" data-note="Lede 34–38ch, max-width 44ch">4</span>
+          <span class="pin" style="left: 52%; top: 78%" data-note="Primary gold + ghost CTA, 1px radius">5</span>
+          <span class="pin" style="left: 90%; top: 24%" data-note="Rotating brand seal 132px">6</span>
+          <span class="pin" style="left: 12%; top: 93%" data-note="Stat deck + featured journey chip">7</span>
+
+          <div class="content">
+            <p class="kicker">
+              <span class="rule"></span>
+              <span>Private journeys</span>
+              <b>·</b>
+              <span>India &amp; beyond</span>
+            </p>
+            <h2 class="hero-title">The art of<br /><span class="gold">wandering</span> <span class="outline">well</span></h2>
+            <div class="hero-lower">
+              <p>
+                Handcrafted holidays across India and beyond — <b>boutique stays</b>, private guides and slow,
+                cinematic itineraries built around the way you actually like to travel.
+              </p>
+              <div class="hero-btns">
+                <span class="hbtn">Plan my journey ↗</span>
+                <span class="hbtn hbtn--ghost">Explore destinations</span>
+              </div>
+            </div>
+            <div class="hero-deck">
+              <div class="deck-facts">
+                <span><i>01</i><b>68</b><s>Destinations, handpicked</s></span>
+                <span><i>02</i><b>12</b><s>Years crafting journeys</s></span>
+                <span><i>03</i><b>4.9</b><s>Average trip rating</s></span>
+              </div>
+              <span class="hbtn hbtn--ghost" style="pointer-events: none">This week’s favourite · Kerala</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="notes">
+          <div class="note"><b>1</b><span><strong>Navigation.</strong> Scrolling announcement strip (34px) above a 3-column bar: split links, centred crest, actions. Condenses to 60px and gains a blur veil after 60px of scroll.</span></div>
+          <div class="note"><b>2</b><span><strong>Frame.</strong> 1px <code>rgba(201,164,92,.16)</code> inset at 94px / 26px, with 30px corner brackets at 70% gold. Purely decorative, never blocks the film.</span></div>
+          <div class="note"><b>3</b><span><strong>Headline.</strong> Fraunces Variable, weight 330, opsz 144, tracking −0.042em, leading 0.84. Line 1 solid ivory, <i>wandering</i> in a 5-stop champagne gradient (12s shimmer), <i>well</i> outlined at 1px 55% ivory.</span></div>
+          <div class="note"><b>4</b><span><strong>Lede.</strong> Manrope 400, 16px/1.75, 76% ivory, 44ch measure, separated from the headline by a hairline at 18%.</span></div>
+          <div class="note"><b>5</b><span><strong>CTAs.</strong> Gold fill <code>#C9A45C</code> on ink text, 1px radius, 0.24em tracked caps, 18–30px padding. Ghost variant is 1px ivory at 34%. Both wipe upward on hover.</span></div>
+          <div class="note"><b>6</b><span><strong>Seal.</strong> 132px rotating SVG stamp, 34s per rotation, emblem locked in the centre. Appears from 1120px width.</span></div>
+          <div class="note"><b>7</b><span><strong>Deck.</strong> Three facts with gold index numerals plus a featured-journey chip (46px thumbnail). Sits on a 14% hairline, aligned to the 1560px shell.</span></div>
+        </div>
+      </section>
+
+      <!-- ---------------- MOBILE ---------------- -->
+      <section>
+        <div class="sec-head">
+          <h2>Frame 02 — Mobile hero</h2>
+          <span>390 × 844 · same layers, stacked</span>
+        </div>
+        <div class="mobile-row">
+          <div class="phone">
+            <img class="still" src="/video/hero-poster-1440.jpg" alt="" />
+            <div class="veil"></div>
+            <div class="ui">
+              <div class="navbar">
+                <span class="mark"></span>
+                <span class="burger"><i></i><i></i></span>
+              </div>
+              <div>
+                <p class="kicker" style="margin: 0 0 0.45rem"><b>·</b><span>Private journeys</span></p>
+                <h2 class="hero-title">The art of<br /><span class="gold">wandering</span><br /><span class="outline">well</span></h2>
+                <div class="hero-lower" style="margin-top: 0.7rem">
+                  <p style="font-size: 0.58rem">Handcrafted holidays across India and beyond — boutique stays, private guides and slow, cinematic itineraries.</p>
+                </div>
+                <div class="hero-btns" style="margin-top: 0.7rem">
+                  <span class="hbtn" style="font-size: 0.4rem">Plan my journey ↗</span>
+                </div>
+                <div class="deck-facts" style="margin-top: 0.8rem; gap: 0.7rem">
+                  <span><i>01</i><b style="font-size: 0.7rem">68</b></span>
+                  <span><i>02</i><b style="font-size: 0.7rem">12</b></span>
+                  <span><i>03</i><b style="font-size: 0.7rem">4.9</b></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex: 1; min-width: 260px">
+            <table>
+              <tr><th>Token</th><th>Mobile</th></tr>
+              <tr><td>Gutter</td><td><b>18px</b></td></tr>
+              <tr><td>Headline</td><td><b>clamp 44 → 78px</b>, 0.86 leading</td></tr>
+              <tr><td>Nav</td><td>Crest left, 44px burger right</td></tr>
+              <tr><td>Film</td><td>Paused on save-data / reduced motion</td></tr>
+              <tr><td>Deck</td><td>Facts only, chip hidden under 560px</td></tr>
+            </table>
+            <p class="hint">
+              The film is 16:9, so phones crop to the centre and keep the road in frame. Poster shows first, video
+              fades in only once it can play.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- TOKENS ---------------- -->
+      <section>
+        <div class="sec-head">
+          <h2>Design tokens</h2>
+          <span>Colour · type · geometry</span>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <h3>Colour</h3>
+            <div class="swatches">
+              <div class="swatch"><i style="background: #040a09"></i> Ink <code>#040A09</code></div>
+              <div class="swatch"><i style="background: #103529"></i> Jade <code>#103529</code></div>
+              <div class="swatch"><i style="background: #c9a45c"></i> Champagne <code>#C9A45C</code></div>
+              <div class="swatch"><i style="background: #ebd3a0"></i> Gold light <code>#EBD3A0</code></div>
+              <div class="swatch"><i style="background: #e06a3d"></i> Saffron <code>#E06A3D</code></div>
+              <div class="swatch"><i style="background: #f8f2e5"></i> Ivory <code>#F8F2E5</code></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Type</h3>
+            <div class="type-row">
+              <div><em style="font-size: 1.7rem">Display</em><span>Fraunces 300 · opsz 144</span></div>
+              <div><em style="font-style: italic">Italic accent</em><span>Fraunces italic · gold</span></div>
+              <div><em style="font-family: var(--body); font-size: 0.9rem">Body</em><span>Manrope 400 · 1.75</span></div>
+              <div><em style="font-family: var(--body); font-size: 0.6rem; letter-spacing: 0.3em">LABEL</em><span>Manrope 800 · 0.34em</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Geometry</h3>
+            <div class="type-row">
+              <div><em>Shell</em><span>1560 max · 88px gutters</span></div>
+              <div><em>Buttons</em><span>1px radius · 0.24em tracking</span></div>
+              <div><em>Arches</em><span>260px radius on portrait cards</span></div>
+              <div><em>Hairlines</em><span>1px at 14–30% gold</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------------- MOTION ---------------- -->
+      <section>
+        <div class="sec-head">
+          <h2>Motion spec</h2>
+          <span>What happens, in order</span>
+        </div>
+        <table>
+          <tr><th>Beat</th><th>Action</th><th>Timing</th></tr>
+          <tr><td><b>0 — Intro</b></td><td>Curtain panels split, logo + counter, wordmark decodes</td><td>0 → 3.4s</td></tr>
+          <tr><td><b>1 — Hero in</b></td><td>Headline rises per line, frame + rails fade, CTAs stagger</td><td>3.4 → 5.4s</td></tr>
+          <tr><td><b>2 — Light sweep</b></td><td>Warm diagonal sweep across the film</td><td>4.8 → 7.6s</td></tr>
+          <tr><td><b>3 — Film loop</b></td><td>4 plates · Ken Burns 1.06→1.145 · 1s crossfades</td><td>16s loop</td></tr>
+          <tr><td><b>4 — Parallax</b></td><td>Film drifts 8% and scales 1.08 as you scroll</td><td>scroll-linked</td></tr>
+          <tr><td><b>5 — Pointer</b></td><td>Image drifts ±22px, seal spins 34s, cursor 44→84px</td><td>continuous</td></tr>
+          <tr><td><b>Reduced motion</b></td><td>Film disabled, poster only, all transforms off</td><td>instant</td></tr>
+        </table>
+      </section>
+
+      <!-- ---------------- VIDEO PACK ---------------- -->
+      <section>
+        <div class="sec-head">
+          <h2>The video pack</h2>
+          <span>Rendered from the same plates as the site</span>
+        </div>
+        <div class="pack">
+          <div class="pack-card">
+            <video src="/video/hero-uhd-4k.mp4" poster="/video/hero-poster-4k.jpg" muted loop playsinline controls preload="metadata"></video>
+            <div class="pack-meta">
+              <span class="spec">Ultra HD master · 3840 × 2160 · 19.7s · 9.4 MB</span>
+              <h4>Hero film — 4K UHD</h4>
+              <p>Six plates, slower moves, teal-and-gold grade, 24fps, seamless loop. This is the file the hero streams on large 4K displays, and the one to hand to a film or TV edit.</p>
+              <a class="chip chip--solid" href="/video/hero-uhd-4k.mp4" download>Download 4K · 9.4 MB ↓</a>
+            </div>
+          </div>
+
+          <div class="pack-card">
+            <video src="/video/hero-loop-1440.mp4" poster="/video/hero-poster-1440.jpg" muted loop playsinline controls preload="metadata"></video>
+            <div class="pack-meta">
+              <span class="spec">Hero · QHD 2560 × 1440 · 19.7s · 5.4 MB</span>
+              <h4>Hero film — 1440p</h4>
+              <p>What retina laptops and 1440p desktops stream. Same cut, half the bitrate, keeps the page instant.</p>
+              <a class="chip" href="/video/hero-loop-1440.mp4" download>Download QHD · 5.4 MB ↓</a>
+            </div>
+          </div>
+
+          <div class="pack-card">
+            <video src="/video/hero-loop-1080.mp4" poster="/video/hero-poster-1080.jpg" muted loop playsinline controls preload="metadata"></video>
+            <div class="pack-meta">
+              <span class="spec">Hero · FHD 1920 × 1080 · 16s · 3.2 MB</span>
+              <h4>Hero film — 1080p</h4>
+              <p>Four plates, 16s loop, warm grade and grain — the lighter fallback for smaller screens and slower links.</p>
+              <a class="chip" href="/video/hero-loop-1080.mp4" download>Download MP4 · 3.2 MB ↓</a>
+            </div>
+          </div>
+
+          <div class="pack-card is-vertical">
+            <video src="/video/hero-reel.mp4" poster="/video/hero-reel-poster.jpg" muted loop playsinline controls preload="metadata"></video>
+            <div class="pack-meta">
+              <span class="spec">Reels · Shorts · Story · 1080 × 1920 · 13s</span>
+              <h4>Vertical reel</h4>
+              <p>Safe-area aware: wordmark in the top third, captions clear of the platform UI, gold hairline frame.</p>
+              <a class="chip" href="/video/hero-reel.mp4" download>Download MP4 · 4.1 MB ↓</a>
+            </div>
+          </div>
+
+          <div class="pack-card">
+            <video src="/video/brand-intro.mp4" poster="/video/brand-intro-poster.jpg" muted loop playsinline controls preload="metadata"></video>
+            <div class="pack-meta">
+              <span class="spec">Brand opener · 1920 × 1080 · 10s</span>
+              <h4>Title-baked intro</h4>
+              <p>Emblem rises, wordmark fades up in champagne, gold rule draws, tagline settles. Fades to ink at the end.</p>
+              <a class="chip" href="/video/brand-intro.mp4" download>Download MP4 · 1.9 MB ↓</a>
+            </div>
+          </div>
+        </div>
+        <p class="hint">
+          Every clip is H.264 / yuv420p, so it plays anywhere: Instagram, YouTube, a Keynote deck, a WhatsApp
+          forward or a paid ad. The hero picks its file from a quality ladder — 4K on displays 1900px and wider,
+          1440p on retina laptops, 1080p below, and the still crossfade whenever motion is reduced or data is
+          tight. Render any of them with <code>scripts/make-hero-4k.py</code>.
+        </p>
+      </section>
+
+      <!-- ---------------- ASSETS ---------------- -->
+      <section>
+        <div class="sec-head">
+          <h2>Files</h2>
+          <span>Drop into Figma, a deck or the site</span>
+        </div>
+        <div class="dl">
+          <a class="chip chip--solid" href="/video/hero-uhd-4k.mp4" download>Hero film · 4K UHD ↓</a>
+          <a class="chip" href="/video/hero-loop-1440.mp4" download>Hero film · 1440p ↓</a>
+          <a class="chip" href="/video/hero-loop-1080.mp4" download>Hero master · 1080p · 3.2 MB ↓</a>
+          <a class="chip" href="/video/hero-reel.mp4" download>Vertical reel · 9:16 ↓</a>
+          <a class="chip" href="/video/brand-intro.mp4" download>Brand intro · title-baked ↓</a>
+          <a class="chip" href="/video/hero-poster-4k.jpg" download>Poster · 3840×2160 ↓</a>
+          <a class="chip" href="/design/hero-frame.svg" download>Hero frame · SVG for Figma ↓</a>
+          <a class="chip" href="/brand/logo.webp" download>Logo (transparent) ↓</a>
+        </div>
+        <p class="hint">
+          <b>Figma:</b> open Figma → File → Place image, or simply drag <code>hero-frame.svg</code> onto the canvas.
+          It imports as editable vector layers with the photograph on its own fill — rename the layer “Film plate”,
+          then swap in the MP4 with a video fill to keep it moving.
+        </p>
+      </section>
+
+      <footer>
+        <span>Trip Tastic Holidays · hero design file · built from the live site tokens</span>
+        <span>Chennai · India</span>
+      </footer>
+    </div>
+  </body>
+</html>
