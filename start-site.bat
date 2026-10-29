@@ -2,33 +2,44 @@
 title Trip Tastic Holidays
 cd /d "%~dp0"
 
+echo.
+echo   ============================================
+echo    TRIP TASTIC HOLIDAYS - local dev server
+echo   ============================================
+
 where node >nul 2>nul
 if errorlevel 1 (
   echo.
-  echo   Node.js kaanom. https://nodejs.org la LTS version install pannunga.
+  echo   [X] Node.js kaanom.
+  echo       https://nodejs.org la LTS version install pannunga ^(Node 20+^).
   echo.
   pause
   exit /b 1
 )
 
+node -v
+
 if not exist "node_modules" (
   echo.
-  echo   Packages install aaguthu... first time mattum, 1-2 nimisham aagum.
+  echo   [1/2] Packages install aaguthu... first time mattum, 1-2 nimisham.
   echo.
   call npm install
   if errorlevel 1 (
     echo.
-    echo   npm install fail aachu. node_modules folder-a delete panni marubadiyum try pannunga.
+    echo   [X] npm install fail aachu.
+    echo       node_modules folder-a delete panni marubadiyum try pannunga.
+    echo.
     pause
     exit /b 1
   )
+) else (
+  echo   [1/2] node_modules ready - install skip.
 )
 
 echo.
-echo   Trip Tastic website start aaguthu...
-echo   Browser automatic-a open aagum: http://localhost:3000
-echo   Stop panna: Ctrl + C  (apram Y + Enter)
+echo   [2/2] Server start aaguthu... free port automatic-a edukkum.
+echo         Browser thaana open aagum. Stop panna: Ctrl + C  ^(apram Y + Enter^)
 echo.
-start "" cmd /c "timeout /t 5 >nul & start http://localhost:3000"
-call npm run dev -- --port 3000 --strictPort
+
+call node scripts\launch.mjs
 pause

@@ -1,0 +1,58 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "trip-tastic: dev server",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "VITE",
+          "endsPattern": "Local:\\s+https?://"
+        }
+      },
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "trip-tastic" }
+    },
+    {
+      "label": "trip-tastic: dev server (auto port + open browser)",
+      "type": "shell",
+      "command": "node scripts/launch.mjs",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "starting the dev server",
+          "endsPattern": "Website ready"
+        }
+      },
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "trip-tastic" }
+    },
+    {
+      "label": "trip-tastic: install",
+      "type": "shell",
+      "command": "npm install",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "trip-tastic" }
+    },
+    {
+      "label": "trip-tastic: production build",
+      "type": "shell",
+      "command": "npm run build",
+      "problemMatcher": [],
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "trip-tastic: preview build",
+      "type": "shell",
+      "command": "npm run preview",
+      "isBackground": true,
+      "problemMatcher": []
+    }
+  ]
+}

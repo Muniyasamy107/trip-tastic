@@ -21,12 +21,30 @@ npm run preview  # preview the production build
 
 Requires Node 20+.
 
-### Windows quick start (no terminal needed)
+### Run it in VS Code
 
-Double-click **`start-site.bat`** — it installs packages the first time, starts the dev server on
-`http://localhost:3000` and opens the browser for you.
+Full walk-through (ZIP download, clone, F5, troubleshooting): **[RUN-IN-VSCODE.md](RUN-IN-VSCODE.md)**.
 
-### Windows / VS Code terminal (copy-paste)
+Short version — `File ▸ Open Folder`, then in the terminal:
+
+```powershell
+npm install
+npm run dev
+```
+
+### One-click launchers (no terminal typing)
+
+| Method | What happens |
+| --- | --- |
+| **`start-site.bat`** (double-click, Windows) | checks Node → installs packages the first time → picks a free port → starts the server → opens the browser |
+| **`./start-site.sh`** (macOS / Linux) | same thing for bash |
+| **`npm start`** | `scripts/launch.mjs`: free port from 3000 upwards, then opens the exact URL |
+| **`F5` in VS Code** | runs the dev server and attaches Chrome/Edge debugging (see `.vscode/`) |
+
+No port errors: `scripts/launch.mjs` probes for a free port *before* Vite boots and opens the
+browser on the URL Vite actually printed. `strictPort` stays off.
+
+### VS Code terminal (copy-paste, git route)
 
 ```powershell
 cd $HOME\Desktop
