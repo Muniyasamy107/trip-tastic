@@ -5,6 +5,69 @@ Rendu vaazhi irukku — **A (ZIP, easiest)** illa **B (git clone)**. Edhuvum onn
 
 ---
 
+## 0. Ithu oru Pull Request — adha VS Code-la eppadi run panna?
+
+Ithu `main`-la innum merge aagala. So `main`-a clone pannaa site varadhu — **PR branch-a** edukkanum.
+
+**PR link:** https://github.com/Muniyasamy107/trip-tastic/pull/4
+**Branch:** `arena/23d9011d-trip-tastic`
+
+### Vaazhi 1 — VS Code GitHub Pull Requests extension (easy)
+
+1. VS Code → Extensions (`Ctrl+Shift+X`) → **GitHub Pull Requests** install pannunga.
+2. `Ctrl+Shift+P` → **GitHub Pull Requests: Sign in** (oru thadava).
+3. `Ctrl+Shift+P` → **GitHub Pull Requests: Checkout Pull Request** → URL paste pannunga:
+   `https://github.com/Muniyasamy107/trip-tastic/pull/4`
+4. Terminal (`Ctrl+`` ` ``) → `npm install` → `npm start`. Mudinjadhu.
+
+### Vaazhi 2 — `gh` CLI (terminal mattum)
+
+```powershell
+cd $HOME\Desktop
+git clone https://github.com/Muniyasamy107/trip-tastic.git triptastic
+cd triptastic
+gh pr checkout 4
+npm install
+npm start
+```
+
+`gh` install illa-na (Windows): `winget install GitHub.cli` → terminal-a restart pannunga.
+
+### Vaazhi 3 — plain git (gh illa, extension illa)
+
+```powershell
+cd $HOME\Desktop
+git clone https://github.com/Muniyasamy107/trip-tastic.git triptastic
+cd triptastic
+git checkout arena/23d9011d-trip-tastic
+npm install
+npm start
+```
+
+> Namma launcher 3000-la aarambikkum, busy-na 3001… ethu free-o adhu, browser-la sari URL-a thaana
+> open pannum. Port error varaadhu.
+
+### Vaazhi 4 — Dev Container / Codespaces (VS Code-la container-la run)
+
+Repo-la `.devcontainer/devcontainer.json` irukku (Node 22 + port 5173 forwarded + `npm install`
+automatic). Docker irundha:
+
+1. Repo-a clone panni VS Code-la open pannunga.
+2. `Ctrl+Shift+P` → **Dev Containers: Reopen in Container**.
+3. Container ready aana appuram terminal-la `npm start` — VS Code port 5173-a auto-forward pannum,
+   "Open in Browser" click pannunga.
+
+GitHub Codespaces venumna: https://codespaces.new/Muniyasamy107/trip-tastic?quickstart=1
+(branch-a `arena/23d9011d-trip-tastic`-a select pannunga).
+
+### Vaazhi 5 — ZIP (git, gh, account ellam vendaam)
+
+https://github.com/Muniyasamy107/trip-tastic/archive/refs/heads/arena/23d9011d-trip-tastic.zip
+
+Extract → VS Code-la folder open → terminal → `npm install` → `npm start`.
+
+---
+
 ## A. ZIP download (git thevai illa)
 
 1. Ithu download pannunga:

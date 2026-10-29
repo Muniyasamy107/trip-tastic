@@ -23,7 +23,22 @@ Requires Node 20+.
 
 ### Run it in VS Code
 
-Full walk-through (ZIP download, clone, F5, troubleshooting): **[RUN-IN-VSCODE.md](RUN-IN-VSCODE.md)**.
+Full walk-through — pull-request checkout, ZIP download, clone, F5, Dev Container and troubleshooting:
+**[RUN-IN-VSCODE.md](RUN-IN-VSCODE.md)**.
+
+The work lives on the pull request branch `arena/23d9011d-trip-tastic` (**PR #4**) until it is merged, so
+either check out that branch or download its ZIP:
+
+```powershell
+git clone https://github.com/Muniyasamy107/trip-tastic.git
+cd trip-tastic
+gh pr checkout 4      # or: git checkout arena/23d9011d-trip-tastic
+npm install
+npm start
+```
+
+A `.devcontainer/devcontainer.json` is included, so **Dev Containers: Reopen in Container** (or GitHub
+Codespaces) gives you a Node 22 box with port 5173 already forwarded.
 
 Short version — `File ▸ Open Folder`, then in the terminal:
 
