@@ -315,7 +315,7 @@
       </a>
       <span class="spacer"></span>
       <a class="chip" href="/">View live site ↗</a>
-      <a class="chip chip--solid" href="/video/hero-loop-1080.mp4" download>Download hero master ↓</a>
+      <a class="chip chip--solid" href="/video/hero-uhd-4k.mp4" download>Download 4K hero ↓</a>
     </div>
 
     <div class="wrap">
@@ -324,12 +324,12 @@
         <h1>The art of wandering <em>well</em> — hero frame, redrawn to spec.</h1>
         <p>
           Everything below is production-accurate: the same colours, type scale, spacing and motion that the live
-          site runs on. Frame 01 plays the actual hero film; the callouts mark the layer order. Export the frame
+          site runs on. Frame 01 plays the actual hero film (4K UHD on large displays); the callouts mark the layer order. Export the frame
           to Figma with the SVG on the right, or drop the MP4 straight into a deck.
         </p>
         <div class="dl">
           <a class="chip" href="/design/hero-frame.svg" download>Figma-ready SVG ↓</a>
-          <a class="chip" href="/video/hero-loop-1080.mp4" download>Hero master · MP4 16s · 1920×1080 ↓</a>
+          <a class="chip" href="/video/hero-uhd-4k.mp4" download>Hero film · MP4 · 3840×2160 ↓</a>
           <a class="chip" href="/video/hero-poster.jpg" download>Poster frame · JPG ↓</a>
         </div>
       </header>
@@ -512,11 +512,31 @@
         </div>
         <div class="pack">
           <div class="pack-card">
+            <video src="/video/hero-uhd-4k.mp4" poster="/video/hero-poster-4k.jpg" muted loop playsinline controls preload="metadata"></video>
+            <div class="pack-meta">
+              <span class="spec">Ultra HD master · 3840 × 2160 · 19.7s · 9.4 MB</span>
+              <h4>Hero film — 4K UHD</h4>
+              <p>Six plates, slower moves, teal-and-gold grade, 24fps, seamless loop. This is the file the hero streams on large 4K displays, and the one to hand to a film or TV edit.</p>
+              <a class="chip chip--solid" href="/video/hero-uhd-4k.mp4" download>Download 4K · 9.4 MB ↓</a>
+            </div>
+          </div>
+
+          <div class="pack-card">
+            <video src="/video/hero-loop-1440.mp4" poster="/video/hero-poster-1440.jpg" muted loop playsinline controls preload="metadata"></video>
+            <div class="pack-meta">
+              <span class="spec">Hero · QHD 2560 × 1440 · 19.7s · 5.4 MB</span>
+              <h4>Hero film — 1440p</h4>
+              <p>What retina laptops and 1440p desktops stream. Same cut, half the bitrate, keeps the page instant.</p>
+              <a class="chip" href="/video/hero-loop-1440.mp4" download>Download QHD · 5.4 MB ↓</a>
+            </div>
+          </div>
+
+          <div class="pack-card">
             <video src="/video/hero-loop-1080.mp4" poster="/video/hero-poster-1080.jpg" muted loop playsinline controls preload="metadata"></video>
             <div class="pack-meta">
-              <span class="spec">Hero master · 1920 × 1080 · 16s</span>
-              <h4>Hero loop — master</h4>
-              <p>Four plates, Ken Burns, 1s crossfades, warm grade and grain. Seamless: the last shot is the first frame again.</p>
+              <span class="spec">Hero · FHD 1920 × 1080 · 16s · 3.2 MB</span>
+              <h4>Hero film — 1080p</h4>
+              <p>Four plates, 16s loop, warm grade and grain — the lighter fallback for smaller screens and slower links.</p>
               <a class="chip" href="/video/hero-loop-1080.mp4" download>Download MP4 · 3.2 MB ↓</a>
             </div>
           </div>
@@ -543,8 +563,9 @@
         </div>
         <p class="hint">
           Every clip is H.264 / yuv420p, so it plays anywhere: Instagram, YouTube, a Keynote deck, a WhatsApp
-          forward or a paid ad. Need 4K, a 1:1 feed cut or a Tamil title card? The renderer takes one parameter —
-          <code>scripts/make-video-pack.py</code>.
+          forward or a paid ad. The hero picks its file from a quality ladder — 4K on displays 1900px and wider,
+          1440p on retina laptops, 1080p below, and the still crossfade whenever motion is reduced or data is
+          tight. Render any of them with <code>scripts/make-hero-4k.py</code>.
         </p>
       </section>
 
@@ -555,7 +576,9 @@
           <span>Drop into Figma, a deck or the site</span>
         </div>
         <div class="dl">
-          <a class="chip chip--solid" href="/video/hero-loop-1080.mp4" download>Hero master · 1080p · 3.2 MB ↓</a>
+          <a class="chip chip--solid" href="/video/hero-uhd-4k.mp4" download>Hero film · 4K UHD ↓</a>
+          <a class="chip" href="/video/hero-loop-1440.mp4" download>Hero film · 1440p ↓</a>
+          <a class="chip" href="/video/hero-loop-1080.mp4" download>Hero master · 1080p · 3.2 MB ↓</a>
           <a class="chip" href="/video/hero-loop.mp4" download>Hero film · 900p · 2.5 MB ↓</a>
           <a class="chip" href="/video/hero-reel.mp4" download>Vertical reel · 9:16 ↓</a>
           <a class="chip" href="/video/brand-intro.mp4" download>Brand intro · title-baked ↓</a>
