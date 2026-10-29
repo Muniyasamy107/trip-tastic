@@ -40,6 +40,17 @@ npm start
 A `.devcontainer/devcontainer.json` is included, so **Dev Containers: Reopen in Container** (or GitHub
 Codespaces) gives you a Node 22 box with port 5173 already forwarded.
 
+### Windows CMD (copy-paste)
+
+```bat
+cd /d "%USERPROFILE%\Desktop"
+git clone https://github.com/Muniyasamy107/trip-tastic.git triptastic
+cd triptastic && git checkout arena/23d9011d-trip-tastic && npm install && npm start
+```
+
+Every CMD variant (line-by-line, update, `gh` route, ZIP route, `start-site.bat`) plus a
+CMD-specific error table: **[RUN-IN-VSCODE.md → CMD section](RUN-IN-VSCODE.md#cmd-command-prompt--copy-paste-mattum)**.
+
 Short version — `File ▸ Open Folder`, then in the terminal:
 
 ```powershell

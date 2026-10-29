@@ -68,6 +68,89 @@ Extract → VS Code-la folder open → terminal → `npm install` → `npm start
 
 ---
 
+## CMD (Command Prompt) — copy-paste mattum
+
+Windows **Start → type `cmd` → Command Prompt** open pannunga. Ithu ellam CMD-la work aagum
+(PowerShell thevai illa). `%USERPROFILE%` = `C:\Users\<your-name>`.
+
+### 1. Ondru mattum — code-a eduthu run panna (3 lines)
+
+```bat
+cd /d "%USERPROFILE%\Desktop"
+git clone https://github.com/Muniyasamy107/trip-tastic.git triptastic
+cd triptastic && git checkout arena/23d9011d-trip-tastic && npm install && npm start
+```
+
+`npm start` mudinjadhu — free port (3000, busy-na 3001…) eduthu browser-a thaana open pannum.
+
+### 2. Line-by-line (ethavathu fail aanaa idhu use pannunga)
+
+```bat
+cd /d "%USERPROFILE%\Desktop"
+git clone https://github.com/Muniyasamy107/trip-tastic.git triptastic
+cd triptastic
+git checkout arena/23d9011d-trip-tastic
+npm install
+npm start
+```
+
+### 3. Already clone pannirukeengala? Update panni run panna
+
+```bat
+cd /d "%USERPROFILE%\Desktop\triptastic"
+git pull
+npm install
+npm start
+```
+
+### 4. `gh` CLI vachu PR-a direct-a (git branch name thevai illa)
+
+```bat
+cd /d "%USERPROFILE%\Desktop"
+git clone https://github.com/Muniyasamy107/trip-tastic.git triptastic
+cd triptastic
+gh pr checkout 4
+npm install && npm start
+```
+
+### 5. Git illa-na — ZIP + CMD
+
+1. https://github.com/Muniyasamy107/trip-tastic/archive/refs/heads/arena/23d9011d-trip-tastic.zip download
+2. Right-click → **Extract All** → `%USERPROFILE%\Desktop\triptastic`
+3. CMD-la:
+
+```bat
+cd /d "%USERPROFILE%\Desktop\triptastic"
+npm install
+npm start
+```
+
+### 6. Terminal typing vendaam — `start-site.bat`
+
+File Explorer-la project folder open panni **`start-site.bat`** double-click pannunga. Adhu:
+
+- Node irukkaa check pannum
+- `node_modules` illa-na `npm install` pannum
+- free port eduthu server start pannum
+- browser-a thaana open pannum
+
+### CMD-la common error
+
+| Error | Fix (CMD-la type pannunga) |
+| --- | --- |
+| `'git' is not recognized` | `winget install Git.Git` → CMD-a close panni marubadiyum open pannunga |
+| `'npm' is not recognized` | Node install: https://nodejs.org (LTS) → CMD restart |
+| `'gh' is not recognized` | `winget install GitHub.cli` → CMD restart (illa vaazhi 1/2/5 use pannunga) |
+| `fatal: destination path 'triptastic' already exists` | Already clone aagirukku → `cd triptastic` panni vaazhi 3 use pannunga |
+| `EADDRINUSE` / port busy | Use `npm start` (launcher free port edukkum), illa `npm run dev:3000` |
+| `could not find package.json` | Neenga project folder-la illa → `cd /d "%USERPROFILE%\Desktop\triptastic"` |
+| Browser open aagala | Terminal-la `http://localhost:3000` (illa adhu print panna port) manually open pannunga |
+
+> CMD tip: command-a paste panna **right-click** pothum (`Ctrl+V` puriyavittal).
+> Niraiya line onnaa paste pannalum CMD line-by-line run pannum.
+
+---
+
 ## A. ZIP download (git thevai illa)
 
 1. Ithu download pannunga:
